@@ -568,14 +568,17 @@ void usage( void )
 "-o\t\twrite CDR additionally to stdout\n"
 "-m\t\twrite log files on month-by-month instead of day-by-day basis\n"
 "-n\t\tconsider day in place of month and vice versa\n"
-"-r x.x.x.x\taccept TCP connections from this IP address only (deprecated. now using libwrap,\n"
 "-x number\tmaximum number of clients for TCP connections (default: 1)\n"
 "\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
 "-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
-"-i address\tIP address of interface for bind only to it (default to all interfaces)\n"
-"tcp:port\t\twhere port is a TCP port for listen on.\n"
+"-i address\tIP address of interface for bind only to it\n"
+"\t\t(default to all interfaces)\n"
+"tcp:port\twhere port is a TCP port for listen on.\n"
 "-b\t\tbecome daemon\n"
-"-P\t\tPID file. /var/run/atslogd.pid by default\n",CDRR_VER);
+"-P\t\tPID file. /var/run/atslogd.pid by default\n"
+"\n"
+"Use libwrap for contol access to TCP connections. See /etc/hosts.allow\n"
+"and /etc/hosts.deny\n",CDRR_VER);
 
 exit(1);
 }
