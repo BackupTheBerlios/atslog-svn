@@ -39,8 +39,6 @@ typedef long DWORD;
 #define MAXFILENAMELEN	256
 #define MAXERRORLEN	256
 
-// harcoded maximum clients for TCP port
-#define MAXTCPCLIENTS 50
 
 #define	SPACE_TO_ZERO(x)	((x)==' ' ? '0' : (x))
 
@@ -61,6 +59,9 @@ int gpid;
 int filenamelen=0;
 // count of childrens
 int childcount=0;
+int is_tcp=0;
+// default maximum clients for TCP port
+int maxtcpclients=1;
 
 #define LT_RAW		0
 #define LT_DEFINITY	1
@@ -522,122 +523,6 @@ int auth_libwrap(struct sockaddr_in sa_rem)
 
 }
 
-HANDLE open_tcp( unsigned short tcpPort )
-{
-	HANDLE hCom;
-	int opt=1;
-	int pid;
-		HANDLE s,new_s;
-		struct sockaddr_in sa_loc,sa_rem;
-		socklen_t sa_rem_len;
-
-		s=socket(PF_INET,SOCK_STREAM,0);
-		if(s==INVALID_HANDLE_VALUE) {
-			my_syslog( "socket() failed: %s",my_strerror() );
-			return s;
-		}
-		if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(char *)&opt,sizeof(opt)) < 0)
-		{
-			my_syslog( "sotsockopt() failed: %s",my_strerror() );
-			return INVALID_HANDLE_VALUE;
-		}
-		h2close=s;
-		memset( &sa_loc,0,sizeof(sa_loc) );
-		memset( &sa_rem,0,sizeof(sa_loc) );
-		sa_rem.sin_family=sa_loc.sin_family=AF_INET;
-		sa_loc.sin_port=htons(tcpPort);
-		if( bind(s,(struct sockaddr*)&sa_loc,sizeof(sa_loc) )==(-1) ) {
-			my_syslog( "bind() on port %d failed: %s",tcpPort,my_strerror() );
-			goto err_ret;
-		}
-		if( listen(s,1)==(-1) ) {
-			my_syslog( "listen() failed: %s",my_strerror() );
-			goto err_ret;
-		}
-		my_syslog( "waiting TCP connection on port %d",tcpPort );
-		for( ;; ) {
-			sa_rem_len=sizeof(sa_rem);
-			// wait while childs hangs to allow new connections
-			while ( childcount >= MAXTCPCLIENTS )
-				sleep(2);
-			if( (new_s=accept(s,(struct sockaddr*)&sa_rem,&sa_rem_len ))==(-1) ) {
-				my_syslog( "accept() failed: %s",my_strerror() );
-				err_ret:
-				h2close=INVALID_HANDLE_VALUE;
-				close(s);
-				return INVALID_HANDLE_VALUE;
-			}
-			my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
-			// wtf? by andy[at]eva.dp.ua
-			// if( remote_end.s_addr==0 ) break;
-			//if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
-			//	close( new_s );
-			//	my_syslog( "invalid remote IP address" );
-			//	continue;
-			//
-			// using libwrap for controll access
-			if( !auth_libwrap(sa_rem) ) {
-				close( new_s );
-				continue;
-			} else {
-				pid=fork();
-				if (pid==0)
-				{
-					// now we are the champions...errr...child ;-)
-					// close input socket
-					close(s);
-					// temp. disable handler to prevent closing NULL in signal
-					// handler
-					h2close=INVALID_HANDLE_VALUE;
-					hCom=new_s;
-				}
-				else if (pid==-1)
-				{
-					// can't fork. system error
-					switch(errno)
-					{
-						case EAGAIN:
-							{
-								// resource temp. unavail. try again later ;-)
-								my_syslog( "fork() failed: %s",my_strerror() );
-								close(new_s);
-								close(s);
-								//continue;
-								exit(1);
-							};
-						case ENOMEM:
-							{
-								// not enough system memory. hangup?
-								my_syslog( "fork() failed: %s",my_strerror() );
-								close(new_s);
-								close(s);
-								//continue;
-								exit(1);
-							};
-					}			
-				}
-				else
-				{
-					// parent code
-					
-					// increment childcount
-					childcount++;
-					// close child socket 
-					close(new_s);
-					// continue accepting connection
-					continue;
-				}
-			}
-		}
-
-
-		///
-		//hCom=open_socket(tcpPort);
-		if (hCom == INVALID_HANDLE_VALUE) {
-			my_syslog( "can't open '%s'",tcpPort );
-			return INVALID_HANDLE_VALUE;
-		}
-}
 
 
 HANDLE open_io( char *io_name,long speed,int data_bits,char parity,int stop_bits )
@@ -684,7 +569,8 @@ void usage( void )
 "-m\t\twrite log files on month-by-month instead of day-by-day basis\n"
 "-n\t\tconsider day in place of month and vice versa\n"
 "-r x.x.x.x\taccept TCP connections from this IP address only (deprecated. now using libwrap,\n"
-"	see /etc/hosts.allow, /etc/hosts.deny)\n"
+"-t number\tmaximum number of clients for TCP connections (default: 1)\n"
+"\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
 "-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
 "tcp:N\t\twhere N is TCP port.\n"
 "-b\t\tbecome daemon\n"
@@ -707,7 +593,8 @@ int main( int argc, char *argv[] )
 	// move tcp section here
 	// 
 	unsigned short tcpPort=0;
-	int tcp_timeout=2;
+	char *hostname=NULL,*port=NULL,*arg=NULL;
+	
 	int opt=1;
 	int pid;
 	HANDLE s,new_s;
@@ -716,10 +603,10 @@ int main( int argc, char *argv[] )
 	//
 	char do_daemonize=0;
 	sigset_t ss;
-
+	
 	HANDLE hCom;
 
-	while( (rc=getopt(argc,argv,"boahdemnws:D:L:P:F:p:c:f:r:"))!=(-1) ) {
+	while( (rc=getopt(argc,argv,"boahdemnws:D:L:P:F:p:c:f:r:t:"))!=(-1) ) {
 		switch( rc ) {
 		case 'D':
 			dirlen=strlen(optarg);
@@ -773,12 +660,9 @@ int main( int argc, char *argv[] )
 		case 'a':
 			write_date=1;
 			break;
-//		case 'r':
-//			if( inet_aton( optarg,&remote_end )==0 ) {
-//				(void)fprintf( stderr,"Invalid IP address specified: %s\n",optarg );
-//				return 1;
-//			}
-//			break;
+		case 't':
+			maxtcpclients=atoi(optarg);
+			break;
 		case 'w':
 			next_open_timeout=atoi(optarg);
 			break;
@@ -853,16 +737,22 @@ int main( int argc, char *argv[] )
 	setsighandler( SIGCHLD );
 
 	if( strncasecmp( argv[0],"tcp:",4 )==0 ) {
-		tcpPort=atoi(argv[0]+4);
+		arg=strdup(argv[0]);
+		hostname=strtok(arg,":");
+		hostname=strtok(NULL,":");
+		port=strtok(NULL,":");
+		if (port==NULL)
+		{
+			port=strdup(hostname);
+			hostname=NULL;
+		}
+		tcpPort=atoi(port);
 		if( tcpPort==0 ) {
 			my_syslog( "Invalid TCP port number" );
 			hCom=INVALID_HANDLE_VALUE;
 		}
 		else
 		{
-		//	hCom = open_tcp(tcpPort);
-			// using libwrap for controll access
-
 			s=socket(PF_INET,SOCK_STREAM,0);
 			if(s==INVALID_HANDLE_VALUE) {
 				my_syslog( "socket() failed: %s",my_strerror() );
@@ -885,15 +775,30 @@ int main( int argc, char *argv[] )
 			memset( &sa_rem,0,sizeof(sa_loc) );
 			sa_rem.sin_family=sa_loc.sin_family=AF_INET;
 			sa_loc.sin_port=htons(tcpPort);
+			if (hostname!=NULL)
+			{
+				if (inet_aton(hostname,&sa_loc.sin_addr)==0)
+				{
+					my_syslog( "bind() on IP %s failed: %s",hostname,my_strerror() );
+					exit(1);
+				}
+			}
+			
 			if( bind(s,(struct sockaddr*)&sa_loc,sizeof(sa_loc) )==(-1) ) {
-				my_syslog( "bind() on port %d failed: %s",tcpPort,my_strerror() );
+				if (hostname!=NULL)
+					my_syslog( "bind() on port %s:%d failed: %s",hostname,tcpPort,my_strerror() );
+				else
+					my_syslog( "bind() on port %d failed: %s",tcpPort,my_strerror() );
 				goto err_ret;
 			}
 			if( listen(s,5)==(-1) ) {
 				my_syslog( "listen() failed: %s",my_strerror() );
 				goto err_ret;
 			}
-			my_syslog( "waiting TCP connection on port %d",tcpPort );
+			if (hostname!=NULL)
+				my_syslog( "waiting TCP connection on port %s:%d",hostname,tcpPort );
+			else
+				my_syslog( "waiting TCP connection on port %d",tcpPort );
 			for( ;; ) {
 				sa_rem_len=sizeof(sa_rem);
 				if( (new_s=accept(s,(struct sockaddr*)&sa_rem,&sa_rem_len ))==(-1) ) {
@@ -902,21 +807,29 @@ int main( int argc, char *argv[] )
 					h2close=INVALID_HANDLE_VALUE;
 					hCom=h2close;
 					close(s);
-					//return INVALID_HANDLE_VALUE;
 					break;
 				}
-				my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
-				// wtf? by andy[at]eva.dp.ua
-				// if( remote_end.s_addr==0 ) break;
-				//if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
-				//	close( new_s );
-				//	my_syslog( "invalid remote IP address" );
-				//	continue;
+				if ( childcount >= maxtcpclients )
+				{
+					my_syslog( "connection from %s:%d refused because maximum number of clients [%d] has been reached",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port),maxtcpclients );
+					close( new_s );
+					h2close=INVALID_HANDLE_VALUE;
+					hCom=h2close;
+					sleep(2);
+					continue;
+				}
+				else
+					my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
 				// using libwrap for controll access
-				if( !auth_libwrap(sa_rem) ) {
+				if( !auth_libwrap(sa_rem) ) 
+				{
+					h2close=INVALID_HANDLE_VALUE;
+					hCom=h2close;
 					close( new_s );
 					continue;
-				} else {
+				}
+				else
+				{
 					pid=fork();
 					if (pid==0)
 					{
@@ -928,9 +841,6 @@ int main( int argc, char *argv[] )
 						// handler
 						h2close=INVALID_HANDLE_VALUE;
 						hCom=new_s;
-						// ?
-						//setsighandler( SIGINT );
-						//setsighandler( SIGTERM );
 						break;
 					}
 					else if (pid==-1)
@@ -942,15 +852,23 @@ int main( int argc, char *argv[] )
 								{
 									// resource temp. unavail. try again later ;-)
 									my_syslog( "fork() failed: %s",my_strerror() );
+									h2close=INVALID_HANDLE_VALUE;
+									hCom=h2close;
 									close(new_s);
-									continue;
+									close(s);
+									//continue;
+									exit(1);
 								};
 							case ENOMEM:
 								{
 									// not enough system memory. hangup?
 									my_syslog( "fork() failed: %s",my_strerror() );
+									h2close=INVALID_HANDLE_VALUE;
+									hCom=h2close;
 									close(new_s);
-									continue;
+									close(s);
+									//continue;
+									exit(1);
 								};
 						}			
 					}
@@ -959,6 +877,9 @@ int main( int argc, char *argv[] )
 						// parent code
 						
 						// close child socket 
+						childcount++;
+						h2close=INVALID_HANDLE_VALUE;
+						hCom=h2close;
 						close(new_s);
 						// continue accepting connection
 						continue;
@@ -969,7 +890,11 @@ int main( int argc, char *argv[] )
 
 			///
 			if (hCom == INVALID_HANDLE_VALUE) {
-				my_syslog( "can't open '%s'",tcpPort );
+				if (hostname!=NULL)
+					my_syslog( "can't open '%s:%s'",hostname,tcpPort );
+				else
+					my_syslog( "can't open '%s'",tcpPort );
+
 				hCom=INVALID_HANDLE_VALUE;
 				h2close=hCom;
 			}
@@ -996,18 +921,15 @@ int main( int argc, char *argv[] )
 	while( (rc=read_string( hCom,buf,MAXSTRINGLEN ))>=0 ) {
 		if( rc==0 ) {
 			if( strncasecmp( argv[0],"tcp:",4 )==0 ) {
-				// sleep for tcp reading. no need to reopen
+				// because we read() in blocking mode so if we've got 0 ->
+				// remote peer hangs
 				if (errno != EINTR)
 				{
-					my_syslog( "remote end died, exiting");					
+					my_syslog( "connection with remote peer %s:%d has been closed, exiting",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port));
 					h2close=INVALID_HANDLE_VALUE;
 					close( hCom );
 					exit(0);
 					
-				}
-				else
-				{
-					sleep( tcp_timeout );
 				}
 			}
 			else
