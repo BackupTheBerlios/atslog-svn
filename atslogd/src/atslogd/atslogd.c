@@ -839,6 +839,13 @@ int main( int argc, char *argv[] )
 				my_syslog( "sotsockopt() failed: %s",my_strerror() );
 				return INVALID_HANDLE_VALUE;
 			}
+			// send keepalive packets. if remote end hangs then we'll can know
+			// this ?
+			if (setsockopt(s,SOL_SOCKET,SO_KEEPALIVE,(char *)&opt,sizeof(opt)) < 0)
+			{
+				my_syslog( "sotsockopt() failed: %s",my_strerror() );
+				return INVALID_HANDLE_VALUE;
+			}
 			h2close=s;
 			memset( &sa_loc,0,sizeof(sa_loc) );
 			memset( &sa_rem,0,sizeof(sa_loc) );
