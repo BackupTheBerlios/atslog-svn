@@ -1,0 +1,103 @@
+<table cellpadding=0 cellspacing=0 border=0 width="100%">
+    <tr><td colspan=2><?
+
+$user="";
+if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LANG['ChangeDefaultAdminPassword']."</b></font><br>&nbsp;";
+
+?></td>
+    </tr>
+    <tr>
+<?
+    menucomplit($thisMenu);
+?>
+	<td>
+<?
+echo("
+	<form method=\"get\">
+	<div align=right>
+	".$GUI_LANG['Calls'].":
+	<select name=\"incoming\" style='width:150pt;'>
+	<option value=\"1\"${incomingCheck[1]}>".$GUI_LANG['IncomingAndOutgoing']."</option>
+	<option value=\"2\"${incomingCheck[2]}>".$GUI_LANG['OutgoingOnly']."</option>
+	<option value=\"3\"${incomingCheck[3]}>".$GUI_LANG['IncomingOnly']."</option>
+	</select><br>
+
+	".$GUI_LANG['TypeOfReport'].":
+	<select name=\"type\" style='width:150pt;'>
+	<option value=\"CoAll\"$CurrentIP[2]>".$GUI_LANG['ByExternalLines']."</option>
+	<option value=\"IntAll\"$CurrentIP[1]>".$GUI_LANG['ByInternalPhones']."</option>
+	<option value=\"diagram\"$CurrentIP[3]>".$GUI_LANG['ReportInTheSchedules']."</option>
+	<option value=\"NumAll\"$CurrentIP[4]>".$GUI_LANG['ByCallingNumber']."</option>
+	<option value=\"AllCalls\"$CurrentIP[5]>".$GUI_LANG['ByAll']."</option>
+	</select><br>
+
+	".$GUI_LANG['PeriodFrom'].": <input TYPE=Text size=2 name=day maxlength=3 tabindex=1 VALUE=$day>
+	<select name=mon>");
+	print_select_mon($mon);
+	echo ("</select>
+	<input TYPE=Text size=4 name=year maxlength=5 tabindex=1 VALUE=$year><br>
+ 	".$GUI_LANG['PeriodTo'].": <input TYPE=Text size=2 name=day2 maxlength=3 tabindex=1 VALUE=$day2>
+	<select name=mon2>");
+	print_select_mon($mon2);
+	echo ("</select>
+	<input TYPE=Text size=4 name=year2 maxlength=5 tabindex=1 VALUE=$year2>
+	<br>");
+
+	echo("	".$GUI_LANG['ExcludeCityCalls']."<input type=radio name=CityOnly value=2 ${CityOnlyCheck[2]}>
+	<br>");
+
+	echo("	".$GUI_LANG['CityCallsOnly']." <input type=radio name=CityOnly value=1 ${CityOnlyCheck[1]}>
+	<br>");
+
+	echo("	".$GUI_LANG['CityAndTrunkCalls']." <input type=radio name=CityOnly value=0 ${CityOnlyCheck[0]}>
+	<br>");
+
+if($CityOnly!=1){
+echo("	".$GUI_LANG['ExcludeCellularCalls']." <input type=checkbox name=noMobLine value=1 ${noMobLineCheck[$noMobLine]}>
+	<br>
+	".$GUI_LANG['ExcludeLongDistanceCalls']." <input type=checkbox name=noNationalLine value=1 ${noNationalLineCheck[$noNationalLine]}>
+	<br>");
+}
+
+// Строка поиска
+// ----------------------------------------------------------------------------
+echo("
+<table cellspacing=0 cellpadding=0 border=0 width=100%>
+");
+
+if (preg_match ("/MSIE|Gecko/i", $_SERVER["HTTP_USER_AGENT"]) && ! preg_match ("/Opera/i", $_SERVER["HTTP_USER_AGENT"]) ){
+    echo ("
+    <tr id=\"i740\">
+    	<td align=right width=100%><a href=\"javascript:changeTree('740');\" title=\"".$GUI_LANG['Search']."\">".$GUI_LANG['NumberLookUp']."</a></td>
+    </tr>
+    ");
+
+}
+echo ("
+    <tr id=\"t740\" class=treeElem>
+	<td align=right width=100%>".$GUI_LANG['SearchString'].": <INPUT NAME=\"search\" TYPE=\"text\"></td>
+    </tr>
+</table>
+");
+// ----------------------------------------------------------------------------
+
+if(!empty($debugMode)){
+echo("	".$GUI_LANG['DebuggingConditions']."
+	<select name=\"debug\">
+	<option value=\"0\"$CurrentDebug[0]>0</option>
+	<option value=\"1\"$CurrentDebug[1]>1</option>
+	<option value=\"2\"$CurrentDebug[2]>2</option>
+	</select>
+	<br>");
+}
+
+echo("	<br><input type=submit class=submit></div>
+	<input type=hidden name=newStatus value=TRUE>
+</form>
+");
+
+?>
+
+	</td>
+    </tr>
+</table>
