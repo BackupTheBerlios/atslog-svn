@@ -1,10 +1,10 @@
 #!/usr/bin/perl
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #
 
 use Sys::Syslog qw(:DEFAULT setlogsock);# Сообщения об ошибках запишем в syslog
-use Mysql;# Класс для работы с MySQL
+use DBI;# Класс для работы с БД
 use POSIX qw(locale_h); # Для правильной обработки языковых настроек.
 
 
@@ -38,7 +38,7 @@ while(<LN>) {
 close(LN);
 
 # Закоментрированное оставляю для отладки
-#$stringNumber=0;
+#$stringnumber=0;
 $callsCount=0;
 $toexit=0;
 
@@ -78,8 +78,17 @@ sub AmPmTo24(){
 # Поехали!
 setlogsock('unix');#Тип сокета для syslogd
 openlog("atslogdb", 'pid, ndelay, cons', "$sFas1");#Откроем сокет на syslogd
-if ($dbh = Mysql->Connect($vars{sqlhost}, $vars{sqldatabase}, $vars{sqlmasteruser}, $vars{sqlmaspasswd})){
+if($vars{sqltype}  =~ /PostgreSQL/i){
+    $sqltype=Pg;
+}else{
+    $sqltype=mysql;
+}
+$host="";                           
+if($vars{sqlhost} ne "localhost"){
+    $host = ";host=".$vars{sqlhost};
+}
 
+if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0})){
     if ($vars{model} =~ /SKP-816/i){
         require "$vars{libdir}/skp-816.lib";
     }elsif($vars{model} =~ /KX-TA308RU/i or $vars{model} =~ /KX-TA308/i or $vars{model} =~ /KX-TA616RU/i){
@@ -90,8 +99,16 @@ if ($dbh = Mysql->Connect($vars{sqlhost}, $vars{sqldatabase}, $vars{sqlmasteruse
 	require "$vars{libdir}/kx-td816ru.lib";
     }elsif($vars{model} =~ /GD-320/i){
         require "$vars{libdir}/gd-320.lib";
+    }elsif($vars{model} =~ /HICOM-350H/i){
+        require "$vars{libdir}/hicom-350h.lib";
+    }elsif($vars{model} =~ /GDK-100/i or $vars{model} =~ /GDK-162/i){
+        require "$vars{libdir}/gdk-100.lib";
     }elsif($vars{model} =~ /NX-820/i){
         require "$vars{libdir}/nx-820.lib";
+    }elsif($vars{model} =~ /GHX-46/i){
+        require "$vars{libdir}/ghx-46.lib";
+    }elsif($vars{model} =~ /LDK-100/i or $vars{model} =~ /LDK-300/i){
+        require "$vars{libdir}/ldk-300.lib";
     }else{
         $ERRORMESSAGE="$vars{msg31}";
         echoerrors();
@@ -108,4 +125,5 @@ if ($dbh = Mysql->Connect($vars{sqlhost}, $vars{sqldatabase}, $vars{sqlmasteruse
  echoerrors();
 }
 closelog();
+$dbh->disconnect;
 exit $toexit;

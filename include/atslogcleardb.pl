@@ -7,7 +7,7 @@ if ($ARGV[0] ne "yes"){
     exit 1;
 }
 
-use Mysql;
+use DBI;
 use POSIX qw(locale_h); # Для правильной обработки языковых настроек.
 
 $config_file="/usr/local/etc/atslog.conf";
@@ -41,19 +41,29 @@ close(LN);
 
 print $vars{msg29}."calls: ";
 
+if($vars{sqltype} =~ /PostgreSQL/i){
+    $sqltype=Pg;
+}else{
+    $sqltype=mysql;
+}
 
-$dbh = Mysql->Connect($vars{sqlhost}, $vars{sqldatabase}, $vars{sqlmasteruser}, $vars{sqlmaspasswd});
+$host="";
+if($vars{sqlhost} ne "localhost"){
+    $host = ";host=".$vars{sqlhost};
+}
+	
+$dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0});
+
 $del_query="DELETE FROM calls;";
-
 #print $del_query;
 
-if ($dbh->Query($del_query)) {
+$sth = $dbh->prepare($del_query);
+if ($sth->execute) {
     print $vars{msg17}."\n";
-    undef $dbh;
     $toexit=0;
 }else{
-    undef $dbh;
     print $vars{msg30}."\n";
     $toexit=1;
 }
+$dbh->disconnect;
 exit $toexit;

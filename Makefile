@@ -15,24 +15,6 @@ MAKE=make
 SH=/bin/sh
 RM = rm
 SUBDIR += src/atslogd
-CONFIGURE_ARGS+= --with-perl=${PERL}
-
-
-.if defined(PREFIX)
-PREFIX?=/usr/local
-CONFIGURE_ARGS+= --prefix=${PREFIX}
-.endif
-
-.if defined(PERL)
-PERL?=/usr/bin/perl
-CONFIGURE_ARGS+= --with-perl=${PERL}
-.endif
-
-.if defined(WITH_POSTGRESQL)
-CONFIGURE_ARGS+=--sql-type=PostgreSQL
-elif defined(WITH_MYSQL)
-CONFIGURE_ARGS+=--sql-type=MySQL
-.endif
 
 
 
@@ -50,6 +32,19 @@ atslogd:
 	done
 
 config:
+	@if [ $(PREFIX) ]; \
+	then PREFIX?=/usr/local; \
+	CONFIGURE_ARGS+= --prefix=${PREFIX}; \
+	fi
+	@if [ $(PERL) ]; \
+	then PERL?=/usr/bin/perl; \
+	CONFIGURE_ARGS+= --with-perl=${PERL}; \
+	fi
+	@if [ $(WITH_POSTGRESQL) ]; \
+	then CONFIGURE_ARGS+= --sql-type=PostgreSQL; \
+	elif [ $(WITH_MYSQL) ]; \
+	then CONFIGURE_ARGS+= --sql-type=MySQL; \
+	fi
 	@if [ ! -r atslog.conf -o ! -r atslogdinit -o ! -r conf.inc ]; \
 	then ./configure $(CONFIGURE_ARGS); \
 	fi
@@ -80,8 +75,14 @@ clear:	clean
 install:	all
 	@$(SH) ./installing --install --sqlroot=${SQLROOT}
 
-disableupdate:	
-	@$(SH) ./configure --disable-update $(CONFIGURE_ARGS)
+disableupdate: to_disable all
+	@echo Disable automatic updating
 
 deinstall:
 	@$(SH) ./installing --deinstall
+
+to_disable:
+	ifdef $(IGNORE); \
+	    CONFIGURE_ARGS+=--disable-update; \
+	enif
+

@@ -1,7 +1,7 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 
-Использование ATSlog.
+Использование серверной части ATSlog.
 
 /usr/local/etc/atslog.conf	конфигурационный файл. 
 atslogmaster start		запуск ATSlog. 

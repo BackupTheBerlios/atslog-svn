@@ -8,12 +8,12 @@ sub parsecurcalls() {
 #    print("ParceCurCalls\n");
     while ($str=<>)
     {
-	$stringNumber++;
+	$stringnumber++;
 	if ($str =~ /^\D*([0-9]+)\s+([0-9]+)\s+\**\#*\s*([[0-9]+|CLI Num: [0-9]+|Incoming]*)\s+([0-9\/]+)\s+([0-9\:\'\"]+)\s+([0-9\:\'\"]+)/){
 #	    print("$1 $2  $3  $4  $5   $6  $7\n");
 	    unitecurcalls();
 	}else{
-	    #print("$stringNumber\n");
+	    #print("$stringnumber\n");
 	    #print("$str\n");
 	    if ($vars{debug} =~ /yes/i){
 	        if ($str !~ /^$/){
@@ -52,39 +52,40 @@ sub unitecurcalls() {
 		$partCell[6][1]= $2;
 		$partCell[6][2]= $3;
 		
-    	    if ($cell[3] =~ /Incoming/){
-		$Way='1';
-		$Number=0;
+    	    if ($cell[3] =~ /Incoming/i){
+		$way='1';
+		$number=0;
 	    }elsif ($cell[3] =~ /CLI Num: ([0-9]+)/){
-		$Way='1';
-		$Number=$1;
+		$way='1';
+		$number=$1;
 	    }else{
-		$Way='2';
+		$way='2';
 		$Outnumber = $cell[3];
 		$Outnumber =~ s/\D*//;
-		$Number=substr($Outnumber,0,100);
+		$number=substr($Outnumber,0,100);
 	    }
 
-	    $Forwarded=0;
+	    $forwarded=0;
 	    
-	    $Internally=$cell[1];
+	    $internally=$cell[1];
 	    
-	    $CO=$cell[2];
+	    $co=$cell[2];
 
-	    $Duration=(($partCell[6][0]*60*60)+($partCell[6][1]*60)+$partCell[6][2]);
+	    $duration=(($partCell[6][0]*60*60)+($partCell[6][1]*60)+$partCell[6][2]);
 
-    	    $TimeOfCall="'$YEAR-${partCell[4][0]}-${partCell[4][1]} ${partCell[5][0]}:${partCell[5][1]}:${partCell[5][2]}'";
+    	    $timeofcall="$YEAR-${partCell[4][0]}-${partCell[4][1]} ${partCell[5][0]}:${partCell[5][1]}:${partCell[5][2]}";
 
-    	    if ($TimeOfCall ne ""){
+    	    if ($timeofcall ne ""){
     # Проверим, имеестя ли хоть одна запись звонков подлежащая
     # записи в db.
 		$callsCount++;
 	    }
-#	    if ($cell[3] =~ /Incoming/){
-#	      print("$stringNumber $TimeOfCall $Forwarded $Internally $CO $Way $Number $Duration\n");
+#	    if ($cell[3] =~ /Incoming/i){
+#	      print("$stringnumber $timeofcall $forwarded $internally $co $way $number $duration\n");
 #	    }
-	    $ins_query = "INSERT INTO `calls` (`TimeOfCall`, `Forwarded`,`Internally`,`CO`, `Way` , `Number`, `Duration`) VALUES  (".$TimeOfCall.", '$Forwarded', '$Internally', '$CO', '$Way', '$Number', '$Duration');";
-	    $dbh->Query($ins_query);
+	    $ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co, way , number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	    $sth = $dbh->prepare($ins_query);
+    	    $sth->execute;
 
 };
 

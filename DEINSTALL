@@ -1,25 +1,27 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 
-Деинсталляция ATSlog. Пошаговая инструкция. 
+The deinstallation of ATSlog. A step instruction:
 
-1. Остановите ATSlog:
+1. Stop ATSlog
+
    atslogmaster stop 
 
-2. Перейдите в каталог, описанный параметром $sharedir конфигурационного
-   файла (по умолчанию это директория /usr/local/share/atslog) и выполните
-   команду:
+2. Pass to the catalog described by the parameter $sharedir of the
+   configuration file (by default it is a directory /usr/local/share/atslog)
+   and complete a command:
+
    make deinstall
 
-   При деинсталляции скрипт проверит наличие файлов с рабочей информацией
-   для того, чтобы ничего лишнего не удалить. 
+   During the deinstallation a script will check up if there are files with
+   work information not to delete anything you need.
 
-   Текстовые лог-файлы не удаляются ( всё содержимое каталога описанного
-   параметром $logdir в конфигурационном файле; по умолчанию это директория
-   /var/log/atslog ). Не удаляются директории, если они содержат любые
-   файлы, не принадлежащие программе ATSlog. 
+3. The text log-files can't be deleted (everything tat is in the catalog
+   described by the parameter $logdir of the configuration file: by default
+   it is a directory /var/log/atslog ). Any directories that have any files
+   that are not connected with ATSlog can't be deleted.
 
-   Данные, содержащиеся в таблицах SQL сервера, не удаляются. 
+   The information situated the lists of SQL server, can't be deleted.
 
-   Обратите внимание, что при деинсталляции программы PID-файл
-   ( /var/run/atslog.pid ) не удаляется. 
+   Please, pay attention that during the deinstallation of the program
+   PID-file ( /var/run/atslogd.pid ) can't be deleted.

@@ -1,6 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -O
-EXEEXT =
+CFLAGS += -s -Wall -lwrap
 RM = rm
 NAME=atslogd
 
@@ -8,13 +7,12 @@ NAME=atslogd
 CDRR_VER_DOT = \"1.09\"
 CDRR_VER     = 109
 
-EXES = $(NAME)$(EXEEXT)
+EXES = $(NAME)
 
 all:	$(EXES)
 
-$(NAME)$(EXEEXT):	$(NAME).c
-	$(CC) $(CFLAGS) -DCDRR_VER=$(CDRR_VER_DOT) -lwrap -o $@ $(NAME).c
-	strip $@
+$(NAME):	$(NAME).c
+	$(CC) $(CFLAGS) -DCDRR_VER=$(CDRR_VER_DOT) -o $@ $(NAME).c
 
 clean:
 	-$(RM) $(EXES)

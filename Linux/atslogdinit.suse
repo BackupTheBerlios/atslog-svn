@@ -6,9 +6,9 @@
 
 . /etc/rc.status
 # Reading config file
-ATS_CONFIG=/usr/local/etc/atslog.conf
-test -r $ATS_CONFIG || exit 6
-. $ATS_CONFIG
+ATS_coNFIG=/usr/local/etc/atslog.conf
+test -r $ATS_coNFIG || exit 6
+. $ATS_coNFIG
 
 ATS_LOG=$bindir/$masterscript
 test -x $ATS_LOG || exit 5
@@ -18,7 +18,7 @@ case "$1" in
         echo -n "Starting ATSlog "
         ## Start daemon with startproc(8). If this fails
         ## the return value is set appropriately by startproc.
-        startproc $ATS_LOG stop
+        startproc $ATS_LOG start
 
         # Remember status and be verbose
         rc_status -v

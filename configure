@@ -48,6 +48,19 @@ do
 	--logdir=*)
 	    LOGDIR=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
 	;;
+	--sql-type=*)
+	    case "$1" in
+	        "--sql-type=MySQL")
+		    SQLTYPE=mysql
+		    sqltype=MySQL
+		    MYSQLBASE=yes
+	        ;;
+	        "--sql-type=PostgreSQL")
+	    	    SQLTYPE=pgsql
+		    sqltype=PostgreSQL
+		    PGSQLBASE=yes
+	    esac                        
+	;;
     esac
     shift
 done
@@ -92,6 +105,11 @@ echo "--disable-update Произвести установку новой версии без учета
 --with-perl=PERL
 		 architecture-independen path to Perl
 		 [/usr/bin/perl]
+
+--sql-type=[PostgreSQL|MySQL]
+		 Database type. MySQL by default.
+		 --sql-type=MySQL
+		 --sql-type=PostgreSQL
 		 
 "
     exit 0
@@ -113,6 +131,9 @@ fi
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
 PATH=$PATH:$bindir:$sharedir
 UNAME=`uname`
+# Назначим путь к клиенту БД
+PGSQLPATH=$PREFIX/bin/psql
+MYSQLPATH=$PREFIX/bin/mysql
 
 # Если ставим на Linux, то переназначим некоторые переменные
 if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
@@ -123,7 +144,7 @@ if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
     port=ttyS0
 # Определимся с релизом Linux:
     if [ ! "$LINUXVERSVION" = "" ];then
-	cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit
+	cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit.tmp
     else
         if [ -r  /etc/redhat-release ];then
 # RedHat
@@ -139,10 +160,10 @@ if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
 	    LINUXVERSVION="redhat"
 	fi
     fi
-    cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit
+    cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit.tmp
 else
 # Все другие операционные системы кроме Linux.
-    cp ./FreeBSD/atslogdinit.sh ./atslogdinit
+    cp ./FreeBSD/atslogdinit.sh ./atslogdinit.tmp
 fi
 
 # Заменим PREFIX
@@ -163,6 +184,9 @@ echo checking for dailyscript path $dailyscript
 
 initscript=`echo "$initscript" | sed "s%/usr/local%$PREFIX%g"`
 echo checking for initscript path $initscript
+
+echo checking for prefix path $PREFIX
+
 
 # Проверим есть ли в системе старые версии конфигурационных файлов
 echo -n "checking for old config files: "
@@ -192,7 +216,6 @@ else
     echo " NONE"
 fi
 
-echo checking for prefix path $PREFIX
 echo checking for Perl path $PERL
 
 case "$UPDATE" in
@@ -227,11 +250,68 @@ case "$UPDATE" in
 	        debug=$nowrlog
 	    fi
 	fi
+	
+	if [ "$sqltype" = "PostgreSQL" ];then
+	    sqltype=PostgreSQL
+	    SQLTYPE=pgsql
+	else
+	    sqltype=MySQL
+	    SQLTYPE=mysql
+	fi
     ;;
     *)
 	echo "Продолжение конфигурирования для новой установки ATSlog"
+	echo -n "checking for PostgreSQL database: "
+	if [ "$MYSQLBASE" != "yes" ];then
+	    if [ -x $PGSQLPATH ];then
+		sqltype=PostgreSQL
+		SQLTYPE=pgsql
+		if [ "$PGSQLBASE" = "yes" ];then
+		    echo OPTIONED
+		else
+	    	    echo EXIST
+		fi
+	    else
+		if [ "$PGSQLBASE" = "yes" ];then
+		    sqltype=PostgreSQL
+		    SQLTYPE=pgsql
+		    echo OPTIONED
+		else
+		    echo NONE
+		fi
+	    fi
+	else
+	    echo "NOT USED"
+	fi
+
+	echo -n "checking for MySQL database: "
+	if [ "$PGSQLBASE" != "yes" ];then
+	    if [ -x $MYSQLPATH ];then
+		sqltype=MySQL
+		SQLTYPE=mysql
+		if [ "$MYSQLBASE" = "yes" ];then
+		    echo OPTIONED
+		else
+		    echo EXIST
+		fi
+	    else
+		if [ "$MYSQLBASE" = "yes" ];then
+		    sqltype=MySQL
+		    SQLTYPE=mysql
+		    echo OPTIONED
+		else
+		    echo NONE
+		fi
+	    fi
+	else
+	    echo "NOT USED"
+	fi
+
+	
     ;;
 esac
+
+echo using database: $sqltype
 
 if [ "$sqlhost" = "localhost" ];then
     sqlfromhost=localhost
@@ -280,36 +360,70 @@ fi
 
 case "$UPDATE" in
     [Yy][Ee][Ss])
-	if [ "0$build" -lt 028 ]  ;then
-	    cat ./sql/updateto28.sql >> ./updatesqltables.sql.tmp
+	if [ 0$build -lt 028 ]  ;then
+	    echo checking for update from build 28
+	    cat ./sql/updateto28.mysql.sql >> ./updatesqltables.mysql.sql.tmp
 	fi
 
-	if [ "0$build" -lt 030 ]  ;then
-	    cat ./sql/updateto30.sql >> ./updatesqltables.sql.tmp
+	if [ 0$build -lt 030 ]  ;then
+	    echo checking for update from build 30
+	    cat ./sql/updateto30.mysql.sql >> ./updatesqltables.mysql.sql.tmp
 	fi
 
-	if [ "0$build" -lt 034 ]  ;then
-	    cat ./sql/updateto34.sql >> ./updatesqltables.sql.tmp
+	if [ 0$build -lt 034 ]  ;then
+	    echo checking for update from build 34
+	    cat ./sql/updateto34.mysql.sql >> ./updatesqltables.mysql.sql.tmp
 	fi
 
-	sed \
+	if [ 0$build -lt 060 ]  ;then
+	    echo checking for update from build 60
+	    cat ./sql/updateto60.mysql.sql >> ./updatesqltables.mysql.sql.tmp
+	fi
+
+	if [ 0$build -lt 088 ]  ;then
+	    echo checking for update from build 88
+	    cat ./sql/updateto88.mysql.sql >> ./updatesqltables.mysql.sql.tmp
+	fi
+
+	if [ -f ./updatesqltables.$SQLTYPE.sql.tmp ];then
+	    sed \
 	     -e "s/@sqlmaspasswd@/$sqlmaspasswd/g" \
 	     -e "s/@sqlfromhost@/$sqlfromhost/g" \
 	     -e "s/@sqlmasteruser@/$sqlmasteruser/g" \
 	     -e "s/@sqlhost@/$sqlhost/g" \
 	     -e "s/@sqldatabase@/$sqldatabase/g" \
-	     < ./updatesqltables.sql.tmp > ./updatesqltables.sql
+	     < ./updatesqltables.$SQLTYPE.sql.tmp > ./updatesqltables.$SQLTYPE.sql
+
+	fi
+	if [ -f ./updatesqltables.mysql.sql.tmp ];then
+	    rm ./updatesqltables.mysql.sql.tmp
+	fi
+	if [ -f ./updatesqltables.pgsql.sql.tmp ];then
+	    rm ./updatesqltables.pgsql.sql.tmp
+	fi
 
 	echo "Конфигурируем таблицы SQL сервера для обновления"
     ;;
         *)
+	if [ -f ./sql/createsqltables.$SQLTYPE.sql ];then
 	sed \
 	     -e "s/@sqlmaspasswd@/$sqlmaspasswd/g" \
 	     -e "s/@sqlfromhost@/$sqlfromhost/g" \
 	     -e "s/@sqlmasteruser@/$sqlmasteruser/g" \
 	     -e "s/@sqlhost@/$sqlhost/g" \
 	     -e "s/@sqldatabase@/$sqldatabase/g" \
-	     < ./sql/createsqltables.sql.default > ./createsqltables.sql
+	     < ./sql/createsqltables.$SQLTYPE.sql > ./createsqltables.$SQLTYPE.sql
+	fi
+
+	if [ -f ./sql/createuser.$SQLTYPE.sql ];then
+	sed \
+	     -e "s/@sqlmaspasswd@/$sqlmaspasswd/g" \
+	     -e "s/@sqlfromhost@/$sqlfromhost/g" \
+	     -e "s/@sqlmasteruser@/$sqlmasteruser/g" \
+	     -e "s/@sqlhost@/$sqlhost/g" \
+	     -e "s/@sqldatabase@/$sqldatabase/g" \
+	     < ./sql/createuser.$SQLTYPE.sql > ./createuser.$SQLTYPE.sql
+	fi
 
 	echo "Конфигурируем таблицы SQL сервера для новой установки"
     ;;
@@ -346,17 +460,102 @@ esac
  -e "s%^notwritelog=notwrite.log%notwritelog=$notwritelog%g" \
  -e "s%^debug=no%debug=$debug%g" \
  -e "s%^pidfile=/var/run/atslogd.pid%pidfile=$pidfile%g" \
- -e "s%^fastwrite=no%fastwrite=$fastwrite%g" \
+ -e "s%^fastwrite=yes%fastwrite=$fastwrite%g" \
  -e "s%^sqltype=MySQL%sqltype=$sqltype%g" \
  < ./include/atslog.conf.default > ./atslog.conf
 
+ echo checking for Perl path in scripts/checkDBD.pl
  sed \
  -e "s%/usr/bin/perl%$PERL%g" \
- < ./include/atslogcleardb.pl > ./include/atslogcleardb.pl.tmp
+ < ./scripts/checkDBD.pl > ./scripts/checkDBD.out.pl
+ chmod a+x ./scripts/checkDBD.out.pl
 
+ echo checking for Perl path in scripts/createdb.pl
  sed \
  -e "s%/usr/bin/perl%$PERL%g" \
- < ./include/atslogdb.pl > ./include/atslogdb.pl.tmp
+ < ./scripts/createdb.pl > ./scripts/createdb.out.pl
+ chmod a+x ./scripts/createdb.out.pl
+
+ echo checking for Perl path in atslogcleardb.pl
+ sed \
+ -e "s%/usr/bin/perl%$PERL%g" \
+ < ./include/atslogcleardb.pl > ./atslogcleardb.pl.tmp
+ echo checking for config file path in atslogcleardb.pl
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$PREFIX/etc/atslog.conf%g" \
+ < ./atslogcleardb.pl.tmp > ./atslogcleardb.pl
+ if [ -f ./atslogcleardb.pl.tmp ];then
+    rm ./atslogcleardb.pl.tmp
+ fi
+
+ echo checking for Perl path in atslogdb.pl
+ sed \
+ -e "s%/usr/bin/perl%$PERL%g" \
+ < ./include/atslogdb.pl > ./atslogdb.pl.tmp
+ echo checking for config file path in atslogdb.pl
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$PREFIX/etc/atslog.conf%g" \
+ < ./atslogdb.pl.tmp > ./atslogdb.pl
+ if [ -f ./atslogdb.pl.tmp ];then
+    rm ./atslogdb.pl.tmp
+ fi
+
+ echo checking for config file path in atslogmaster
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$PREFIX/etc/atslog.conf%g" \
+ < ./include/atslogmaster > ./atslogmaster
+
+ echo checking for config file path in atslogdaily
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$PREFIX/etc/atslog.conf%g" \
+ < ./include/atslogdaily > ./atslogdaily
+
+ echo checking for config file path in atslogrotate
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$PREFIX/etc/atslog.conf%g" \
+ < ./include/atslogrotate > ./atslogrotate
+
+ echo checking for PREFIX path in Makefile
+ sed \
+ -e "s%/usr/local%$PREFIX%g" \
+ < ./Makefile > ./Makefile.out
+
+ echo checking for PREFIX path in installing script
+ sed \
+ -e "s%PREFIX=\"/usr/local\"%PREFIX=\"$PREFIX\"%g" \
+ < ./installing > ./installing.out
+
+ echo checking for config file path in atslogdinit
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$PREFIX/etc/atslog.conf%g" \
+ < ./atslogdinit.tmp > ./atslogdinit
+ if [ -f ./atslogdinit.tmp ];then
+    rm ./atslogdinit.tmp
+ fi
+# Check for Perl DBI.
+    echo -n "checking for DBI $sqltype class for Perl: "
+    ./scripts/checkDBD.out.pl $sqltype
+    if [ $? -ne 0 ];then
+	echo "ERROR"
+	if [ "$SQLTYPE" = "pgsql" ];then
+	    echo ======================================================
+	    echo Пожалуйста, установите DBD::Pg модуль для Perl
+	    echo Смотрите http://search.cpan.org/~rudy/DBD-Pg/
+	    echo и        http://search.cpan.org/~timb/DBI/
+	    echo ======================================================
+	    echo
+	else
+	    echo =======================================================
+	    echo Пожалуйста, установите DBD::MySQL модуль для Perl
+	    echo Смотрите http://search.cpan.org/~timb/DBI/
+	    echo и        http://search.cpan.org/~rudy/DBD-mysql/
+	    echo =======================================================
+	    echo
+	fi
+	exit 1
+    else
+	echo "OK"
+    fi
 
 echo "Configure done."
 exit $?

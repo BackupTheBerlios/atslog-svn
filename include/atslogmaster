@@ -27,12 +27,12 @@ fi
 # Установим рабочие переменные
 PATH=$PATH:$bindir:$sharedir
 if [ -s $pidfile ];then
-    GROUPPID=`cat $pidfile`
-    if [ -z "$GROUPPID" ];then
-        GROUPPID=`ps -x -o pgid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
+    GROUPPid=`cat $pidfile`
+    if [ -z "$GROUPPid" ];then
+        GROUPPid=`ps xo pgid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
     fi
 else
-    GROUPPID=`ps -x -o pgid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
+    GROUPPid=`ps xo pgid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
 fi
 
 case "$debug" in
@@ -50,24 +50,23 @@ if [ $TCPPORT = 0 ];then
     port="/dev/"${port}
 fi
 
-
 # Определим основные функции
 #
 # Функция выводит сообщения об ошибках на консоль, в лог-файл и в syslog
 echomess(){
-    if [ ! -z "$GROUPPID"  ];then
-	ECHOGROUPPID="[${GROUPPID}]"
+    if [ ! -z "$GROUPPid"  ];then
+	ECHOGROUPPid="[${GROUPPid}]"
     else
-	ECHOGROUPPID=""
+	ECHOGROUPPid=""
     fi
     if [ -n "$ECHOMESSAGE" ];then
 	MESSAGE=$ECHOMESSAGE
     else
 	MESSAGE=$ERRORMESSAGE
-	logger -p $syslogfacility "${masterscript}${ECHOGROUPPID}: $MESSAGE"
+	logger -p $syslogfacility "${masterscript}${ECHOGROUPPid}: $MESSAGE"
     fi
     echo "${masterscript}: $MESSAGE"
-    echo "$NOWDATE ${masterscript}${ECHOGROUPPID}: $MESSAGE" >> $logdir/$startlogfile
+    echo "$NOWDATE ${masterscript}${ECHOGROUPPid}: $MESSAGE" >> $logdir/$startlogfile
     ECHOMESSAGE=""
     ERRORMESSAGE=""
 }
@@ -79,17 +78,24 @@ startloging(){
 	echomess
 	TORETURN=1
     else
-	# Проверим заканчивается ли наш $curcallslogfile пустой строкой.
+	# Проверим, заканчивается ли наши текстовые лог-файлы пустой строкой.
 	# Нужно для того, чтобы последние строки не слились в одну.
 	# Такое может случиться, например, при некорректном
         # завершения роботы программы или при выключении питания
         # в момент записи строки.
         # В любом случае новая строка не помешает! :)
 
-        LASTSTRING=`tail -n1 $logdir/$curcallslogfile`
-        if [ -n "$LASTSTRING" ];then
-    	    echo "" >> $logdir/$curcallslogfile
-	fi
+	for textlog in $curcallslogfile $callslogfile
+	do
+    	    if [ -s $logdir/$textlog ];then
+		LASTSTRING=`tail -n1 $logdir/$textlog`
+		if [ -n "$LASTSTRING" ];then
+    		    echo "" >> $logdir/$textlog
+		fi
+    	    else
+		touch $logdir/$textlog
+	    fi
+	done
 
 	# Запустим считывание
 	case "$fastwrite" in
@@ -125,22 +131,24 @@ startloging(){
 # Функция останавливает основной скрипт считывания информации из мини-АТС
 stoploging(){
     if [ -s $pidfile ];then
-	KILLGROUPPID=`cat $pidfile`
+	KILLGROUPPid=`cat $pidfile`
     fi
 
-    if [ -z "$KILLGROUPPID" ];then
-	KILLGROUPPID="$GROUPPID"
+    if [ -z "$KILLGROUPPid" ];then
+	KILLGROUPPid="$GROUPPid"
     fi
-    if [ -n "$KILLGROUPPID" ];then
-	rm -f $pidfile 
-	kill -- -$KILLGROUPPID 1>/dev/null 2>/dev/null
+    if [ -n "$KILLGROUPPid" ];then
+	if [ -f $pidfile ];then
+	    rm -f $pidfile
+	fi
+	kill -- -$KILLGROUPPid 1>/dev/null 2>/dev/null
 	RETURNKILL=$?
 	if [ $RETURNKILL -eq 0 ]
 	then
-            echo "$NOWDATE ${atslogd}[$KILLGROUPPID]: $msg2" >> $logdir/$startlogfile
+            echo "$NOWDATE ${atslogd}[$KILLGROUPPid]: $msg2" >> $logdir/$startlogfile
 	    return 0
 	else
-	    echo $KILLGROUPPID > $pidfile
+	    echo $KILLGROUPPid > $pidfile
 	    ERRORMESSAGE=$msg3
 	    echomess
 	    return $RETURNKILL
@@ -196,45 +204,63 @@ restart)
 writedb)
     # Запись данных в базу SQL сервера
 
-    # Будем записывать данные только в том случае, если $curcallslogfile не пустой.
-	if [ -s $curcallslogfile ];then
+    # Будем записывать данные только в том случае,
+    # если $curcallslogfile не пустой.
+	if [ -s $logdir/$curcallslogfile ];then
 	    case "$fastwrite" in
 	        [Yy][Ee][Ss])
-		    if [ -n "$GROUPPID" ];then
-			echo "$msg11"
-			exit
+		    if [ -n "$GROUPPid" ];then
+			
+			echo "$msg24"
+			exit 1
 		    fi
 	    esac
-	    # В этом случае будем делать.
-
 	    echo "$msg11"
 
 	    # Переименуем текущий, открытый для записи файл во временный.
 	    mv $logdir/$curcallslogfile $logdir/$curcallslogfile.tmp
 	    # Сообщим демону, что нужно пересоздать текстовый лог-файл.
-	    kill -HUP $GROUPPID
-	    if [ $? -eq 0 ]
+	    TORETURN=0
+	    if [ -n "$GROUPPid" ];then
+		kill -HUP $GROUPPid
+		TORETURN=$?
+	    else
+		touch $logdir/$curcallslogfile
+	    fi
+
+	    if [ $TORETURN -eq 0 ]
 	    then
-    # Call to script atslogdb.pl
 		ECHOMESSAGE=$msg12
 		echomess
-    		if cat $logdir/$curcallslogfile.tmp 2>/dev/null | $bindir/$atslogdb 1>> $notwriteoutput 2>/dev/null
+
+# Call to script atslogdb.pl
+		cat $logdir/$curcallslogfile.tmp 2>/dev/null | $bindir/$atslogdb 1>> $notwriteoutput 2>/dev/null
+    		if [ $? -eq 0 ]
 		then
-		    if cat $logdir/$curcallslogfile.tmp >> $logdir/$callslogfile
+		    cat $logdir/$curcallslogfile.tmp >> $logdir/$callslogfile
+		    if [ $? -eq 0 ]
 		    then
-    			echo -n "" > $logdir/$curcallslogfile
+    			rm $logdir/$curcallslogfile.tmp
 			ECHOMESSAGE=$msg13
 			echomess
+		    else
+    			ECHOMESSAGE=$msg34
+			echomess
+			ECHOMESSAGE=$msg35
+			echomess
+			exit 1
 		    fi
+		else
+		    ECHOMESSAGE=$msg34
+		    echomess
+		    ECHOMESSAGE=$msg28
+		    echomess
+		    exit 1
 		fi
-
-    # Starting
-		startloging
-		if [ $? -eq 0 ]
-		then
-		    echo "$msg5"
-    		fi
-
+	    else
+		ECHOMESSAGE=$msg25
+		echomess
+		exit 1
 	    fi
 	else
 	    ECHOMESSAGE=$msg14
@@ -273,9 +299,13 @@ rotate)
 		# Переименуем текущий, открытый для записи файл во временный.
 		mv $logdir/$callslogfile $logdir/$callslogfile.tmp
 		# Сообщим демону, что нужно пересоздать текстовый лог-файл.
-		kill -HUP $GROUPPID
+		if [ -n "$GROUPPid" ];then
+		    kill -HUP $GROUPPid
+		else
+		    touch $logdir/$callslogfile
+		fi
 
-		echo "$NOWDATE ${masterscript}[$GROUPPID]: $callslogfile rotate" >> $logdir/$startlogfile
+		echo "$NOWDATE ${masterscript}[$GROUPPid]: $callslogfile rotate" >> $logdir/$startlogfile
 		bzip2 -z $logdir/$callslogfile.tmp
 		mv $logdir/$callslogfile.tmp.bz2 $logdir/$callslogfile.1.bz2
 	        echo -n "."
@@ -284,7 +314,7 @@ rotate)
 	    for logfn in $notwritelog $startlogfile
 	    do
 		if [ -s $logdir/$logfn ];then
-		    echo "$NOWDATE ${masterscript}[$GROUPPID]: $logfn rotate" >> $logdir/$startlogfile
+		    echo "$NOWDATE ${masterscript}[$GROUPPid]: $logfn rotate" >> $logdir/$startlogfile
 		    bzip2 -z $logdir/$logfn
 		    mv $logdir/$logfn.bz2 $logdir/$logfn.1.bz2
 
@@ -327,6 +357,16 @@ alltodb)
 	    LASTERROR=1
 	fi
     fi
+
+    if [ -s $logdir/$curcallslogfile ];then
+	cat $logdir/$curcallslogfile | $bindir/$atslogdb 1>> $notwriteoutput
+	if [ $? -eq 0 ]
+	then
+	    echo -n "."
+	else
+	    LASTERROR=1
+	fi
+    fi
     if [ $LASTERROR -eq 0 ]
     then                
         echo " $msg17"
@@ -341,8 +381,8 @@ cleardb)
     ;;
 *)
     echo "atslogmaster version @version@ build @buildnumber@"
-    if [ -n "$GROUPPID" ];then
-	echo "$atslogd $msg26 $GROUPPID"
+    if [ -n "$GROUPPid" ];then
+	echo "$atslogd $msg26 $GROUPPid"
     else
 	echo "$atslogd $msg27"
 	EXITSTATUS=1

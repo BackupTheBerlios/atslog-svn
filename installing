@@ -62,16 +62,15 @@ echo "
 fi
 
 readpasswd(){
-    echo "ожидается ввод"
-    echo "Введите пароль для пользователя root SQL сервера (не для системного"
-    echo "пользователя root). Этот пароль  нужен только для инсталляции или"
-    echo "обновления ATSlog. В дальнейшей работе не используется."
+    echo "Введите пароль для суперпользователя SQL сервера (не для системного"
+    echo "суперпользователя). Этот пароль  нужен только для установки или"
+    echo "обновления ATSlog. В дальнейшей работе он не будет использоваться."
     trap 'exit;' 0 1 2 3 15
     echo -n "Пароль: "
     stty -echo
     read sqlrootpassword
     stty echo
-    echo ""
+    echo "OK"
 }
 copying(){
 
@@ -106,6 +105,14 @@ copying(){
         mkdir -p $PREFIX/www/atslog
 	chmod 555 $PREFIX/www/atslog
     fi
+    if [ ! -d $sharedir/sql ];then
+        mkdir -p $sharedir/sql
+	chmod 555 $sharedir/sql
+    fi
+    if [ ! -d $PREFIX/etc ];then
+        mkdir -p $PREFIX/etc
+    fi
+
     touch $logdir/$callslogfile
     touch $logdir/$startlogfile
     touch $logdir/$curcallslogfile
@@ -113,8 +120,9 @@ copying(){
 
     DAILYPATH=`dirname $monthlyscript`
     MONTHLYPATH=`dirname $dailyscript`
+    PIDFILEPATH=`dirname $pidfile`
 
-    for PERPATH in $DAILYPATH $MONTHLYPATH
+    for PERPATH in $DAILYPATH $MONTHLYPATH $PIDFILEPATH
     do
 	if [ ! -d $PERPATH ];then
     	    mkdir -p $PERPATH
@@ -136,26 +144,34 @@ copying(){
 	    ln -s $PREFIX/etc/atslog.conf /etc/atslog.conf
 	fi
     fi
+    if [ "$UNAME" = "FreeBSD" ];then
+	if [ ! -d $PREFIX/etc/rc.d ];then
+	    mkdir -p $PREFIX/etc/rc.d
+	fi                          
+    fi
+
     install -m 755 ./atslogdinit $initscript
-    install -m 755 ./include/atslogrotate $monthlyscript
-    install -m 755 ./include/atslogdaily $dailyscript
-    install -m 755 ./include/atslogdb.pl.tmp $bindir/$atslogdb
+    install -m 755 ./atslogrotate $monthlyscript
+    install -m 755 ./atslogdaily $dailyscript
+    install -m 755 ./atslogdb.pl $bindir/$atslogdb
     install -m 600 ./atslog.conf $PREFIX/etc/atslog.conf
     install -m 644 ./atslog.conf $PREFIX/etc/atslog.conf.default
     install -m 644 ./atslog.conf $sharedir/atslog.conf.default
     install -m 644 ./libexec/kx-ta616-308-ru.lib $libdir/kx-ta616-308-ru.lib
     install -m 644 ./libexec/gd-320.lib $libdir/gd-320.lib
+    install -m 644 ./libexec/gdk-100.lib $libdir/gdk-100.lib
+    install -m 644 ./libexec/ghx-46.lib $libdir/ghx-46.lib
     install -m 644 ./libexec/skp-816.lib $libdir/skp-816.lib
     install -m 644 ./libexec/nx-820.lib $libdir/nx-820.lib
+    install -m 644 ./libexec/hicom-350h.lib $libdir/hicom-350h.lib
     install -m 644 ./libexec/kx-td1232.lib $libdir/kx-td1232.lib
     install -m 644 ./libexec/kx-td816ru.lib $libdir/kx-td816ru.lib
     install -m 755 ./src/atslogd/atslogd $bindir/$atslogd
-    install -m 755 ./include/atslogmaster $bindir/$masterscript
-    install -m 755 ./include/atslogcleardb.pl.tmp $bindir/$cleardb
-    install -m 644 ./sql/createsqltables.sql.default $sharedir/createsqltables.sql.default
-    install -m 644 ./installing $sharedir/installing
+    install -m 755 ./atslogmaster $bindir/$masterscript
+    install -m 755 ./atslogcleardb.pl $bindir/$cleardb
+    install -m 644 ./installing.out $sharedir/installing
     install -m 644 ./INSTALL $sharedir/INSTALL
-    install -m 644 ./Makefile $sharedir/Makefile
+    install -m 644 ./Makefile.out $sharedir/Makefile
     install -m 644 ./README $sharedir/README
     install -m 644 ./DEINSTALL $sharedir/DEINSTALL
     install -m 644 ./UPDATING $sharedir/UPDATING
@@ -163,6 +179,7 @@ copying(){
     install -m 644 ./CHANGES $sharedir/CHANGES
     cp -R textlogs $sharedir
     cp -R www/* $PREFIX/www
+    cp -R sql/* $sharedir/sql
     cp -R conf.inc $PREFIX/www/atslog/include/set
     chmod -R a-w,a+rX $PREFIX/www/atslog
     cp -R lang/* $sharedir/$langdir
@@ -196,12 +213,15 @@ deinstall)
     rm $monthlyscript
     rm $dailyscript
     rm $bindir/$atslogdb
-    rm /usr/local/etc/atslog.conf.default
+    rm $PREFIX/etc/atslog.conf.default
     rm $sharedir/atslog.conf.default
     rm $libdir/kx-ta616-308-ru.lib
     rm $libdir/gd-320.lib
+    rm $libdir/gdk-100.lib
+    rm $libdir/ghx-46.lib
     rm $libdir/skp-816.lib
     rm $libdir/nx-820.lib
+    rm $libdir/hicom-350h.lib
     rm $libdir/kx-td1232.lib
     rm $libdir/kx-td816ru.lib
     rm $bindir/$masterscript
@@ -215,10 +235,10 @@ deinstall)
     rm $sharedir/UPDATING
     rm $sharedir/USING
     rm $sharedir/CHANGES
-    rm $sharedir/createsqltables.sql.default
 
     rm -rf $sharedir/$langdir
     rm -rf $PREFIX/www/atslog
+    rm -rf $sharedir/sql
     rm -rf $sharedir/textlogs
 
     if [ ! -s $logdir/$callslogfile ];then
@@ -236,9 +256,10 @@ deinstall)
 
     DAILYPATH=`dirname $monthlyscript`
     MONTHLYPATH=`dirname $dailyscript`
+    PIDFILEPATH=`dirname $pidfile`
     #echo $DAILYPATH $MONTHLYPATH
 
-    for PERPATH in $DAILYPATH $MONTHLYPATH $sharedir $libdir $logdir
+    for PERPATH in $DAILYPATH $MONTHLYPATH $PIDFILEPATH $sharedir $libdir $logdir
     do
 	if [ -d $PERPATH ];then
 	    if [ `ls -1l $PERPATH | grep -c -` = 0 ];then
@@ -260,63 +281,66 @@ install)
         echo "Can't open config file. Please start configure."
         exit 1
     fi
-# Start updating
-    if [ -f ./updatesqltables.sql ];then
-        echo -n "Обновляем базы данных SQL сервера: "
-	mysql -f -h $sqlhost < ./updatesqltables.sql 1>/dev/null 2>./install.log
-	if [ "$?" -eq 0 ]
-	then
-	    echo "OK"
+
+# Start SQL operations
+    if [ -f updatesqltables.pgsql.sql -o -f createsqltables.pgsql.sql -o -f createuser.pgsql.sql ];then
+	SQLTYPE=pgsql
+	sqltype=PostgreSQL
+    else
+	SQLTYPE=mysql
+	sqltype=MySQL
+    fi
+
+    for sqlinfo in createuser.$SQLTYPE.sql createsqltables.$SQLTYPE.sql updatesqltables.$SQLTYPE.sql
+    do
+	if [ -f ./$sqlinfo ];then
+	    DBOPERATIONS=true
+	fi
+    done
+
+    if [ $DBOPERATIONS ];then
+    	echo -n "Проводятся операции с базами данных $sqltype сервера: "
+    fi
+
+    ERROECHO=0
+    LASTOPERAT=0
+    for sqlfile in createuser.$SQLTYPE.sql createsqltables.$SQLTYPE.sql updatesqltables.$SQLTYPE.sql
+    do
+    if [ -f ./$sqlfile ];then
+        if [ "$sqlfile" = "createsqltables.pgsql.sql" ];then
+    	    cat ./$sqlfile | ./scripts/createdb.out.pl $sqlmaspasswd $sqlmasteruser 2>>./install.log
+	    if [ $? -ne 0 ];then
+		ERROECHO=1
+	    fi
 	else
-	    mysql -h $sqlhost -u $sqlmasteruser --password=$sqlmaspasswd < ./updatesqltables.sql 1>/dev/null 2>>./install.log
-	    if [ "$?" -eq 0 ]
-	    then
-		echo "OK"
-	    else
-		if [ -z "$sqlrootpassword" ]
-		then
+	    cat ./$sqlfile | ./scripts/createdb.out.pl 2>>./install.log
+	    LASTOPERAT=$?
+	    if [ $LASTOPERAT -eq 1 ];then
+	        ERROECHO=1
+	    fi
+	    if [ $LASTOPERAT -eq 2 ];then
+	        if [ -z "$sqlrootpassword" ]
+	        then
+		    echo "NEED A PASSWORD!"
 		    # Call to function
-		    readpasswd
+	    	    readpasswd
 		else
-		    echo "ожидается продолжение"
-		fi
-		echo -n "Продолжаем обновление: "
-		mysql -f -h $sqlhost --password=$sqlrootpassword < ./updatesqltables.sql 1>/dev/null 2>>./install.log
-		if [ "$?" -eq 0 ]
-		then
-		    echo "OK"
-		else
-		    echo "ОШИБКА"
+		    echo -n "Продолжение операций с базами данных: "
+	    	fi
+		cat ./$sqlfile | ./scripts/createdb.out.pl $sqlrootpassword 2>>./install.log
+		if [ $? -ne 0 ];then
 		    ERROECHO=1
 		fi
-
 	    fi
 	fi
     fi
-# Start new installation
-    if [ -f ./createsqltables.sql ];then
-        echo -n "Создаём базы данных и таблицы SQL сервера: "
-	mysql -f -h $sqlhost < ./createsqltables.sql 1>/dev/null 2>./install.log
-	if [ "$?" -eq 0 ]
-	then
-	    echo "OK"
+    done
+    
+    if [ $DBOPERATIONS ];then
+	if [ $ERROECHO != 1 ];then
+    	    echo "OK"
 	else
-	    if [ -z "$sqlrootpassword" ]
-	    then
-		# Call to function
-		readpasswd
-	    else
-		echo "ожидается продолжение"
-	    fi
-	    echo -n "Продолжаем создание: "
-	    mysql -f -h $sqlhost --password=$sqlrootpassword < ./createsqltables.sql 1>/dev/null 2>>./install.log
-	    if [ "$?" -eq 0 ]
-	    then
-		echo "OK"
-	    else
-		echo "ОШИБКА"
-		ERROECHO=1
-	    fi
+    	    echo "ОШИБКА"
 	fi
     fi
 

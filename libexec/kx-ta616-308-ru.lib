@@ -7,11 +7,11 @@
 sub parsecurcalls() {
     while ($str=<>)
     {
-        $stringNumber++;
-        if ($str =~ /^.*?(\d+)\/\s??(\d+)\/\s??(\d+)\s*([\**|\s*])\s*(\d+)\:(\d+)(['AM'|'PM']{2})\s+(\d+)\s+(\d+)\s+(.*?)\s+(\d+)\:(\d+)\'(\d+)\".+$/){
+        $stringnumber++;
+        if ($str =~ /^.*?(\d+)\/\s??(\d+)\/\s??(\d+)\s*([\**|\s*])\s*(\d+)\:(\d+)([A|P]M)\s+(\d+)\s+(\d+)\s+(.*?)\s+(\d+)\:(\d+)\'(\d+)\".+$/){
 	    unitecurcalls();
         }else{
-	    #print("$stringNumber\n");
+	    #print("$stringnumber\n");
 	    if ($vars{debug} =~ /yes/i){
 		if ($str !~ /^$/){
 		    print $str;
@@ -32,41 +32,41 @@ sub unitecurcalls() {
     $CallHour=&AmPmTo24($5,$7);
 
     if($4 eq '*'){
-	$Forwarded =1;
+	$forwarded =1;
     }else{
-        $Forwarded =0;
+        $forwarded =0;
     };
 
     $CallMinute=$6;
 
-    $Internally=$8;
+    $internally=$8;
 
-    $CO=$9;
+    $co=$9;
 
     $forIncoming=$10;
 
-    $Duration = (($11*60*60)+($12*60)+$13);
+    $duration = (($11*60*60)+($12*60)+$13);
 
-    $TimeOfCall = "'$Year-$Month-$Day $CallHour\:$CallMinute\:00'";
+    $timeofcall = "$Year-$Month-$Day $CallHour\:$CallMinute\:00";
 	
     if($forIncoming =~ /<\s*[[a-z]|\s]*\s*>\s*/i){
-	$Way='1';
-	$Number=0; # Not Specified
+	$way='1';
+	$number=0; # Not Specified
     }else{
-	$Way='2';
+	$way='2';
 	$forIncoming =~ s/\D+//;
-	$Number = substr($forIncoming,0,100);
+	$number = substr($forIncoming,0,100);
     };
 
-    if ($TimeOfCall ne ""){
+    if ($timeofcall ne ""){
 # Для проверки наличия хоть одной запись звонков подлежащей
 # записи в db.
 	$callsCount++;
     }
-#    print("$stringNumber $TimeOfCall $Forwarded $Internally $CO $Way $Number $Duration\n");
-    $ins_query = "INSERT INTO `calls` (`TimeOfCall`, `Forwarded`,`Internally`,`CO`,`Way`,`Number`, `Duration`) VALUES  (".$TimeOfCall.", '$Forwarded', '$Internally', '$CO', '$Way', '$Number', '$Duration');";
-    $dbh->Query($ins_query);
-
+#    print("$stringnumber $timeofcall $forwarded $internally $co $way $number $duration\n");
+    $ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+    $sth = $dbh->prepare($ins_query);
+    $sth->execute;
 }
 
 1;
