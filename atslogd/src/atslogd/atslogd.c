@@ -479,36 +479,6 @@ int read_string( HANDLE hCom,char *buf,int blen )
 	return count;
 }
 
-void ParseClassicDate( char *dt )
-{
-	if( isdigit(SPACE_TO_ZERO(dt[0])) && isdigit(dt[1]) &&
-		dt[2]=='/' &&
-		isdigit(SPACE_TO_ZERO(dt[3])) && isdigit(dt[4]) &&
-		dt[5]=='/' &&
-		isdigit(SPACE_TO_ZERO(dt[6])) && isdigit(dt[7]) )
-	{
-
-		new_day=(SPACE_TO_ZERO(dt[3])-'0')*10+(dt[4]-'0');
-		new_month=(SPACE_TO_ZERO(dt[0])-'0')*10+(dt[1]-'0');
-		open_cur_logfile_with_check( 1 );
-	}
-}
-
-void ParseMD110DateF2( char *dt )
-{
-	if( isdigit(dt[0]) && isdigit(dt[1]) &&
-		isdigit(dt[2]) && isdigit(dt[3]) &&
-		isdigit(dt[4]) && isdigit(dt[5]) &&
-		isdigit(dt[6]) && isdigit(dt[7]) &&
-		dt[8]==' ' )
-	{
-
-		new_day=(dt[2]-'0')*10+(dt[3]-'0');
-		new_month=(dt[0]-'0')*10+(dt[1]-'0');
-		open_cur_logfile_with_check( 1 );
-	}
-}
-
 int auth_libwrap(struct sockaddr_in sa_rem)
 {
 	struct request_info req;
