@@ -38,6 +38,9 @@ typedef long DWORD;
 #define MAXFILENAMELEN	256
 #define MAXERRORLEN	256
 
+// harcoded maximum clients for TCP port
+#define MAXTCPCLIENTS 50
+
 #define	SPACE_TO_ZERO(x)	((x)==' ' ? '0' : (x))
 
 HANDLE h2close=INVALID_HANDLE_VALUE;
@@ -55,6 +58,8 @@ char filename[MAXFILENAMELEN+1]="raw";
 int dirlen=0;
 int gpid;
 int filenamelen=0;
+// count of childrens
+int childcount=0;
 
 #define LT_RAW		0
 #define LT_DEFINITY	1
@@ -220,6 +225,7 @@ static void sigchldhandler(int sig)
 	pid_t pid;
 	my_syslog( "catch SIGCHLD, waiting for childs");
 	pid=waitpid(-1,NULL,WNOHANG);
+	childcount--;
 //	if (pid>0)
 //	{
 //		my_syslog( "child [%d]",);
@@ -536,6 +542,9 @@ HANDLE open_tcp( unsigned short tcpPort )
 		my_syslog( "waiting TCP connection on port %d",tcpPort );
 		for( ;; ) {
 			sa_rem_len=sizeof(sa_rem);
+			// wait while childs hangs to allow new connections
+			while ( childcount >= MAXTCPCLIENTS )
+				sleep(2);
 			if( (new_s=accept(s,(struct sockaddr*)&sa_rem,&sa_rem_len ))==(-1) ) {
 				my_syslog( "accept() failed: %s",my_strerror() );
 				err_ret:
@@ -555,10 +564,9 @@ HANDLE open_tcp( unsigned short tcpPort )
 				if (pid==0)
 				{
 					// now we are the champions...errr...child ;-)
-					
 					// close input socket
 					close(s);
-					// temp. disable handler to revent closing NULL in signal
+					// temp. disable handler to prevent closing NULL in signal
 					// handler
 					h2close=INVALID_HANDLE_VALUE;
 					hCom=new_s;
@@ -573,6 +581,7 @@ HANDLE open_tcp( unsigned short tcpPort )
 								// resource temp. unavail. try again later ;-)
 								my_syslog( "fork() failed: %s",my_strerror() );
 								close(new_s);
+								close(s);
 								//continue;
 								exit(1);
 							};
@@ -581,6 +590,7 @@ HANDLE open_tcp( unsigned short tcpPort )
 								// not enough system memory. hangup?
 								my_syslog( "fork() failed: %s",my_strerror() );
 								close(new_s);
+								close(s);
 								//continue;
 								exit(1);
 							};
@@ -590,6 +600,8 @@ HANDLE open_tcp( unsigned short tcpPort )
 				{
 					// parent code
 					
+					// increment childcount
+					childcount++;
 					// close child socket 
 					close(new_s);
 					// continue accepting connection
@@ -669,13 +681,12 @@ int main( int argc, char *argv[] )
 	int data_bits=8,stop_bits=1;
 	char parity=0;
 	int next_open_timeout=5;
-	// for tcp reading
-	int tcp_timeout=2;
 	char buf[MAXSTRINGLEN+1];
 	char write_date=0;
 	// move tcp section here
 	// 
 	unsigned short tcpPort=0;
+	int tcp_timeout=2;
 	int opt=1;
 	int pid;
 	HANDLE s,new_s;
@@ -960,7 +971,18 @@ int main( int argc, char *argv[] )
 		if( rc==0 ) {
 			if( strncasecmp( argv[0],"tcp:",4 )==0 ) {
 				// sleep for tcp reading. no need to reopen
-				sleep( tcp_timeout );
+				if (errno != EINTR)
+				{
+					my_syslog( "remote end died, exiting");					
+					h2close=INVALID_HANDLE_VALUE;
+					close( hCom );
+					exit(0);
+					
+				}
+				else
+				{
+					sleep( tcp_timeout );
+				}
 			}
 			else
 			{
