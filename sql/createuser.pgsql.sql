@@ -1,5 +1,5 @@
 
-SET client_min_messages = 'PANIC';
+SET client_min_messages = 'ERROR';
 CREATE USER @sqlmasteruser@ PASSWORD '@sqlmaspasswd@' CREATEDB CREATEUSER;
 SET SESSION AUTHORIZATION '@sqlmasteruser@';
 SET client_encoding = 'WIN';
