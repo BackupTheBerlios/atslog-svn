@@ -10,12 +10,6 @@
  * build a database on any ADOdb-supported platform using a simple
  * XML schema.
  *
- * Last Editor: $Author: jlim $
- * @author Richard Tango-Lowy & Dan Cech
- * @version $Revision: 1.9 $
- *
- * @package axmls
- * @tutorial getting_started.pkg
  */
 
 /**

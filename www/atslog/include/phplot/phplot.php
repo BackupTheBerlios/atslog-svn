@@ -1,7 +1,5 @@
 <?php
 
-/* $Id: phplot.php,v 1.79.2.3 2004/01/28 18:12:54 migueldb Exp $ */
-
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002 Afan Ottenheimer.  Released under
  * the GPL and PHP licenses as stated in the the README file which
