@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <tcpd.h>
 
 #include <signal.h>
 #include <sys/socket.h>
@@ -507,6 +508,20 @@ void ParseMD110DateF2( char *dt )
 	}
 }
 
+int auth_libwrap(struct sockaddr_in sa_rem)
+{
+	struct request_info req;
+	request_init(&req,RQ_DAEMON,"atslogd",RQ_CLIENT_SIN,&sa_rem,0);
+	fromhost(&req);
+	if (!hosts_access(&req))
+	{
+			my_syslog( "connection from host %s refused by libwrap",inet_ntoa(sa_rem.sin_addr));
+			return 0;
+	}
+	return 1;
+
+}
+
 HANDLE open_tcp( unsigned short tcpPort )
 {
 	HANDLE hCom;
@@ -555,9 +570,14 @@ HANDLE open_tcp( unsigned short tcpPort )
 			my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
 			// wtf? by andy[at]eva.dp.ua
 			// if( remote_end.s_addr==0 ) break;
-			if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
+			//if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
+			//	close( new_s );
+			//	my_syslog( "invalid remote IP address" );
+			//	continue;
+			//
+			// using libwrap for controll access
+			if( !auth_libwrap(sa_rem) ) {
 				close( new_s );
-				my_syslog( "invalid remote IP address" );
 				continue;
 			} else {
 				pid=fork();
@@ -840,6 +860,8 @@ int main( int argc, char *argv[] )
 		else
 		{
 		//	hCom = open_tcp(tcpPort);
+			// using libwrap for controll access
+
 			s=socket(PF_INET,SOCK_STREAM,0);
 			if(s==INVALID_HANDLE_VALUE) {
 				my_syslog( "socket() failed: %s",my_strerror() );
@@ -885,9 +907,13 @@ int main( int argc, char *argv[] )
 				my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
 				// wtf? by andy[at]eva.dp.ua
 				// if( remote_end.s_addr==0 ) break;
-				if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
+				//if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
+				//	close( new_s );
+				//	my_syslog( "invalid remote IP address" );
+				//	continue;
+				// using libwrap for controll access
+				if( !auth_libwrap(sa_rem) ) {
 					close( new_s );
-					my_syslog( "invalid remote IP address" );
 					continue;
 				} else {
 					pid=fork();
@@ -949,7 +975,6 @@ int main( int argc, char *argv[] )
 			else
 			{
 				h2close=hCom;
-				my_syslog( "aaa");
 			}
 		}
 	}
