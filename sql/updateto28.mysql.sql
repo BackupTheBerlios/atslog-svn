@@ -1,3 +1,4 @@
+
 USE @sqldatabase@;
 
 ALTER TABLE @sqldatabase@.calls ADD Way enum('in','out') default NULL AFTER CO;
