@@ -553,7 +553,7 @@ void usage( void )
 "for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua\n"
 "\n"
 "atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits]\n"
-"        [-t type] [-P PIDfile][-d] [-e] [-a] [-o] [tcp:[IP:]N] dev\n"
+"        [-t type] [-P PIDfile][-d] [-e] [-a] [-o] [-i address] [tcp:port] dev\n"
 "-D dir\t\tdirectory where CDR files will be put, default is current dir\n"
 "-L logfile\tfile for error messages, default is stderr\n"
 "-F filename\tname of file where CDR messages will be put\n"
@@ -572,7 +572,8 @@ void usage( void )
 "-x number\tmaximum number of clients for TCP connections (default: 1)\n"
 "\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
 "-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
-"tcp:[IP:]N\t\twhere IP is IP-address to bind (all interfaces by default), N is TCP port.\n"
+"-i address\tIP address of interface for bind only to it (default to all interfaces)\n"
+"tcp:port\t\twhere port is a TCP port for listen on.\n"
 "-b\t\tbecome daemon\n"
 "-P\t\tPID file. /var/run/atslogd.pid by default\n",CDRR_VER);
 
@@ -593,7 +594,7 @@ int main( int argc, char *argv[] )
 	// move tcp section here
 	// 
 	unsigned short tcpPort=0;
-	char *hostname=NULL,*port=NULL,*arg=NULL;
+	char *hostname=NULL;
 	
 	int opt=1;
 	int pid;
@@ -662,6 +663,9 @@ int main( int argc, char *argv[] )
 			break;
 		case 'x':
 			maxtcpclients=atoi(optarg);
+			break;
+		case 'i':
+			hostname=optarg;
 			break;
 		case 'w':
 			next_open_timeout=atoi(optarg);
@@ -737,16 +741,7 @@ int main( int argc, char *argv[] )
 	setsighandler( SIGCHLD );
 
 	if( strncasecmp( argv[0],"tcp:",4 )==0 ) {
-		arg=strdup(argv[0]);
-		hostname=strtok(arg,":");
-		hostname=strtok(NULL,":");
-		port=strtok(NULL,":");
-		if (port==NULL)
-		{
-			port=strdup(hostname);
-			hostname=NULL;
-		}
-		tcpPort=atoi(port);
+		tcpPort=atoi(argv[0]+4);
 		if( tcpPort==0 ) {
 			my_syslog( "Invalid TCP port number" );
 			hCom=INVALID_HANDLE_VALUE;
