@@ -45,7 +45,7 @@ typedef long DWORD;
 #define	SPACE_TO_ZERO(x)	((x)==' ' ? '0' : (x))
 
 HANDLE h2close=INVALID_HANDLE_VALUE;
-struct in_addr remote_end={0};
+//struct in_addr remote_end={0};
 
 char dbg=0;
 char copy_to_stderr=0;
@@ -683,7 +683,8 @@ void usage( void )
 "-o\t\twrite CDR additionally to stdout\n"
 "-m\t\twrite log files on month-by-month instead of day-by-day basis\n"
 "-n\t\tconsider day in place of month and vice versa\n"
-"-r x.x.x.x\taccept TCP connections from this IP address only\n"
+"-r x.x.x.x\taccept TCP connections from this IP address only (deprecated. now using libwrap,\n"
+"	see /etc/hosts.allow, /etc/hosts.deny)\n"
 "-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
 "tcp:N\t\twhere N is TCP port.\n"
 "-b\t\tbecome daemon\n"
@@ -772,12 +773,12 @@ int main( int argc, char *argv[] )
 		case 'a':
 			write_date=1;
 			break;
-		case 'r':
-			if( inet_aton( optarg,&remote_end )==0 ) {
-				(void)fprintf( stderr,"Invalid IP address specified: %s\n",optarg );
-				return 1;
-			}
-			break;
+//		case 'r':
+//			if( inet_aton( optarg,&remote_end )==0 ) {
+//				(void)fprintf( stderr,"Invalid IP address specified: %s\n",optarg );
+//				return 1;
+//			}
+//			break;
 		case 'w':
 			next_open_timeout=atoi(optarg);
 			break;
