@@ -607,7 +607,7 @@ int main( int argc, char *argv[] )
 	
 	HANDLE hCom;
 
-	while( (rc=getopt(argc,argv,"boahdemnws:D:L:P:F:p:c:f:r:t:"))!=(-1) ) {
+	while( (rc=getopt(argc,argv,"boahdemnws:D:L:P:F:p:c:f:r:x:i:"))!=(-1) ) {
 		switch( rc ) {
 		case 'D':
 			dirlen=strlen(optarg);
