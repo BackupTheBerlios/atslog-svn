@@ -43,7 +43,6 @@ typedef long DWORD;
 #define	SPACE_TO_ZERO(x)	((x)==' ' ? '0' : (x))
 
 HANDLE h2close=INVALID_HANDLE_VALUE;
-//struct in_addr remote_end={0};
 
 char dbg=0;
 char copy_to_stderr=0;
@@ -51,7 +50,8 @@ char copy_to_stdout=0;
 char by_month=0;
 char swap_day_month=0;
 FILE *errout;
-FILE *fp;
+FILE *pfd=NULL;
+char *pid_file="/var/run/atslogd.pid";
 char dirname[MAXPATHLEN+1+MAXFILENAMELEN+1];
 char filename[MAXFILENAMELEN+1]="raw";
 int dirlen=0;
@@ -128,6 +128,25 @@ static int daemonize( void )
 	return rc_gpid;
 }
 
+FILE *open_pid()
+{
+	FILE *fd=NULL;
+	fd = fopen(pid_file, "w");
+	return fd; 
+}
+
+void close_pid()
+{
+	if (pfd!=NULL)
+		unlink(pid_file);
+}
+
+void my_exit(int code)
+{
+	close_pid();
+	exit(code);
+}
+
 int my_syslog( char *s, ... )
 {
 	va_list va;
@@ -160,7 +179,7 @@ static void *my_malloc( int size,char do_clr )
 	void *p=malloc(size);
 	if( p==NULL ) {
 		my_syslog( "can't allocate %d bytes: %s",strerror(errno) );
-		exit( 1 );
+		my_exit( 1 );
 	}
 	if( do_clr ) memset( p,0,size );
 	return p;
@@ -200,7 +219,7 @@ static void sighandler(int sig)
 	}
 	pid=waitpid(-1,NULL,WNOHANG);
 	my_syslog( "exiting on signal %d",sig );
-	exit( 0 );
+	my_exit( 0 );
 }
 
 static void sighuphandler(int sig)
@@ -212,14 +231,12 @@ static void sighuphandler(int sig)
 			cur_logfile=NULL;
 		}
 
-		memcpy( dirname+dirlen,filename,strlen(filename));
-		if( (cur_logfile=fopen(dirname,"at"))==NULL )
-		{
-		    my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
-		    exit(1);
-		}
-
-	
+	memcpy( dirname+dirlen,filename,strlen(filename));
+	if( (cur_logfile=fopen(dirname,"at"))==NULL )
+	{
+	    my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
+	    my_exit(1);
+	}
 }
 
 static void sigchldhandler(int sig)
@@ -242,7 +259,7 @@ static void setsighandler(int sig )
 	sigaddset( &ss,sig );
 	if( sigprocmask( SIG_UNBLOCK,&ss,NULL )==(-1) ) {
 		my_syslog( "can't unblock signal %d: %s",sig,strerror(errno) );
-		exit( 1 );
+		my_exit( 1 );
 	}
 	memset( &sa,0,sizeof(sa) );
 	sa.sa_flags = SA_RESTART;
@@ -254,7 +271,7 @@ static void setsighandler(int sig )
 		sa.sa_handler=sighandler;
 	if( sigaction( sig,&sa,NULL )==(-1) ) {
 		my_syslog( "can't set signal handler on %d: %s",sig,strerror(errno) );
-		exit( 1 );
+		my_exit( 1 );
 	}
 }
 
@@ -327,7 +344,7 @@ void open_cur_logfile( char do_flush_q )
 	}
 	if( (cur_logfile=fopen(dirname,"at"))==NULL ) {
 		my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
-		exit( 1 );
+		my_exit( 1 );
 	}
 	my_syslog( "CDR file '%s' opened",dirname );
 	fputs( "\n",cur_logfile );
@@ -550,14 +567,13 @@ void usage( void )
 "Use libwrap for contol access to TCP connections. See /etc/hosts.allow\n"
 "and /etc/hosts.deny\n",CDRR_VER);
 
-exit(1);
+my_exit(1);
 }
 
 int main( int argc, char *argv[] )
 {
 	int rc;
 	char *logfile=NULL;
-	char *pid_file="/var/run/atslogd.pid";
 	long speed=9600;
 	int data_bits=8,stop_bits=1;
 	char parity=0;
@@ -662,7 +678,7 @@ int main( int argc, char *argv[] )
 			usage();
 		default:
 			(void)fprintf( stderr,"Unknown switch: %c\n",(char)rc );
-			exit( 1 );
+			my_exit( 1 );
 		}
 	}
 
@@ -691,22 +707,22 @@ int main( int argc, char *argv[] )
 
 	if( do_daemonize && gpid==(-1) ) {
 		my_syslog( "can't become daemon, exiting" );
-		exit( 1 );
+		my_exit( 1 );
 	}
 
-	fp = fopen(pid_file, "w");
-	if (fp) {
-	    (void)fprintf(fp, "%ld\n", (long)gpid);
-	    fclose(fp);
+	pfd = open_pid();
+	if (pfd!=NULL) {
+	    (void)fprintf(pfd, "%ld\n", (long)gpid);
+	    fclose(pfd);
 	}else{
 	    my_syslog( "can't write PID file, exiting" );
-	    exit( 1 );
+	    my_exit( 1 );
 	}
 
 	sigfillset( &ss );
 	if( sigprocmask( SIG_SETMASK,&ss,NULL )==(-1) ) {
 		my_syslog( "can't block all signals: %s",strerror( errno ) );
-		exit( 1 );
+		my_exit( 1 );
 	}
 	setsighandler( SIGHUP );
 	setsighandler( SIGINT );
@@ -748,7 +764,7 @@ int main( int argc, char *argv[] )
 				if (inet_aton(hostname,&sa_loc.sin_addr)==0)
 				{
 					my_syslog( "bind() on IP %s failed: %s",hostname,my_strerror() );
-					exit(1);
+					my_exit(1);
 				}
 			}
 			
@@ -825,7 +841,7 @@ int main( int argc, char *argv[] )
 									close(new_s);
 									close(s);
 									//continue;
-									exit(1);
+									my_exit(1);
 								};
 							case ENOMEM:
 								{
@@ -836,7 +852,7 @@ int main( int argc, char *argv[] )
 									close(new_s);
 									close(s);
 									//continue;
-									exit(1);
+									my_exit(1);
 								};
 						}			
 					}
@@ -896,7 +912,7 @@ int main( int argc, char *argv[] )
 					my_syslog( "connection with remote peer %s:%d has been closed, exiting",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port));
 					h2close=INVALID_HANDLE_VALUE;
 					close( hCom );
-					exit(0);
+					my_exit(0);
 					
 				}
 			}
