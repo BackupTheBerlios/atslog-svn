@@ -14,6 +14,7 @@
 #include <time.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 #include <signal.h>
 #include <sys/socket.h>
@@ -210,10 +211,12 @@ static void my_fflush( FILE *fp )
 
 static void sighandler(int sig)
 {
+	pid_t pid;
 	if( h2close!=INVALID_HANDLE_VALUE ) {
 		my_syslog( "closing CDR stream" );
 		close( h2close );
 	}
+	pid=waitpid(-1,NULL,WNOHANG);
 	my_syslog( "exiting on signal %d",sig );
 	exit( 0 );
 }
@@ -240,6 +243,17 @@ static void sighuphandler(int sig)
 	
 }
 
+static void sigchldhandler(int sig)
+{
+	pid_t pid;
+	my_syslog( "catch SIGCHLD, waiting for childs");
+	pid=waitpid(-1,NULL,WNOHANG);
+//	if (pid>0)
+//	{
+//		my_syslog( "child [%d]",);
+//	}
+}
+
 static void setsighandler(int sig )
 {
 	struct sigaction sa;
@@ -254,6 +268,8 @@ static void setsighandler(int sig )
 	sa.sa_flags = SA_RESTART;
 	if ( sig == SIGHUP)
 		sa.sa_handler=sighuphandler;
+	else if ( sig == SIGCHLD)
+		sa.sa_handler=sigchldhandler;
 	else
 		sa.sa_handler=sighandler;
 	if( sigaction( sig,&sa,NULL )==(-1) ) {
@@ -368,54 +384,6 @@ void open_cur_logfile_with_check( char do_flush_q )
 	open_cur_logfile( do_flush_q );
 }
 
-HANDLE open_socket( unsigned short port )
-{
-	HANDLE s,new_s;
-	struct sockaddr_in sa_loc,sa_rem;
-	socklen_t sa_rem_len;
-
-	s=socket(PF_INET,SOCK_STREAM,0);
-	if(s==INVALID_HANDLE_VALUE) {
-		my_syslog( "socket() failed: %s",my_strerror() );
-		return s;
-	}
-	h2close=s;
-	memset( &sa_loc,0,sizeof(sa_loc) );
-	memset( &sa_rem,0,sizeof(sa_loc) );
-	sa_rem.sin_family=sa_loc.sin_family=AF_INET;
-	sa_loc.sin_port=htons(port);
-	if( bind(s,(struct sockaddr*)&sa_loc,sizeof(sa_loc) )==(-1) ) {
-		my_syslog( "bind() on port %d failed: %s",port,my_strerror() );
-		goto err_ret;
-	}
-	if( listen(s,1)==(-1) ) {
-		my_syslog( "listen() failed: %s",my_strerror() );
-		goto err_ret;
-	}
-	my_syslog( "waiting TCP connection on port %d",port );
-	for( ;; ) {
-		sa_rem_len=sizeof(sa_rem);
-		if( (new_s=accept(s,(struct sockaddr*)&sa_rem,&sa_rem_len ))==(-1) ) {
-			my_syslog( "accept() failed: %s",my_strerror() );
-			err_ret:
-			h2close=INVALID_HANDLE_VALUE;
-			close(s);
-			return INVALID_HANDLE_VALUE;
-		}
-		my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
-		if( remote_end.s_addr==0 ) break;
-		if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
-			close( new_s );
-			my_syslog( "invalid remote IP address" );
-			continue;
-		} else {
-			break;
-		}
-	}
-	h2close=INVALID_HANDLE_VALUE;
-	close(s);
-	return new_s;
-}
 
 HANDLE open_tty( char *tty_name )
 {
@@ -695,24 +663,116 @@ void ParseMD110DateF2( char *dt )
 	}
 }
 
+HANDLE open_tcp( unsigned short tcpPort )
+{
+	HANDLE hCom;
+	int opt=1;
+	int pid;
+		HANDLE s,new_s;
+		struct sockaddr_in sa_loc,sa_rem;
+		socklen_t sa_rem_len;
+
+		s=socket(PF_INET,SOCK_STREAM,0);
+		if(s==INVALID_HANDLE_VALUE) {
+			my_syslog( "socket() failed: %s",my_strerror() );
+			return s;
+		}
+		if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(char *)&opt,sizeof(opt)) < 0)
+		{
+			my_syslog( "sotsockopt() failed: %s",my_strerror() );
+			return INVALID_HANDLE_VALUE;
+		}
+		h2close=s;
+		memset( &sa_loc,0,sizeof(sa_loc) );
+		memset( &sa_rem,0,sizeof(sa_loc) );
+		sa_rem.sin_family=sa_loc.sin_family=AF_INET;
+		sa_loc.sin_port=htons(tcpPort);
+		if( bind(s,(struct sockaddr*)&sa_loc,sizeof(sa_loc) )==(-1) ) {
+			my_syslog( "bind() on port %d failed: %s",tcpPort,my_strerror() );
+			goto err_ret;
+		}
+		if( listen(s,1)==(-1) ) {
+			my_syslog( "listen() failed: %s",my_strerror() );
+			goto err_ret;
+		}
+		my_syslog( "waiting TCP connection on port %d",tcpPort );
+		for( ;; ) {
+			sa_rem_len=sizeof(sa_rem);
+			if( (new_s=accept(s,(struct sockaddr*)&sa_rem,&sa_rem_len ))==(-1) ) {
+				my_syslog( "accept() failed: %s",my_strerror() );
+				err_ret:
+				h2close=INVALID_HANDLE_VALUE;
+				close(s);
+				return INVALID_HANDLE_VALUE;
+			}
+			my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
+			// wtf? by andy@eva.dp.ua
+			// if( remote_end.s_addr==0 ) break;
+			if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
+				close( new_s );
+				my_syslog( "invalid remote IP address" );
+				continue;
+			} else {
+				pid=fork();
+				if (pid==0)
+				{
+					// now we are the champions...errr...child ;-)
+					
+					// close input socket
+					close(s);
+					// temp. disable handler to revent closing NULL in signal
+					// handler
+					h2close=INVALID_HANDLE_VALUE;
+					hCom=new_s;
+				}
+				else if (pid==-1)
+				{
+					// can't fork. system error
+					switch(errno)
+					{
+						case EAGAIN:
+							{
+								// resource temp. unavail. try again later ;-)
+								my_syslog( "fork() failed: %s",my_strerror() );
+								close(new_s);
+								continue;
+							};
+						case ENOMEM:
+							{
+								// not enough system memory. hangup?
+								my_syslog( "fork() failed: %s",my_strerror() );
+								close(new_s);
+								continue;
+							};
+					}			
+				}
+				else
+				{
+					// parent code
+					
+					// close child socket 
+					close(new_s);
+					// continue accepting connection
+					continue;
+				}
+			}
+		}
+
+
+		///
+		//hCom=open_socket(tcpPort);
+		if (hCom == INVALID_HANDLE_VALUE) {
+			my_syslog( "can't open '%s'",tcpPort );
+			return INVALID_HANDLE_VALUE;
+		}
+}
+
+
 HANDLE open_io( char *io_name,long speed,int data_bits,char parity,int stop_bits )
 {
 	HANDLE hCom;
 	int rc;
-	unsigned short tcpPort=0;
 
-	if( strncasecmp( io_name,"tcp:",4 )==0 ) {
-		tcpPort=atoi(io_name+4);
-		if( tcpPort==0 ) {
-			my_syslog( "Invalid TCP port number" );
-			return INVALID_HANDLE_VALUE;
-		}
-		hCom=open_socket(tcpPort);
-		if (hCom == INVALID_HANDLE_VALUE) {
-			my_syslog( "can't open '%s'",io_name );
-			return INVALID_HANDLE_VALUE;
-		}
-	} else {
 		hCom = open_tty( io_name );
 		if (hCom == INVALID_HANDLE_VALUE) {
 			my_syslog( "can't open serial device '%s'",io_name );
@@ -723,7 +783,6 @@ HANDLE open_io( char *io_name,long speed,int data_bits,char parity,int stop_bits
 			my_syslog( "Unable to set TTY device parameters" );
 			return INVALID_HANDLE_VALUE;
 		}
-	}
 	h2close=hCom;
 	return hCom;
 }
@@ -779,10 +838,20 @@ int main( int argc, char *argv[] )
 	int data_bits=8,stop_bits=1;
 	char parity=0;
 	int next_open_timeout=5;
+	// for tcp reading
+	int tcp_timeout=2;
 	char buf[MAXSTRINGLEN+1];
 	struct LogType *lt;
 	char write_date=0;
-
+	// move tcp section here
+	// 
+	unsigned short tcpPort=0;
+	int opt=1;
+	int pid;
+	HANDLE s,new_s;
+	struct sockaddr_in sa_loc,sa_rem;
+	socklen_t sa_rem_len;
+	//
 #ifndef WIN32
 	char do_daemonize=0;
 #endif
@@ -941,8 +1010,126 @@ int main( int argc, char *argv[] )
 	setsighandler( SIGHUP );
 	setsighandler( SIGINT );
 	setsighandler( SIGTERM );
+	setsighandler( SIGCHLD );
 
-	hCom = open_io( argv[0],speed,data_bits,parity,stop_bits );
+	if( strncasecmp( argv[0],"tcp:",4 )==0 ) {
+		tcpPort=atoi(argv[0]+4);
+		if( tcpPort==0 ) {
+			my_syslog( "Invalid TCP port number" );
+			hCom=INVALID_HANDLE_VALUE;
+		}
+		else
+		{
+		//	hCom = open_tcp(tcpPort);
+			s=socket(PF_INET,SOCK_STREAM,0);
+			if(s==INVALID_HANDLE_VALUE) {
+				my_syslog( "socket() failed: %s",my_strerror() );
+				return s;
+			}
+			if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(char *)&opt,sizeof(opt)) < 0)
+			{
+				my_syslog( "sotsockopt() failed: %s",my_strerror() );
+				return INVALID_HANDLE_VALUE;
+			}
+			h2close=s;
+			memset( &sa_loc,0,sizeof(sa_loc) );
+			memset( &sa_rem,0,sizeof(sa_loc) );
+			sa_rem.sin_family=sa_loc.sin_family=AF_INET;
+			sa_loc.sin_port=htons(tcpPort);
+			if( bind(s,(struct sockaddr*)&sa_loc,sizeof(sa_loc) )==(-1) ) {
+				my_syslog( "bind() on port %d failed: %s",tcpPort,my_strerror() );
+				goto err_ret;
+			}
+			if( listen(s,5)==(-1) ) {
+				my_syslog( "listen() failed: %s",my_strerror() );
+				goto err_ret;
+			}
+			my_syslog( "waiting TCP connection on port %d",tcpPort );
+			for( ;; ) {
+				sa_rem_len=sizeof(sa_rem);
+				if( (new_s=accept(s,(struct sockaddr*)&sa_rem,&sa_rem_len ))==(-1) ) {
+					my_syslog( "accept() failed: %s",my_strerror() );
+					err_ret:
+					h2close=INVALID_HANDLE_VALUE;
+					hCom=h2close;
+					close(s);
+					//return INVALID_HANDLE_VALUE;
+					break;
+				}
+				my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
+				// wtf? by andy@eva.dp.ua
+				// if( remote_end.s_addr==0 ) break;
+				if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
+					close( new_s );
+					my_syslog( "invalid remote IP address" );
+					continue;
+				} else {
+					pid=fork();
+					if (pid==0)
+					{
+						// now we are the champions...errr...child ;-)
+						
+						// close input socket
+						close(s);
+						// temp. disable handler to revent closing NULL in signal
+						// handler
+						h2close=INVALID_HANDLE_VALUE;
+						hCom=new_s;
+						// ?
+						//setsighandler( SIGINT );
+						//setsighandler( SIGTERM );
+						break;
+					}
+					else if (pid==-1)
+					{
+						// can't fork. system error
+						switch(errno)
+						{
+							case EAGAIN:
+								{
+									// resource temp. unavail. try again later ;-)
+									my_syslog( "fork() failed: %s",my_strerror() );
+									close(new_s);
+									continue;
+								};
+							case ENOMEM:
+								{
+									// not enough system memory. hangup?
+									my_syslog( "fork() failed: %s",my_strerror() );
+									close(new_s);
+									continue;
+								};
+						}			
+					}
+					else
+					{
+						// parent code
+						
+						// close child socket 
+						close(new_s);
+						// continue accepting connection
+						continue;
+					}
+				}
+			}
+	
+
+			///
+			if (hCom == INVALID_HANDLE_VALUE) {
+				my_syslog( "can't open '%s'",tcpPort );
+				hCom=INVALID_HANDLE_VALUE;
+				h2close=hCom;
+			}
+			else
+			{
+				h2close=hCom;
+				my_syslog( "aaa");
+			}
+		}
+	}
+	else
+		hCom = open_io( argv[0],speed,data_bits,parity,stop_bits );
+
 	if( hCom==INVALID_HANDLE_VALUE ) {
 		my_syslog( "can't open '%s', exiting",argv[0] );
 		return 1;
@@ -959,13 +1146,20 @@ int main( int argc, char *argv[] )
 	while( (rc=read_string( hCom,buf,MAXSTRINGLEN ))>=0 ) {
 		char *dt;
 		if( rc==0 ) {
-			h2close=INVALID_HANDLE_VALUE;
-			close( hCom );
-			sleep( next_open_timeout );
-			hCom = open_io( argv[0],speed,data_bits,parity,stop_bits );
-			if( hCom==INVALID_HANDLE_VALUE ) {
-				my_syslog( "can't open '%s', exiting",argv[0] );
-				return 1;
+			if( strncasecmp( argv[0],"tcp:",4 )==0 ) {
+				// sleep for tcp reading. no need to reopen
+				sleep( tcp_timeout );
+			}
+			else
+			{
+				h2close=INVALID_HANDLE_VALUE;
+				close( hCom );
+				sleep( next_open_timeout );
+				hCom = open_io( argv[0],speed,data_bits,parity,stop_bits );
+				if( hCom==INVALID_HANDLE_VALUE ) {
+					my_syslog( "can't open '%s', exiting",argv[0] );
+					return 1;
+				}
 			}
 			continue;
 		}
