@@ -569,7 +569,7 @@ void usage( void )
 "-m\t\twrite log files on month-by-month instead of day-by-day basis\n"
 "-n\t\tconsider day in place of month and vice versa\n"
 "-r x.x.x.x\taccept TCP connections from this IP address only (deprecated. now using libwrap,\n"
-"-t number\tmaximum number of clients for TCP connections (default: 1)\n"
+"-x number\tmaximum number of clients for TCP connections (default: 1)\n"
 "\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
 "-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
 "tcp:[IP:]N\t\twhere IP is IP-address to bind (all interfaces by default), N is TCP port.\n"
@@ -660,7 +660,7 @@ int main( int argc, char *argv[] )
 		case 'a':
 			write_date=1;
 			break;
-		case 't':
+		case 'x':
 			maxtcpclients=atoi(optarg);
 			break;
 		case 'w':
