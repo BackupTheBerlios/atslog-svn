@@ -1,0 +1,91 @@
+<!--
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+-->
+<html>
+<head>
+    <META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="ru-ru">
+    <META NAME="Description" CONTENT="ATSlog. Анализ и учет звонков мини-АТС.">
+    <META NAME="Keywords" CONTENT="atslog,atslog.dp.ua,panalog.dp.ua,panalog,php,mysql,ats,атс,pbx,smdr,tariff,тариф,call,звонков,тарификация,account,samsung,panasonic,hybrex,KX-TD816,KX-TA308,KX-TD1232,KX-TA616,SKP-816,GD-320,mini-ATS,мини-АТС,схема,распайка,руководство,описание">
+    <META name="AUTHOR-CORPORATE" content="Denis CyxoB www.yamiyam.dp.ua">
+    <META NAME="ROBOTS" CONTENT="ALL">
+
+<title>ATSlog - <?php echo $title ?>. </title>
+	<style>
+		body {
+			text-decoration: none;
+			<? echo $COLORS['StyleBodyScrollbarBaseColor']."\n"; ?>
+			<? echo $COLORS['StyleBodyScrollbarArrowColor']."\n"; ?>
+
+		}
+<?
+
+if ($toprint!="yes"){
+echo ("
+		A {
+			text-decoration : none;
+		}
+		A:hover{
+			".$COLORS['StyleAHover']."
+			text-decoration : underline;
+		}
+		A.menu {
+			".$COLORS['StyleAMenu']."
+			font-family : Verdana;
+			text-decoration : none;
+		}
+		A.menu:hover{
+			".$COLORS['StyleAMenuHover']."
+			text-decoration : none;
+		}
+");
+}else{
+echo("
+		A {
+			text-decoration : none;
+			color:#000000;
+		}
+");
+}
+?>
+		input{
+			<? echo $COLORS['StyleInputBackground']."\n"; ?>
+		}
+		select{
+			<? echo $COLORS['StyleSelectBackground']."\n"; ?>
+		}
+		textarea{
+			<? echo $COLORS['StyleTextareaBackground']."\n"; ?>
+		}
+		input.submit{
+			<? echo $COLORS['StyleInputSubmitBackground']."\n"; ?>
+			<? echo $COLORS['StyleInputSubmitBorderRight']."\n"; ?>
+			<? echo $COLORS['StyleInputSubmitBorderTop']."\n"; ?>
+			<? echo $COLORS['StyleInputSubmitBorderLeft']."\n"; ?>
+			<? echo $COLORS['StyleInputSubmitBorderBottom']."\n"; ?>
+			font-family : Verdana;
+		}
+		.content { 
+			margin-left:50px;
+			margin-right:50px;
+		} 
+	</style>
+<?
+// JavaScript Functions                
+// ------------------------------------
+if ($toprint!="yes"){                                       
+    include("../include/set/functions.js");
+}
+                                       
+// ------------------------------------
+
+echo "
+</head>
+
+<body ".$COLORS['BodyBgcolor']." ".$COLORS['BodyText']." ".$COLORS['BodyLink']." ".$COLORS['BodyVlink']." ".$COLORS['BodyAlink']." leftmargin=20 bottommargin=20 marginheight=20 marginwidth=20 rightmargin=20 topmargin=20>
+";
+?>
+
+<table cellpadding="2" cellspacing="4" border=0 align="center" width="80%">
+    <tr>
+        <td>
