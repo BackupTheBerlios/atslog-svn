@@ -1185,12 +1185,6 @@ class dbQuerySet extends dbObject {
 * This class is used to load and parse the XML file, to create an array of SQL statements
 * that can be used to build a database, and to build the database using the SQL array.
 *
-* @tutorial getting_started.pkg
-*
-* @author Richard Tango-Lowy & Dan Cech
-* @version $Revision: 1.9 $
-*
-* @package axmls
 */
 class adoSchema {
 	
