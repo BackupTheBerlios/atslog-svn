@@ -553,7 +553,7 @@ void usage( void )
 "for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua\n"
 "\n"
 "atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits]\n"
-"        [-t type] [-P PIDfile][-d] [-e] [-a] [-o] [tcp:N] dev\n"
+"        [-t type] [-P PIDfile][-d] [-e] [-a] [-o] [tcp:[IP:]N] dev\n"
 "-D dir\t\tdirectory where CDR files will be put, default is current dir\n"
 "-L logfile\tfile for error messages, default is stderr\n"
 "-F filename\tname of file where CDR messages will be put\n"
@@ -572,7 +572,7 @@ void usage( void )
 "-t number\tmaximum number of clients for TCP connections (default: 1)\n"
 "\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
 "-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
-"tcp:N\t\twhere N is TCP port.\n"
+"tcp:[IP:]N\t\twhere IP is IP-address to bind (all interfaces by default), N is TCP port.\n"
 "-b\t\tbecome daemon\n"
 "-P\t\tPID file. /var/run/atslogd.pid by default\n",CDRR_VER);
 
