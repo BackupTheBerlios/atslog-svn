@@ -2,6 +2,7 @@
 
     (C) Alexey V. Kuznetsov, avk@gamma.ru, 2001, 2002
     changed by Denis CyxoB www.yamiyam.dp.ua
+    and Andrew Kornilov andy[at]eva.dp.ua
     for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
 
 */
@@ -21,22 +22,16 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#ifndef WIN32
 #include <termios.h>
 #include <sysexits.h>
-#endif
 
 #ifndef GETOPT
 #include <unistd.h>
 #endif
 
-#ifdef WIN32
-#include <windows.h>
-#else
 typedef long HANDLE;
 typedef long DWORD;
 #define INVALID_HANDLE_VALUE (HANDLE)(-1)
-#endif
 
 #define	MAXSTRINGLEN	1028
 #define MAXPATHLEN	256
@@ -69,26 +64,11 @@ int filenamelen=0;
 #define LT_GHX		5
 #define LT_MD110	6
 
-struct LogType {
-	char *name;
-	int type;
-} logtypes[] = {
-	{ "raw",		LT_RAW },
-	{ "definity",		LT_DEFINITY },
-	{ "merlin",		LT_MERLIN },
-	{ "panasonic",		LT_PANASONIC },
-	{ "meridian",		LT_MERIDIAN },
-	{ "ghx",		LT_GHX },
-	{ "md110",		LT_MD110 },
-	{ NULL, 0 }
-};
-
 struct String {
 	char		*s;
 	struct String	*next;
 };
 
-int logtype=LT_RAW;
 FILE *cur_logfile=NULL;
 int cur_month=0,new_month=0;
 int cur_day=0,new_day=0;
@@ -129,8 +109,6 @@ extern int optind;
 
 #endif
 
-#ifndef WIN32
-
 static int daemonize( void )
 {
 	int rc;
@@ -142,9 +120,6 @@ static int daemonize( void )
 	if( rc_gpid==(-1) ) return (-1);
 	return rc_gpid;
 }
-
-#endif
-
 
 int my_syslog( char *s, ... )
 {
@@ -230,14 +205,11 @@ static void sighuphandler(int sig)
 			cur_logfile=NULL;
 		}
 
-	if ( logtype==LT_RAW )
+		memcpy( dirname+dirlen,filename,strlen(filename));
+		if( (cur_logfile=fopen(dirname,"at"))==NULL )
 		{
-		   memcpy( dirname+dirlen,filename,strlen(filename));
-		   if( (cur_logfile=fopen(dirname,"at"))==NULL )
-		   		{
-					my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
-					exit(1);
-				}
+		    my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
+		    exit(1);
 		}
 
 	
@@ -321,27 +293,11 @@ char *my_strerror(void)
 	static char ret_err[MAXERRORLEN+1];
 	int rc;
 	int l;
-#ifdef WIN32
-	sprintf( ret_err,"[0x%08lX] ",GetLastError() );
-#else
 	sprintf( ret_err,"(%d) ",errno );
-#endif
 	l=strlen(ret_err);
-#ifdef WIN32
-	rc = FormatMessage(
-		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
-		GetLastError(),
-		0,
-		(LPTSTR) (ret_err+l),
-		MAXERRORLEN-l,
-		NULL 
-	);
-#else
 	strncpy( ret_err+l,strerror(errno),MAXERRORLEN-l );
 	ret_err[MAXERRORLEN]=0;
 	rc=strlen(ret_err+l);
-#endif
 	if( rc==0 ) {
 		ret_err[l-1]=0;
 	} else {
@@ -389,18 +345,7 @@ HANDLE open_tty( char *tty_name )
 {
 	HANDLE hCom;
 
-#ifdef WIN32
-	hCom = CreateFile( tty_name,
-		GENERIC_READ | GENERIC_WRITE,
-		0,    // comm devices must be opened w/exclusive-access
-		NULL, // no security attributes
-		OPEN_EXISTING, // comm devices must use OPEN_EXISTING
-		0,    // not overlapped I/O
-		NULL  // hTemplate must be NULL for comm devices
-	);
-#else
 	hCom = open( tty_name,O_RDWR );
-#endif
 
 	if (hCom == INVALID_HANDLE_VALUE) {
 		my_syslog( "open_tty on '%s' failed: %s",tty_name,my_strerror() );
@@ -414,16 +359,6 @@ int set_tty_params( HANDLE hCom,long speed,int data_bits,char parity,int stop_bi
 		long	speed;
 		DWORD	wspeed;
 	} speeds[] = {
-#ifdef WIN32
-		{ 1200, CBR_1200 },
-		{ 2400, CBR_2400 },
-		{ 4800, CBR_4800 },
-		{ 9600, CBR_9600 },
-		{ 19200, CBR_19200 },
-		{ 38400, CBR_38400 },
-		{ 57600, CBR_57600 },
-		{ 115200, CBR_115200 },
-#else
 		{ 1200, B1200 },
 		{ 2400, B2400 },
 		{ 4800, B4800 },
@@ -432,19 +367,12 @@ int set_tty_params( HANDLE hCom,long speed,int data_bits,char parity,int stop_bi
 		{ 38400, B38400 },
 		{ 57600, B57600 },
 		{ 115200, B115200 },
-#endif
 		{ 0, 0 }
 	};
 
 	struct Speed *sp;
 
-#ifdef WIN32
-	DCB dcb;
-	COMMTIMEOUTS cto;
-	BOOL fSuccess;
-#else
 	struct termios tt;
-#endif
 
 	for( sp=speeds; sp->speed; sp++ ) {
 		if( sp->speed==speed ) break;
@@ -462,69 +390,6 @@ int set_tty_params( HANDLE hCom,long speed,int data_bits,char parity,int stop_bi
 		return (-1);
 	}
 
-#ifdef WIN32
-	memset( &dcb,0,sizeof(DCB) );
-	dcb.DCBlength=sizeof(DCB);
-	dcb.BaudRate=sp->wspeed;
-	dcb.fBinary=TRUE;
-	if( parity ) {
-		dcb.fParity=TRUE;
-		switch( parity ) {
-		case 'e':
-			dcb.Parity=EVENPARITY;
-			break;
-		case 'o':
-			dcb.Parity=ODDPARITY;
-			break;
-		case 's':
-			dcb.Parity=SPACEPARITY;
-			break;
-		case 'm':
-			dcb.Parity=MARKPARITY;
-			break;
-		case 'n':
-			dcb.Parity=NOPARITY;
-			break;
-		default:
-			my_syslog( "Invalid parity: '%c'",parity );
-			return (-1);
-		}
-	} else {
-		dcb.fParity=FALSE;
-	}
-	dcb.fOutxCtsFlow=TRUE;
-	dcb.fOutxDsrFlow=FALSE;
-	dcb.fDtrControl=DTR_CONTROL_ENABLE;
-	dcb.fDsrSensitivity=TRUE;
-	dcb.fOutX=FALSE;
-	dcb.fInX=FALSE;
-	dcb.fErrorChar=FALSE;
-	dcb.fNull=FALSE;
-	dcb.fRtsControl=RTS_CONTROL_ENABLE;
-	dcb.fAbortOnError=FALSE;
-	dcb.ByteSize=data_bits;
-	dcb.StopBits=stop_bits==2 ? TWOSTOPBITS : ONESTOPBIT;
-	dcb.EofChar=0xFF;
-	dcb.EvtChar=0xFF;
-
-	fSuccess = SetCommState(hCom, &dcb);
-	if (!fSuccess) {
-		my_syslog( "SetCommState failed: %s", my_strerror() );
-		return (-1);
-	}
-
-	cto.ReadIntervalTimeout=0;
-	cto.ReadTotalTimeoutMultiplier=0;
-	cto.ReadTotalTimeoutConstant=0;
-	cto.WriteTotalTimeoutMultiplier=0;
-	cto.WriteTotalTimeoutConstant=0;
-
-	fSuccess = SetCommTimeouts(hCom, &cto);
-	if (!fSuccess) {
-		my_syslog( "SetCommTimeouts failed: %s", my_strerror());
-		return (-1);
-	}
-#else
 	cfmakeraw( &tt );
 	tt.c_iflag = 0;
 	tt.c_oflag = 0;
@@ -566,7 +431,6 @@ int set_tty_params( HANDLE hCom,long speed,int data_bits,char parity,int stop_bi
 		my_syslog( "tcsetattr failed: %s",my_strerror() );
 		return (-1);
 	}
-#endif
 
 	return 0;
 }
@@ -574,19 +438,11 @@ int set_tty_params( HANDLE hCom,long speed,int data_bits,char parity,int stop_bi
 int read_string( HANDLE hCom,char *buf,int blen )
 {
 	DWORD dwLength;
-#ifdef WIN32
-	BOOLEAN fSuccess;
-#endif
 	int count;
 
 	for( count=0; count<blen; count++,buf++ ) {
 		do {
-#ifdef WIN32
-			DWORD dwErrors;
-			while( (fSuccess=ReadFile( hCom,buf,1,&dwLength,NULL )) ) {
-#else
 			while( (dwLength=read( hCom,buf,1 ))>=0 ) {
-#endif
 				if( dwLength==0 ) {
 					if( dbg ) {
 						my_syslog( "read returned zero length" );
@@ -607,28 +463,10 @@ int read_string( HANDLE hCom,char *buf,int blen )
 				}
 				break;
 			}
-#ifdef WIN32
-			if( !fSuccess ) {
-#else
 			if( dwLength==(-1) ) {
-#endif
-#ifdef WIN32
-				BOOLEAN fCceSuccess;
-				fCceSuccess=ClearCommError( hCom,&dwErrors,NULL );
-				if( !fCceSuccess ) {
-					my_syslog( "ClearCommError failed: %s",my_strerror() );
-				} else {
-					my_syslog( "ClearCommError returned error 0x%lX",dwErrors );
-				}
-#else
 				my_syslog( "read error: %s",my_strerror() );
-#endif
 			}
-#ifdef WIN32
-		} while( !fSuccess );
-#else
 		} while( dwLength<=0 );
-#endif
 	}
 	return count;
 }
@@ -706,7 +544,7 @@ HANDLE open_tcp( unsigned short tcpPort )
 				return INVALID_HANDLE_VALUE;
 			}
 			my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
-			// wtf? by andy@eva.dp.ua
+			// wtf? by andy[at]eva.dp.ua
 			// if( remote_end.s_addr==0 ) break;
 			if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
 				close( new_s );
@@ -789,11 +627,10 @@ HANDLE open_io( char *io_name,long speed,int data_bits,char parity,int stop_bits
 
 void usage( void )
 {
-	struct LogType *lt;
-
 	(void)fprintf( stderr,
-"CDR Reader for PBXs v.%s (C) Alexey V. Kuznetsov, avk@gamma.ru, 2001-2002\n"
+"CDR Reader for PBXs v.%s (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002\n"
 "changed by Denis CyxoB www.yamiyam.dp.ua\n"
+"and Andrew Kornilov andy[at]eva.dp.ua\n"
 "for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua\n"
 "\n"
 "atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits]\n"
@@ -805,7 +642,6 @@ void usage( void )
 "-c char_size\tlength of character; valid values from 5 to 8\n"
 "-p parity\tparity of serial device:\n"
 "\t\te - even parity, o - odd parity, n - no parity,\n"
-"\t\tm - mark parity (Win32 only), s - space parity (Win32 only)\n"
 "-f stop_bits\tnumber of stop bits; valid values 1 or 2\n"
 "-d\t\toutput additional debug messages\n"
 "-e\t\tcopy error messages to stderr (in case if -L has value)\n"
@@ -816,17 +652,10 @@ void usage( void )
 "-r x.x.x.x\taccept TCP connections from this IP address only\n"
 "-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
 "tcp:N\t\twhere N is TCP port.\n"
-"-t cdr_type\ttype of CDR records, valid values (first is default)\n"
-	,CDRR_VER );
-	for( lt=logtypes; lt->name!=NULL; lt++ ) {
-		(void)fprintf( stderr,"\t\t\t%s\n",lt->name );
-	}
-#ifndef WIN32
-	(void)fprintf( stderr,
 "-b\t\tbecome daemon\n"
-"-P\t\tPID file. /var/run/atslogd.pid by default\n");
-#endif
-	exit(1);
+"-P\t\tPID file. /var/run/atslogd.pid by default\n",CDRR_VER);
+
+exit(1);
 }
 
 int main( int argc, char *argv[] )
@@ -841,7 +670,6 @@ int main( int argc, char *argv[] )
 	// for tcp reading
 	int tcp_timeout=2;
 	char buf[MAXSTRINGLEN+1];
-	struct LogType *lt;
 	char write_date=0;
 	// move tcp section here
 	// 
@@ -852,18 +680,12 @@ int main( int argc, char *argv[] )
 	struct sockaddr_in sa_loc,sa_rem;
 	socklen_t sa_rem_len;
 	//
-#ifndef WIN32
 	char do_daemonize=0;
-#endif
 	sigset_t ss;
 
 	HANDLE hCom;
 
-#ifdef WIN32
-	while( (rc=getopt(argc,argv,"oahdemnws:t:D:L:F:p:c:f:r:"))!=(-1) ) {
-#else
-	while( (rc=getopt(argc,argv,"boahdemnws:t:D:L:P:F:p:c:f:r:"))!=(-1) ) {
-#endif
+	while( (rc=getopt(argc,argv,"boahdemnws:D:L:P:F:p:c:f:r:"))!=(-1) ) {
 		switch( rc ) {
 		case 'D':
 			dirlen=strlen(optarg);
@@ -926,25 +748,11 @@ int main( int argc, char *argv[] )
 		case 'w':
 			next_open_timeout=atoi(optarg);
 			break;
-#ifndef WIN32
 		case 'b':
 			do_daemonize=1;
 			break;
 		case 'P':
 			pid_file=optarg;
-			break;
-#endif
-		case 't':
-			for( lt=logtypes; lt->name!=NULL; lt++ ) {
-				if( strcmp( lt->name,optarg )==0 ) {
-					logtype=lt->type;
-					break;
-				}
-			}
-			if( lt->name==NULL ) {
-				(void)fprintf( stderr,"Invalid CDR type: '%s'\n",optarg );
-				return 1;
-			}
 			break;
 		case 'o':
 			copy_to_stdout=1;
@@ -984,7 +792,6 @@ int main( int argc, char *argv[] )
 
 	my_syslog( "starting" );
 
-#ifndef WIN32
 	gpid = daemonize();
 
 	if( do_daemonize && gpid==(-1) ) {
@@ -1001,7 +808,6 @@ int main( int argc, char *argv[] )
 	    exit( 1 );
 	}
 
-#endif
 	sigfillset( &ss );
 	if( sigprocmask( SIG_SETMASK,&ss,NULL )==(-1) ) {
 		my_syslog( "can't block all signals: %s",strerror( errno ) );
@@ -1057,7 +863,7 @@ int main( int argc, char *argv[] )
 					break;
 				}
 				my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
-				// wtf? by andy@eva.dp.ua
+				// wtf? by andy[at]eva.dp.ua
 				// if( remote_end.s_addr==0 ) break;
 				if( remote_end.s_addr!=sa_rem.sin_addr.s_addr ) {
 					close( new_s );
@@ -1135,16 +941,13 @@ int main( int argc, char *argv[] )
 		return 1;
 	}
 
-	if( logtype==LT_RAW ) {
-		memcpy( dirname+dirlen,filename,strlen(filename));
-		if( (cur_logfile=fopen(dirname,"at"))==NULL ) {
-			my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
-			return 1;
-		}
+	memcpy( dirname+dirlen,filename,strlen(filename));
+	if( (cur_logfile=fopen(dirname,"at"))==NULL ){
+		my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
+		return 1;
 	}
 
 	while( (rc=read_string( hCom,buf,MAXSTRINGLEN ))>=0 ) {
-		char *dt;
 		if( rc==0 ) {
 			if( strncasecmp( argv[0],"tcp:",4 )==0 ) {
 				// sleep for tcp reading. no need to reopen
@@ -1163,121 +966,16 @@ int main( int argc, char *argv[] )
 			}
 			continue;
 		}
-		switch( logtype ) {
-		case LT_RAW:
-			my_fputs( buf,cur_logfile );
-			my_fputs( "\n",cur_logfile );
-			my_fflush( cur_logfile );
+		my_fputs( buf,cur_logfile );
+		my_fputs( "\n",cur_logfile );
+		my_fflush( cur_logfile );
+		if( cur_logfile==NULL ) {
+			put_cdr_to_q( buf );
 			break;
-		case LT_DEFINITY:
-			if( rc==5 &&
-				isdigit(buf[0]) && isdigit(buf[1]) &&
-				buf[2]==' ' &&
-				isdigit(buf[3]) && isdigit(buf[4]) )
-			{
-				new_day=(buf[0]-'0')*10+(buf[1]-'0');
-				new_month=(buf[3]-'0')*10+(buf[4]-'0');
-				new_log:
-				if( swap_day_month ) {
-					int i;
-					i=new_day; new_day=new_month; new_month=i;
-				}
-				if( new_day!=cur_day || new_month!=cur_month ) {
-					cur_day=new_day; cur_month=new_month;
-					open_cur_logfile( 0 );
-					if( write_date ) {
-						my_fputs( buf,cur_logfile );
-						my_fputs( "\n",cur_logfile );
-						my_fflush( cur_logfile );
-
-					}
-					flush_cdr_q();
-					free_cdr_q();
-				}
-				break;
-			} else if( rc==11 &&
-				isdigit(buf[0]) && isdigit(buf[1]) &&
-				buf[2]==':' &&
-				isdigit(buf[3]) && isdigit(buf[4]) &&
-				buf[5]==' ' &&
-				isdigit(buf[6]) && isdigit(buf[7]) &&
-				buf[8]=='/' &&
-				isdigit(buf[9]) && isdigit(buf[10]) )
-			{
-				new_day=(buf[6]-'0')*10+(buf[7]-'0');
-				new_month=(buf[9]-'0')*10+(buf[10]-'0');
-				goto new_log;
-			} else if( rc==4 &&
-				isdigit(buf[0]) && isdigit(buf[1]) &&
-				isdigit(buf[2]) && isdigit(buf[3]) )
-
-			{
-				new_day=(buf[0]-'0')*10+(buf[1]-'0');
-				new_month=(buf[2]-'0')*10+(buf[3]-'0');
-				goto new_log;
-			}
-			write_cdr:
-			if( cur_logfile==NULL ) {
-				put_cdr_to_q( buf );
-				break;
-			}
-			my_fputs( buf,cur_logfile );
-			my_fputs( "\n",cur_logfile );
-			my_fflush( cur_logfile );
-			break;
-		case LT_MERLIN:
-			if( isalpha(buf[0]) && buf[1]==' ' ) {
-				ParseClassicDate( buf+2 );
-			}
-			goto write_cdr;
-		case LT_PANASONIC:
-			ParseClassicDate( buf );
-			goto write_cdr;
-		case LT_GHX:
-			if( rc>21 ) ParseClassicDate( buf+21 );
-			goto write_cdr;
-		case LT_MD110:
-			if( rc>9 ) ParseMD110DateF2( buf+strspn(buf," ") );
-			goto write_cdr;
-		case LT_MERIDIAN:
-			if( rc>=39 && isdigit(buf[25]) && isdigit(buf[26]) &&
-				buf[27]=='/' &&
-				isdigit(buf[28]) && isdigit(buf[29]) &&
-				buf[30]==' ' &&
-				isdigit(buf[31]) && isdigit(buf[32]) &&
-				buf[33]==':' &&
-				isdigit(buf[34]) && isdigit(buf[35]) &&
-				buf[36]==':' &&
-				isdigit(buf[37]) && isdigit(buf[38]) )
-			{ // NEW CDR format
-				int new_month,new_day;
-				new_day=(buf[28]-'0')*10+(buf[29]-'0');
-				new_month=(buf[25]-'0')*10+(buf[26]-'0');
-				open_cur_logfile_with_check(1);
-			} else { // OLD CDR format
-				static int date_offs[] = { 25, 37, 39, 49, -1 };
-				int i;
-				for( i=0; date_offs[i]!=(-1); i++ ) {
-					if( rc<(date_offs[i]+12) ) continue;
-					dt=buf+date_offs[i];
-					if( isdigit(dt[0]) && isdigit(dt[1]) &&
-						dt[2]=='/' &&
-						isdigit(dt[3]) && isdigit(dt[4]) &&
-						dt[5]==' ' &&
-						isdigit(dt[6]) && isdigit(dt[7]) &&
-						dt[8]==':' &&
-						isdigit(dt[9]) && isdigit(dt[10]) )
-					{
-						int new_month,new_day;
-						new_day=(dt[3]-'0')*10+(dt[4]-'0');
-						new_month=(dt[0]-'0')*10+(dt[1]-'0');
-						open_cur_logfile_with_check(1);
-						break;
-					}
-				}
-			}
-			goto write_cdr;
 		}
+		my_fputs( buf,cur_logfile );
+		my_fputs( "\n",cur_logfile );
+		my_fflush( cur_logfile );
 	}
 	return 0;
 }
