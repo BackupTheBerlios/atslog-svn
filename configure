@@ -3,10 +3,13 @@
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #
 
+# Установим рабочие переменные
+UNAME=`uname`
+
 # Генерируем случайный пароль
 passwordgen(){
     if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
-# for Linus
+# for Linux
 	PASSWORD=`head -c 64 < /dev/urandom | md5sum | awk '{print $1}'| head -c 16`
     else
 # for FreeBSD
@@ -67,8 +70,31 @@ done
 
 if [ -z "$PREFIX" ]
 then
-    PREFIX="/usr/local"
+    if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
+	PREFIX="/usr"
+    else
+	PREFIX="/usr/local"
+    fi
 fi
+
+if [ "$PREFIX" = "/" ];then
+    TRUEPREFIX=$PREFIX
+    NOTCONTINUEPREFIX=YES
+fi
+
+# Check for last slash "/" in the PREFIX
+# Проверка на завершающий слеш "/" в переменной PREFIX
+SUFIX=$(expr 0$PREFIX : 0".*\(\/\)\$")
+while [ "$SUFIX" = "/" ] ;do
+    PREFIX=$(expr 0$PREFIX : 0"\(.*\)/\$")
+    SUFIX=$(expr 0$PREFIX : 0".*\(\/\)\$")
+done
+
+if [ "$NOTCONTINUEPREFIX" != "YES" ];then
+    TRUEPREFIX=$PREFIX
+fi
+
+
 if [ -z "$PERL" ]
 then
     PERL="/usr/bin/perl"
@@ -100,11 +126,11 @@ echo "--disable-update Произвести установку новой версии без учета
 		 происходит автоматически.
 
 --prefix=PREFIX  install architecture-independent files in PREFIX
-                 [/usr/local]
+                 [$PREFIX]
 
 --with-perl=PERL
 		 architecture-independen path to Perl
-		 [/usr/bin/perl]
+		 [$PERL]
 
 --sql-type=[PostgreSQL|MySQL]
 		 Database type. MySQL by default.
@@ -127,10 +153,12 @@ else
     exit 1
 fi
 
+
+echo checking for PREFIX path $TRUEPREFIX
+
 # Установим рабочие переменные
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
 PATH=$PATH:$bindir:$sharedir
-UNAME=`uname`
 # Назначим путь к клиенту БД
 PGSQLPATH=$PREFIX/bin/psql
 MYSQLPATH=$PREFIX/bin/mysql
@@ -144,7 +172,7 @@ if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
     port=ttyS0
 # Определимся с релизом Linux:
     if [ ! "$LINUXVERSVION" = "" ];then
-	cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit.tmp
+	cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit.out
     else
         if [ -r  /etc/redhat-release ];then
 # RedHat
@@ -160,10 +188,10 @@ if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
 	    LINUXVERSVION="redhat"
 	fi
     fi
-    cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit.tmp
+    cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit.out
 else
 # Все другие операционные системы кроме Linux.
-    cp ./FreeBSD/atslogdinit.sh ./atslogdinit.tmp
+    cp ./FreeBSD/atslogdinit.sh ./atslogdinit.out
 fi
 
 # Заменим PREFIX
@@ -184,8 +212,6 @@ echo checking for dailyscript path $dailyscript
 
 initscript=`echo "$initscript" | sed "s%/usr/local%$PREFIX%g"`
 echo checking for initscript path $initscript
-
-echo checking for prefix path $PREFIX
 
 
 # Проверим есть ли в системе старые версии конфигурационных файлов
@@ -324,16 +350,30 @@ then
     logdir=$LOGDIR
 fi
 
-if [ "$PREFIX" != "/usr/local" ]
-then                            
-    logdir=${PREFIX}${logdir}
+if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
+    if [ "$PREFIX" != "/usr" ]
+    then                            
+	logdir=${PREFIX}${logdir}
+    fi
+else
+    if [ "$PREFIX" != "/usr/local" ]
+    then                            
+	logdir=${PREFIX}${logdir}
+    fi
 fi
 
 echo checking for log directory $logdir
 
-if [ "$PREFIX" != "/usr/local" ]
-then                            
-    pidfile=${PREFIX}${pidfile}
+if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
+    if [ "$PREFIX" != "/usr" ]
+    then                            
+	pidfile=${PREFIX}${pidfile}
+    fi
+else
+    if [ "$PREFIX" != "/usr/local" ]
+    then                            
+	pidfile=${PREFIX}${pidfile}
+    fi
 fi
 
 echo checking for PID file path $pidfile
@@ -362,44 +402,44 @@ case "$UPDATE" in
     [Yy][Ee][Ss])
 	if [ 0$build -lt 028 ]  ;then
 	    echo checking for update from build 28
-	    cat ./sql/updateto28.mysql.sql >> ./updatesqltables.mysql.sql.tmp
+	    cat ./sql/updateto28.mysql.sql >> ./updatesqltables.mysql.sql.out
 	fi
 
 	if [ 0$build -lt 030 ]  ;then
 	    echo checking for update from build 30
-	    cat ./sql/updateto30.mysql.sql >> ./updatesqltables.mysql.sql.tmp
+	    cat ./sql/updateto30.mysql.sql >> ./updatesqltables.mysql.sql.out
 	fi
 
 	if [ 0$build -lt 034 ]  ;then
 	    echo checking for update from build 34
-	    cat ./sql/updateto34.mysql.sql >> ./updatesqltables.mysql.sql.tmp
+	    cat ./sql/updateto34.mysql.sql >> ./updatesqltables.mysql.sql.out
 	fi
 
 	if [ 0$build -lt 060 ]  ;then
 	    echo checking for update from build 60
-	    cat ./sql/updateto60.mysql.sql >> ./updatesqltables.mysql.sql.tmp
+	    cat ./sql/updateto60.mysql.sql >> ./updatesqltables.mysql.sql.out
 	fi
 
 	if [ 0$build -lt 088 ]  ;then
 	    echo checking for update from build 88
-	    cat ./sql/updateto88.mysql.sql >> ./updatesqltables.mysql.sql.tmp
+	    cat ./sql/updateto88.mysql.sql >> ./updatesqltables.mysql.sql.out
 	fi
 
-	if [ -f ./updatesqltables.$SQLTYPE.sql.tmp ];then
+	if [ -f ./updatesqltables.$SQLTYPE.sql.out ];then
 	    sed \
 	     -e "s/@sqlmaspasswd@/$sqlmaspasswd/g" \
 	     -e "s/@sqlfromhost@/$sqlfromhost/g" \
 	     -e "s/@sqlmasteruser@/$sqlmasteruser/g" \
 	     -e "s/@sqlhost@/$sqlhost/g" \
 	     -e "s/@sqldatabase@/$sqldatabase/g" \
-	     < ./updatesqltables.$SQLTYPE.sql.tmp > ./updatesqltables.$SQLTYPE.sql
+	     < ./updatesqltables.$SQLTYPE.sql.out > ./updatesqltables.$SQLTYPE.sql
 
 	fi
-	if [ -f ./updatesqltables.mysql.sql.tmp ];then
-	    rm ./updatesqltables.mysql.sql.tmp
+	if [ -f ./updatesqltables.mysql.sql.out ];then
+	    rm ./updatesqltables.mysql.sql.out
 	fi
-	if [ -f ./updatesqltables.pgsql.sql.tmp ];then
-	    rm ./updatesqltables.pgsql.sql.tmp
+	if [ -f ./updatesqltables.pgsql.sql.out ];then
+	    rm ./updatesqltables.pgsql.sql.out
 	fi
 
 	echo "Конфигурируем таблицы SQL сервера для обновления"
@@ -479,25 +519,25 @@ esac
  echo checking for Perl path in atslogcleardb.pl
  sed \
  -e "s%/usr/bin/perl%$PERL%g" \
- < ./include/atslogcleardb.pl > ./atslogcleardb.pl.tmp
+ < ./include/atslogcleardb.pl > ./atslogcleardb.pl.out
  echo checking for config file path in atslogcleardb.pl
  sed \
  -e "s%/usr/local/etc/atslog.conf%$PREFIX/etc/atslog.conf%g" \
- < ./atslogcleardb.pl.tmp > ./atslogcleardb.pl
- if [ -f ./atslogcleardb.pl.tmp ];then
-    rm ./atslogcleardb.pl.tmp
+ < ./atslogcleardb.pl.out > ./atslogcleardb.pl
+ if [ -f ./atslogcleardb.pl.out ];then
+    rm ./atslogcleardb.pl.out
  fi
 
  echo checking for Perl path in atslogdb.pl
  sed \
  -e "s%/usr/bin/perl%$PERL%g" \
- < ./include/atslogdb.pl > ./atslogdb.pl.tmp
+ < ./include/atslogdb.pl > ./atslogdb.pl.out
  echo checking for config file path in atslogdb.pl
  sed \
  -e "s%/usr/local/etc/atslog.conf%$PREFIX/etc/atslog.conf%g" \
- < ./atslogdb.pl.tmp > ./atslogdb.pl
- if [ -f ./atslogdb.pl.tmp ];then
-    rm ./atslogdb.pl.tmp
+ < ./atslogdb.pl.out > ./atslogdb.pl
+ if [ -f ./atslogdb.pl.out ];then
+    rm ./atslogdb.pl.out
  fi
 
  echo checking for config file path in atslogmaster
@@ -528,9 +568,9 @@ esac
  echo checking for config file path in atslogdinit
  sed \
  -e "s%/usr/local/etc/atslog.conf%$PREFIX/etc/atslog.conf%g" \
- < ./atslogdinit.tmp > ./atslogdinit
- if [ -f ./atslogdinit.tmp ];then
-    rm ./atslogdinit.tmp
+ < ./atslogdinit.out > ./atslogdinit
+ if [ -f ./atslogdinit.out ];then
+    rm ./atslogdinit.out
  fi
 # Check for Perl DBI.
     echo -n "checking for DBI $sqltype class for Perl: "

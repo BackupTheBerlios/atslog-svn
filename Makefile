@@ -57,8 +57,8 @@ clean:
 	createsqltables.pgsql.sql \
 	updatesqltables.mysql.sql \
 	updatesqltables.pgsql.sql \
-	updatesqltables.mysql.sql.tmp \
-	updatesqltables.pgsql.sql.tmp \
+	updatesqltables.mysql.sql.out \
+	updatesqltables.pgsql.sql.out \
 	install.log \
 	./scripts/createdb.out.pl \
 	./scripts/checkDBD.out.pl \
