@@ -573,14 +573,16 @@ HANDLE open_tcp( unsigned short tcpPort )
 								// resource temp. unavail. try again later ;-)
 								my_syslog( "fork() failed: %s",my_strerror() );
 								close(new_s);
-								continue;
+								//continue;
+								exit(1);
 							};
 						case ENOMEM:
 							{
 								// not enough system memory. hangup?
 								my_syslog( "fork() failed: %s",my_strerror() );
 								close(new_s);
-								continue;
+								//continue;
+								exit(1);
 							};
 					}			
 				}
