@@ -950,9 +950,6 @@ int main( int argc, char *argv[] )
 			put_cdr_to_q( buf );
 			break;
 		}
-		my_fputs( buf,cur_logfile );
-		my_fputs( "\n",cur_logfile );
-		my_fflush( cur_logfile );
 	}
 	return 0;
 }
