@@ -1,0 +1,16 @@
+Using server side of ATSlog.
+
+/usr/local/etc/atslog.conf	конфигурационный файл. 
+atslogmaster start		запуск ATSlog. 
+atslogmaster stop		останов. 
+atslogmaster restart		перезагрузка. 
+atslogmaster writedb		запись последних звонков в базу SQL сервера. 
+atslogmaster rotate		ротация текстовых лог-файлов.
+atslogmaster cleardb		очистка таблиц SQL сервера.
+atslogmaster alltodb		запись всех (в т.ч. из архивов) звонков в
+				базу SQL сервера. Данные о текущих звонках
+				из файла /var/log/atslog/currentcalls.log не
+				добавляются из-за возможного дублирования
+				информации. Если есть необходимость записать
+				также и текущие звонки, то воспользуйтесь
+				функцией writedb
