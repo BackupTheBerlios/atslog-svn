@@ -1,0 +1,68 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+#
+# Разбираем строки текстового-лог файла для АТС Panasonic KX-TD816RU
+
+sub parsecurcalls() {
+    while ($str=<>)
+    {
+        $stringNumber++;
+        if ($str =~ /^.*?(\d+)\/\s??(\d+)\/\s??(\d+)\s+(\d+)\:(\d+)(['AM'|'PM']{2})\s+(\d+)\s+(\d+)\s+(.*?)\s+(\d+)\:(\d+)\'(\d+).+$/){
+	    unitecurcalls();
+        }else{
+	    #print("$stringNumber\n");
+	    if ($vars{debug} =~ /yes/i){
+		if ($str !~ /^\s*$/){
+		    print $str;
+		};
+	    };
+        };
+    };
+};
+
+sub unitecurcalls() {
+
+    $Month = $1;
+
+    $Day=$2;
+
+    $Year=$3+2000;
+
+    $CallHour=&AmPmTo24($4,$6);
+
+    $Forwarded=0;
+
+    $CallMinute=$5;
+
+    $Internally=$7;
+
+    $CO=$8;
+
+    $forIncoming=$9;
+
+    $Duration = (($10*60*60)+($11*60)+$12);
+
+    $TimeOfCall = "'$Year-$Month-$Day $CallHour\:$CallMinute\:00'";
+	
+    if($forIncoming =~ /<INCOMING>\s*/){
+	$Way='1';
+	$Number=0;
+    }else{
+	$Way='2';
+	$Number=$forIncoming;
+	$forIncoming =~ s/\D+//;
+	$Number = substr($forIncoming,0,100);
+    };
+
+    if ($TimeOfCall ne ""){
+# Для проверки наличия хоть одной запись звонков подлежащей
+# записи в db.
+	$callsCount++;
+    }
+    #print("$stringNumber $TimeOfCall $Forwarded $Internally $CO $Way $Number $Duration\n");
+    $ins_query = "INSERT INTO `calls` (`TimeOfCall`, `Forwarded`,`Internally`,`CO`, `Way` , `Number`, `Duration`) VALUES  (".$TimeOfCall.", '$Forwarded', '$Internally', '$CO', '$Way', '$Number', '$Duration');";
+    $dbh->Query($ins_query);
+
+}
+
+1;

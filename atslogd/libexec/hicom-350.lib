@@ -1,0 +1,96 @@
+#!/usr/bin/perl
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+#
+# Разбираем строки текстового-лог файла для АТС Siemens Hicom 350
+
+parsecurcalls();
+
+sub parsecurcalls() {
+#    print("ParceCurCalls\n");
+    while ($str=<>)
+    {
+# $#@/#@/#@#@:#@:#@#@:#@:#@#@@#@#@@@@@@@@@@@@@@@@@@@
+	$stringNumber++;
+	if ($str =~ /^\$(\d\d)\/(\d\d)\/.*/){
+
+#	if ($str =~ /^\D*([0-9]+)\s+([0-9]+)\s+\**\#*\s*([[0-9]+|CLI Num: [0-9]+|Incoming]*)\s+([0-9\/]+)\s+([0-9\:\'\"]+)\s+([0-9\:\'\"]+)/){
+#	    print("$1 $2  $3  $4  $5   $6  $7\n");
+	    unitecurcalls();
+	}else{
+	    #print("$stringNumber\n");
+	    #print("$str\n");
+	    if ($vars{nowrlog} =~ /yes/i){
+	        if ($str !~ /^$/){
+#	    	    print $str;
+	        };                        
+	    };                            
+        };                                
+    };
+};                                    
+
+sub unitecurcalls() {
+
+	    $cell[7] = $7;
+	    $cell[6] = $6;
+	    $cell[5] = $5;
+	    $cell[4] = $4;
+	    $cell[3] = $3;
+	    $cell[2] = $2;
+	    $cell[1] = $1;
+	    
+	    $cell[4] =~ /(\d{2})\/(\d{2})/;
+		$partCell[4][0]= $1;
+		$partCell[4][1]= $2;
+	    
+	    $cell[5] =~ /(\d{2})\:(\d{2})\'(\d{2})\"/;
+		$partCell[5][0]= $1;
+		$partCell[5][1]= $2;
+		$partCell[5][2]= $3;
+
+	    ($SECOND, $MINUTE, $HOUR, $DAY, $MONTH, $YEAR) = (localtime())[0, 1, 2, 3, 4, 5];
+	    $YEAR+=1900;
+	    $MONTH++;
+		
+	    $cell[6] =~ /(\d{2})\:(\d{2})\'(\d{2})\"/;
+		$partCell[6][0]= $1;
+		$partCell[6][1]= $2;
+		$partCell[6][2]= $3;
+		
+    	    if ($cell[3] =~ /Incoming/){
+		$Way='1';
+		$Number=0;
+	    }elsif ($cell[3] =~ /CLI Num: ([0-9]+)/){
+		$Way='1';
+		$Number=$1;
+	    }else{
+		$Way='2';
+		$Outnumber = $cell[3];
+		$Outnumber =~ s/\D*//;
+		$Number=substr($Outnumber,0,100);
+	    }
+
+	    $Forwarded=0;
+	    
+	    $Internally=$cell[1];
+	    
+	    $CO=$cell[2];
+
+	    $Duration=(($partCell[6][0]*60*60)+($partCell[6][1]*60)+$partCell[6][2]);
+
+    	    $TimeOfCall="'$YEAR-${partCell[4][0]}-${partCell[4][1]} ${partCell[5][0]}:${partCell[5][1]}:${partCell[5][2]}'";
+
+    	    if ($TimeOfCall ne ""){
+    # Проверим, имеестя ли хоть одна запись звонков подлежащая
+    # записи в db.
+		$callsCount++;
+	    }
+#	    if ($cell[3] =~ /Incoming/){
+	      print("$stringNumber $TimeOfCall $Forwarded $Internally $CO $Way $Number $Duration\n");
+#	    }
+#	    $ins_query = "INSERT INTO `calls` (`TimeOfCall`, `Forwarded`,`Internally`,`CO`, `Way` , `Number`, `Duration`) VALUES  (".$TimeOfCall.", '$Forwarded', '$Internally', '$CO', '$Way', '$Number', '$Duration');";
+#	    $dbh->Query($ins_query);
+
+};
+
+1;

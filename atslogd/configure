@@ -1,0 +1,362 @@
+#!/bin/sh
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+#
+
+# Генерируем случайный пароль
+passwordgen(){
+    if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
+# for Linus
+	PASSWORD=`head -c 64 < /dev/urandom | md5sum | awk '{print $1}'| head -c 16`
+    else
+# for FreeBSD
+	PASSWORD=`head -c 64 < /dev/urandom | md5 | awk '{print $1}'| head -c 16`
+    fi
+}
+
+UPDATEQUESTION="YES"
+
+for i
+do
+    case "$1" in
+	"--help")
+	    HELP="yes"
+	;;
+	"--disable-update")
+	    UPDATEQUESTION="NO"
+	;;
+	--linux-version=*)
+	    case "$1" in
+	        "--linux-version=SuSE")
+		    LINUXVERSVION="suse"
+	        ;;
+	        "--linux-version=RedHat")
+	    	    LINUXVERSVION="redhat"
+		;;
+		"--linux-version=ASPlinux")
+		    LINUXVERSVION="asplinux"
+		;;
+	    esac                        
+	    LINUXYES="YES"	    
+	;;
+	--prefix=*)
+	    PREFIX=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
+	;;
+	--with-perl=*)
+	    PERL=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
+	;;
+	--logdir=*)
+	    LOGDIR=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
+	;;
+    esac
+    shift
+done
+
+if [ -z "$PREFIX" ]
+then
+    PREFIX="/usr/local"
+fi
+if [ -z "$PERL" ]
+then
+    PERL="/usr/bin/perl"
+fi
+
+echo "Usage: configure [options]
+Options: [defaults in brackets after descriptions]
+Use: configure --help for help.
+Configuration:"
+
+if [ "$HELP" = "yes" ];then
+
+echo "--disable-update Произвести установку новой версии без учета
+                 имеющихся в системе конфигурационных файлов.
+
+		 Если параметр \" --disable-update\" не указан, то
+		 будет произведён поиск старых файлов с настройками
+		 ($PREFIX/etc/panalog.conf или $PREFIX/etc/atslog.conf)
+		 и при положительном результате конфигурирование будет
+		 происходить с учетом параметров из этих файлов.
+
+--linux-version= Производитель Linux.
+                 Возможные варианты (проверенные в работе версии Linux):
+		 --linux-version=SuSE
+		 --linux-version=RedHat
+		 --linux-version=ASPlinux
+		 
+		 Если параметр не будет указываться специально, то выбор
+		 происходит автоматически.
+
+--prefix=PREFIX  install architecture-independent files in PREFIX
+                 [/usr/local]
+
+--with-perl=PERL
+		 architecture-independen path to Perl
+		 [/usr/bin/perl]
+		 
+"
+    exit 0
+fi
+
+# Readin config file
+echo -n "checking for default config file: "
+if [ -r ./include/atslog.conf.default ]; then
+    . ./include/atslog.conf.default
+    build=""
+    echo " OK"
+else
+    echo " not found"
+    echo "Can't open config file include/atslog.conf.default"
+    exit 1
+fi
+
+# Установим рабочие переменные
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
+PATH=$PATH:$bindir:$sharedir
+UNAME=`uname`
+
+# Если ставим на Linux, то переназначим некоторые переменные
+if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
+# Переопределим некоторые переменные для среды Linux
+    initscript=/etc/init.d/atslog
+    monthlyscript=/etc/cron.monthly/atslogrotate
+    dailyscript=/etc/cron.daily/atslogdaily
+    port=ttyS0
+# Определимся с релизом Linux:
+    if [ ! "$LINUXVERSVION" = "" ];then
+	cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit
+    else
+        if [ -r  /etc/redhat-release ];then
+# RedHat
+	    LINUXVERSVION="redhat"
+	elif [ -r /etc/asplinux-release ];then
+# ASP-Linux
+	    LINUXVERSVION="asplinux"
+	elif [ -r /etc/SuSE-release ];then
+# SuSE
+	    LINUXVERSVION="suse"
+	else
+# Для других версий Linux, кроме перечисленных выше
+	    LINUXVERSVION="redhat"
+	fi
+    fi
+    cp ./Linux/atslogdinit.$LINUXVERSVION ./atslogdinit
+else
+# Все другие операционные системы кроме Linux.
+    cp ./FreeBSD/atslogdinit.sh ./atslogdinit
+fi
+
+# Заменим PREFIX
+bindir=`echo "$bindir" | sed "s%/usr/local%$PREFIX%g"`
+echo checking for bin directory $bindir
+
+libdir=`echo "$libdir" | sed "s%/usr/local%$PREFIX%g"`
+echo checking for lib directory $libdir
+
+sharedir=`echo "$sharedir" | sed "s%/usr/local%$PREFIX%g"`
+echo checking for share directory $sharedir
+
+monthlyscript=`echo "$monthlyscript" | sed "s%/usr/local%$PREFIX%g"`
+echo checking for monthlyscript path $monthlyscript
+
+dailyscript=`echo "$dailyscript" | sed "s%/usr/local%$PREFIX%g"`
+echo checking for dailyscript path $dailyscript
+
+initscript=`echo "$initscript" | sed "s%/usr/local%$PREFIX%g"`
+echo checking for initscript path $initscript
+
+# Проверим есть ли в системе старые версии конфигурационных файлов
+echo -n "checking for old config files: "
+if [ -r $PREFIX/etc/panalog.conf ]; then
+    if [ "$UPDATEQUESTION" = "YES" ];then
+	UPDATE="YES"
+	CONFONE="YES"
+    fi
+fi
+
+if [ -r $PREFIX/etc/atslog.conf ]; then
+    if [ "$UPDATEQUESTION" = "YES" ];then
+	UPDATE="YES"
+	CONFTWO="YES"
+    fi
+fi
+
+if [ "$CONFONE" = "YES" -o "$CONFTWO" = "YES" ];then
+    echo " OK"
+	if [ "$CONFONE" = "YES" ];then
+	    echo "В системе найден конфигурационный файл $PREFIX/etc/panalog.conf"
+	fi
+	if [ "$CONFTWO" = "YES" ];then
+	    echo "В системе найден конфигурационный файл $PREFIX/etc/atslog.conf"
+	fi
+else
+    echo " NONE"
+fi
+
+echo checking for prefix path $PREFIX
+echo checking for Perl path $PERL
+
+case "$UPDATE" in
+[Yy][Ee][Ss])
+    echo "Продолжение конфигурирования с учётом данных из файлов, имеющихся в системе."
+	if [ -r $PREFIX/etc/panalog.conf ]; then
+	    SHAREDIR=$sharedir
+	    MASTERSCRIPT=$masterscript
+	    CLEARDB=$cleardb
+	    PIDFILE=$pidfile
+
+	    . $PREFIX/etc/panalog.conf
+
+	    port=`basename $port`    
+	    callslogfile=`basename $callslogfile`
+	    startlogfile=`basename $startlogfile`
+	    sharedir=$SHAREDIR
+	    masterscript=$MASTERSCRIPT
+	    cleardb=$CLEARDB
+	    pidfile=$PIDFILE
+	fi
+
+	if [ -r $PREFIX/etc/atslog.conf ]; then
+	    . $PREFIX/etc/atslog.conf
+	    if [ -z "$sqlmaspasswd" ];then
+	        sqlmaspasswd=$sqlpassword
+	    fi
+	    if [ ! -z "$sqluser" ];then
+	        sqlmasteruser=$sqluser
+	    fi
+	    if [ ! -z "$nowrlog" ];then
+	        debug=$nowrlog
+	    fi
+	fi
+    ;;
+    *)
+	echo "Продолжение конфигурирования для новой установки ATSlog"
+    ;;
+esac
+
+if [ "$sqlhost" = "localhost" ];then
+    sqlfromhost=localhost
+else
+    sqlfromhost=`hostname`
+fi
+
+if [ -n "$LOGDIR" ]
+then
+    logdir=$LOGDIR
+fi
+
+if [ "$PREFIX" != "/usr/local" ]
+then                            
+    logdir=${PREFIX}${logdir}
+fi
+
+echo checking for log directory $logdir
+
+if [ "$PREFIX" != "/usr/local" ]
+then                            
+    pidfile=${PREFIX}${pidfile}
+fi
+
+echo checking for PID file path $pidfile
+
+
+
+if [ -z "$sqlmaspasswd" ];then
+    echo "Зададим пароль для пользователя $sqlmasteruser;"
+    echo "модули ATSlog от имени этого пользователя инициализируют"
+    echo "все обращения к SQL серверу".
+# Используем генерированный пароль для работы с SQL сервером
+    passwordgen
+    sqlmaspasswd=$PASSWORD
+fi
+
+ sed \
+ -e "s/sqlhost=''/sqlhost='$sqlhost'/g" \
+ -e "s/sqldatabase=''/sqldatabase='$sqldatabase'/g" \
+ -e "s/sqlmasteruser=''/sqlmasteruser='$sqlmasteruser'/g" \
+ -e "s/sqlmaspasswd=''/sqlmaspasswd='$sqlmaspasswd'/g" \
+ -e "s/sqltype=''/sqltype='$sqltype'/g" \
+ -e "s/model=''/model='$model'/g" \
+ < ./www/atslog/include/set/conf.inc > ./conf.inc
+
+case "$UPDATE" in
+    [Yy][Ee][Ss])
+	if [ "0$build" -lt 028 ]  ;then
+	    cat ./sql/updateto28.sql >> ./updatesqltables.sql.tmp
+	fi
+
+	if [ "0$build" -lt 030 ]  ;then
+	    cat ./sql/updateto30.sql >> ./updatesqltables.sql.tmp
+	fi
+
+	if [ "0$build" -lt 034 ]  ;then
+	    cat ./sql/updateto34.sql >> ./updatesqltables.sql.tmp
+	fi
+
+	sed \
+	     -e "s/@sqlmaspasswd@/$sqlmaspasswd/g" \
+	     -e "s/@sqlfromhost@/$sqlfromhost/g" \
+	     -e "s/@sqlmasteruser@/$sqlmasteruser/g" \
+	     -e "s/@sqlhost@/$sqlhost/g" \
+	     -e "s/@sqldatabase@/$sqldatabase/g" \
+	     < ./updatesqltables.sql.tmp > ./updatesqltables.sql
+
+	echo "Конфигурируем таблицы SQL сервера для обновления"
+    ;;
+        *)
+	sed \
+	     -e "s/@sqlmaspasswd@/$sqlmaspasswd/g" \
+	     -e "s/@sqlfromhost@/$sqlfromhost/g" \
+	     -e "s/@sqlmasteruser@/$sqlmasteruser/g" \
+	     -e "s/@sqlhost@/$sqlhost/g" \
+	     -e "s/@sqldatabase@/$sqldatabase/g" \
+	     < ./sql/createsqltables.sql.default > ./createsqltables.sql
+
+	echo "Конфигурируем таблицы SQL сервера для новой установки"
+    ;;
+esac
+
+ sed \
+ -e "s/^sqlmasteruser=atslog/sqlmasteruser=$sqlmasteruser/g" \
+ -e "s/^sqlmaspasswd=/sqlmaspasswd=$sqlmaspasswd/g" \
+ -e "s/^sqlhost=localhost/sqlhost=$sqlhost/g" \
+ -e "s/^sqldatabase=atslog/sqldatabase=$sqldatabase/g" \
+ -e "s%^port=cuaa0%port=$port%g" \
+ -e "s%^speed=9600%speed=$speed%g" \
+ -e "s%^stopbits=1%stopbits=$stopbits%g" \
+ -e "s%^charsize=8%charsize=$charsize%g" \
+ -e "s%^parity=n%parity=$parity%g" \
+ -e "s/^callslogfile=calls.log/callslogfile=$callslogfile/g" \
+ -e "s/^startlogfile=atstart.log/startlogfile=$startlogfile/g" \
+ -e "s%^bindir=/usr/local/bin%bindir=$bindir%g" \
+ -e "s%^langdir=lang%langdir=$langdir%g" \
+ -e "s%^logdir=/var/log/atslog%logdir=$logdir%g" \
+ -e "s%^howmonth=12%howmonth=$howmonth%g" \
+ -e "s%^model=KX-TA616RU%model=$model%g" \
+ -e "s%^syslogfacility=user.err%syslogfacility=$syslogfacility%g" \
+ -e "s%^libdir=/usr/local/libexec/atslog%libdir=$libdir%g" \
+ -e "s%^sharedir=/usr/local/share/atslog%sharedir=$sharedir%g" \
+ -e "s%^atslogd=atslogd%atslogd=$atslogd%g" \
+ -e "s%^masterscript=atslogmaster%masterscript=$masterscript%g" \
+ -e "s%^initscript=/usr/local/etc/rc.d/atslogdinit.sh%initscript=$initscript%g" \
+ -e "s%^monthlyscript=/usr/local/etc/periodic/monthly/atslogrotate%monthlyscript=$monthlyscript%g" \
+ -e "s%^dailyscript=/usr/local/etc/periodic/daily/atslogdaily%dailyscript=$dailyscript%g" \
+ -e "s%^atslogdb=atslogdb.pl%atslogdb=$atslogdb%g" \
+ -e "s%^cleardb=atslogcleardb.pl%cleardb=$cleardb%g" \
+ -e "s%^curcallslogfile=currentcalls.log%curcallslogfile=$curcallslogfile%g" \
+ -e "s%^notwritelog=notwrite.log%notwritelog=$notwritelog%g" \
+ -e "s%^debug=no%debug=$debug%g" \
+ -e "s%^pidfile=/var/run/atslogd.pid%pidfile=$pidfile%g" \
+ -e "s%^fastwrite=no%fastwrite=$fastwrite%g" \
+ -e "s%^sqltype=MySQL%sqltype=$sqltype%g" \
+ < ./include/atslog.conf.default > ./atslog.conf
+
+ sed \
+ -e "s%/usr/bin/perl%$PERL%g" \
+ < ./include/atslogcleardb.pl > ./include/atslogcleardb.pl.tmp
+
+ sed \
+ -e "s%/usr/bin/perl%$PERL%g" \
+ < ./include/atslogdb.pl > ./include/atslogdb.pl.tmp
+
+echo "Configure done."
+exit $?

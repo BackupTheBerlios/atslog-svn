@@ -1,0 +1,343 @@
+#!/bin/sh
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+#                                                       
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
+NOWDATE=`LANG=en_US;date`
+BASENAME=`basename $0`
+
+# Readin config file                              
+if [ -r /usr/local/etc/atslog.conf ]; then
+    . /usr/local/etc/atslog.conf
+
+# Переменная $LANG - берётся из настройки локали.
+    if [ -f $sharedir/$langdir/$LANG ]; then
+	. $sharedir/$langdir/$LANG
+    elif [ -f $sharedir/$langdir/en_US ]; then
+	. $sharedir/$langdir/en_US
+    else
+	echo "Can't open language file"
+	exit 1
+    fi
+else
+    echo "Can't open config file"
+    exit 1
+fi                                                
+
+# Установим рабочие переменные
+PATH=$PATH:$bindir:$sharedir
+if [ -s $pidfile ];then
+    GROUPPID=`cat $pidfile`
+    if [ -z "$GROUPPID" ];then
+        GROUPPID=`ps -x -o pgid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
+    fi
+else
+    GROUPPID=`ps -x -o pgid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
+fi
+
+case "$debug" in
+    [Yy][Ee][Ss])
+        notwriteoutput="$logdir/$notwritelog"
+    ;;
+    *)
+        notwriteoutput="/dev/null"
+    ;;
+esac
+
+# Проверим, используется tcp порт, или порт в /dev/
+TCPPORT=$(expr $port : "\.*tcp:.*\$")
+if [ $TCPPORT = 0 ];then
+    port="/dev/"${port}
+fi
+
+
+# Определим основные функции
+#
+# Функция выводит сообщения об ошибках на консоль, в лог-файл и в syslog
+echomess(){
+    if [ ! -z "$GROUPPID"  ];then
+	ECHOGROUPPID="[${GROUPPID}]"
+    else
+	ECHOGROUPPID=""
+    fi
+    if [ -n "$ECHOMESSAGE" ];then
+	MESSAGE=$ECHOMESSAGE
+    else
+	MESSAGE=$ERRORMESSAGE
+	logger -p $syslogfacility "${masterscript}${ECHOGROUPPID}: $MESSAGE"
+    fi
+    echo "${masterscript}: $MESSAGE"
+    echo "$NOWDATE ${masterscript}${ECHOGROUPPID}: $MESSAGE" >> $logdir/$startlogfile
+    ECHOMESSAGE=""
+    ERRORMESSAGE=""
+}
+
+# Функция запускает основной скрипт считывания информации из мини-АТС
+startloging(){
+    if [ -s $pidfile ];then
+    	ECHOMESSAGE=$msg1
+	echomess
+	TORETURN=1
+    else
+	# Проверим заканчивается ли наш $curcallslogfile пустой строкой.
+	# Нужно для того, чтобы последние строки не слились в одну.
+	# Такое может случиться, например, при некорректном
+        # завершения роботы программы или при выключении питания
+        # в момент записи строки.
+        # В любом случае новая строка не помешает! :)
+
+        LASTSTRING=`tail -n1 $logdir/$curcallslogfile`
+        if [ -n "$LASTSTRING" ];then
+    	    echo "" >> $logdir/$curcallslogfile
+	fi
+
+	# Запустим считывание
+	case "$fastwrite" in
+	    [Yy][Ee][Ss])
+		case "$debug" in
+		    [Yy][Ee][Ss])
+	    		$bindir/$atslogd -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $callslogfile -L $logdir/$startlogfile $port | $bindir/$atslogdb 1>> $logdir/$notwritelog 2>/dev/null &
+			TORETURN=$?
+		    ;;
+		    *)
+			$bindir/$atslogd -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $callslogfile -L $logdir/$startlogfile $port | $bindir/$atslogdb 1>/dev/null 2>/dev/null &
+			TORETURN=$?
+		    ;;
+		esac
+	    ;;
+	    *)
+		case "$debug" in
+		    [Yy][Ee][Ss])
+			$bindir/$atslogd -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $curcallslogfile -L $logdir/$startlogfile $port 1>> $logdir/$notwritelog 2>/dev/null &
+			TORETURN=$?
+		    ;;
+		    *)
+			$bindir/$atslogd -P $pidfile -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $curcallslogfile -L $logdir/$startlogfile $port 1>/dev/null 2>/dev/null &
+			TORETURN=$?
+		    ;;
+		esac
+	    ;;
+	esac
+    fi
+    return $TORETURN
+}
+
+# Функция останавливает основной скрипт считывания информации из мини-АТС
+stoploging(){
+    if [ -s $pidfile ];then
+	KILLGROUPPID=`cat $pidfile`
+    fi
+
+    if [ -z "$KILLGROUPPID" ];then
+	KILLGROUPPID="$GROUPPID"
+    fi
+    if [ -n "$KILLGROUPPID" ];then
+	rm -f $pidfile 
+	kill -- -$KILLGROUPPID 1>/dev/null 2>/dev/null
+	RETURNKILL=$?
+	if [ $RETURNKILL -eq 0 ]
+	then
+            echo "$NOWDATE ${atslogd}[$KILLGROUPPID]: $msg2" >> $logdir/$startlogfile
+	    return 0
+	else
+	    echo $KILLGROUPPID > $pidfile
+	    ERRORMESSAGE=$msg3
+	    echomess
+	    return $RETURNKILL
+	fi
+    else
+	ERRORMESSAGE=$msg4
+	echomess
+	return 1
+    fi
+}
+
+case "$1" in
+start)
+    startloging
+    if [ $? -eq 0 ]
+    then
+	echo "$msg5"
+    else
+	echo "$msg23"
+	exit 1
+    fi
+    ;;
+stop)
+    stoploging
+    if [ $? -eq 0 ]
+    then
+	echo "$msg7"
+    else
+	echo "$msg8"
+	exit 1
+    fi
+    ;;
+restart)
+
+# Останавливаем.
+    stoploging 
+    if [ $? -eq 0 ]
+    then
+# Если удалось успешно остановить, то запускаем заново.
+        startloging
+        if [ $? -eq 0 ]
+	then
+	    echo "$msg9"
+	else
+	    echo "$msg23"
+	    exit 1
+	fi
+    else
+	echo "$msg8"
+	exit 1
+    fi
+    ;;
+writedb)
+    # Запись данных в базу SQL сервера
+
+    # Будем записывать данные только в том случае, если ATSlog запущен.
+	if [ -s $pidfile ];then
+	    echo "$msg11"
+    	    stoploging
+	    if [ $? -eq 0 ]
+	    then
+    # Call to script atslogdb.pl
+		ECHOMESSAGE=$msg12
+		echomess
+    		if cat $logdir/$curcallslogfile 2>/dev/null | $bindir/$atslogdb 1>> $notwriteoutput 2>/dev/null
+		then
+		    if cat $logdir/$curcallslogfile >> $logdir/$callslogfile
+		    then
+    			echo -n "" > $logdir/$curcallslogfile
+			ECHOMESSAGE=$msg13
+			echomess
+		    fi
+		fi
+
+    # Starting
+		startloging
+		if [ $? -eq 0 ]
+		then
+		    echo "$msg5"
+    		fi
+
+	    fi
+	else
+	    ECHOMESSAGE=$msg14
+    	    echomess
+        fi
+    ;;
+rotate)
+    # Log rotate
+
+    if [ $howmonth -gt 1 ];then
+    # Rotating
+	echo "$msg15"
+	if [ $? -eq 0 ]
+	then
+	    echo -n "$msg16"
+    	    i=$howmonth
+    	    while [ $i -ge 1 ]
+	    do
+		for logf in $callslogfile $notwritelog $startlogfile
+		do
+    	    	    if [ -s $logdir/$logf ];then
+    	    		if [ -r $logdir/$logf.$i.bz2 ];then
+			    nextM=$(($i+1))
+			    if [ $nextM -le $howmonth ];then
+				mv $logdir/$logf.$i.bz2 $logdir/$logf.$nextM.bz2 ; echo -n "."
+			    fi
+			fi
+		    fi
+		done
+		i=$(($i-1))
+	    done
+	    echo " $msg17"
+
+	    echo -n "$msg18"
+
+	    # Если файл есть, и не пустой
+	    if [ -s $logdir/$callslogfile ];then
+		# Переименуем текущий, открытый для записи файл во временный.
+		mv $logdir/$callslogfile $logdir/$callslogfile.tmp
+		# Сообщим демону, что нужно пересоздать текстовый лог-файл.
+		kill -HUP $GROUPPID
+
+		echo "$NOWDATE ${masterscript}[$GROUPPID]: $callslogfile rotate" >> $logdir/$startlogfile
+		bzip2 -z $logdir/$callslogfile.tmp
+		mv $logdir/$callslogfile.tmp.bz2 $logdir/$callslogfile.1.bz2
+	        echo -n "."
+	    fi
+
+	    for logfn in $notwritelog $startlogfile
+	    do
+		if [ -s $logdir/$logfn ];then
+		    echo "$NOWDATE ${masterscript}[$GROUPPID]: $logfn rotate" >> $logdir/$startlogfile
+		    bzip2 -z $logdir/$logfn
+		    mv $logdir/$logfn.bz2 $logdir/$logfn.1.bz2
+
+		    touch $logdir/$logfn
+		    echo -n "."
+		fi
+	    done
+	    echo " $msg17"
+	fi
+    else
+	echo "$msg19"
+    fi
+    ;;
+alltodb)
+    # Экспортирование информации из всех текстовых лог-файлов (включая
+    # архивированные) в базы SQL сервера.
+    echo "$msg20"
+    echo -n "$msg21"
+    i=$howmonth
+    LASTERROR=0
+    while [ $i -ge 1 ]
+    do
+	if [ -s $logdir/$callslogfile.$i.bz2 ];then
+	    bzcat $logdir/$callslogfile.$i.bz2 | $bindir/$atslogdb 1>> $notwriteoutput
+	    if [ $? -eq 0 ]
+	    then
+		echo -n "."
+	    else
+		LASTERROR=1
+	    fi
+	fi
+	i=$(($i-1))
+    done
+
+    if [ -s $logdir/$callslogfile ];then
+	cat $logdir/$callslogfile | $bindir/$atslogdb 1>> $notwriteoutput
+	if [ $? -eq 0 ]
+	then
+	    echo -n "."
+	else
+	    LASTERROR=1
+	fi
+    fi
+    if [ $LASTERROR -eq 0 ]
+    then                
+        echo " $msg17"
+    else                
+        echo "$msg23"
+    fi                  
+    ;;
+cleardb)
+    # Очистить таблицу SQL сервера
+    #
+    $bindir/$cleardb yes
+    ;;
+*)
+    echo "atslogmaster version @version@ build @buildnumber@"
+    if [ -n "$GROUPPID" ];then
+	echo "$atslogd $msg26 $GROUPPID"
+    else
+	echo "$atslogd $msg27"
+	EXITSTATUS=1
+    fi
+    echo "Usage: $BASENAME {start|stop|restart|writedb|rotate|alltodb|cleardb}"
+    ;;
+esac
+exit $EXITSTATUS
