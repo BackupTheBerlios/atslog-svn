@@ -105,7 +105,8 @@ sub unitecurcalls() {
 	    }
 	    #print("$stringNumber $TimeOfCall $Forwarded $Internally $CO $Way $Number $Duration\n");
 	    $ins_query = "INSERT INTO `$vars{sqlcallstable}` (`TimeOfCall`, `Forwarded`,`Internally`,`CO`, `Way` , `Number`, `Duration`) VALUES  (".$TimeOfCall.", '$Forwarded', '$Internally', '$CO', '$Way', '$Number', '$Duration');";
-	    $sth = $dbh->prepare($ins_query);                                                                                             $sth->execute; 
+	    $sth = $dbh->prepare($ins_query);
+	    $sth->execute;
 };
 
 1;
