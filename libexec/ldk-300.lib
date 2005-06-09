@@ -80,10 +80,10 @@ sub unitecurcalls() {
 		
 		
 	    if ($cell[6] =~ /I/){
-		$Way='in';
+		$Way='1';
 		$Number=0; # Not Specified
 	    }else{
-		$Way='out';
+		$Way='2';
 		$Outnumber = $cell[6];
 		$Outnumber =~ s/\D+//;
 		$Number=substr($Outnumber,0,100); 
@@ -104,7 +104,7 @@ sub unitecurcalls() {
 		$callsCount++;
 	    }
 	    #print("$stringNumber $TimeOfCall $Forwarded $Internally $CO $Way $Number $Duration\n");
-	    $ins_query = "INSERT INTO `$vars{sqlcallstable}` (`TimeOfCall`, `Forwarded`,`Internally`,`CO`, `Way` , `Number`, `Duration`) VALUES  (".$TimeOfCall.", '$Forwarded', '$Internally', '$CO', '$Way', '$Number', '$Duration');";
+	    $ins_query = "INSERT INTO calls (`TimeOfCall`, `Forwarded`,`Internally`,`CO`, `Way` , `Number`, `Duration`) VALUES  (".$TimeOfCall.", '$Forwarded', '$Internally', '$CO', '$Way', '$Number', '$Duration');";
 	    $sth = $dbh->prepare($ins_query);
 	    $sth->execute;
 };
