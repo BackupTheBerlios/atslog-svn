@@ -45,6 +45,7 @@ JEANS Ukraine - 066
 Kyivstar Ukraine - 067
 DJUICE Ukraine - 068, 097
 GolgenTelecom Ukaraine - 039
+Life:) Ukraine - 063
 МТС Russia - 910, 916, 917
 БиЛайн Russia - 903, 905
 Мегафон Russia - 926
