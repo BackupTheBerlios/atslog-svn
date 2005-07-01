@@ -6,8 +6,6 @@
 #
 # make install - for building and installing.
 #
-# make disableupdate - configure for new installation.
-#
 # make clean - for cleaning temporaly files.
 
 CC=gcc
@@ -16,12 +14,7 @@ SH=/bin/sh
 RM = rm
 SUBDIR += src/atslogd
 
-
-
-all:
-	@if [ ! -r atslog.conf -o ! -r atslogdinit -o ! -r ./src/atslogd/atslogd -o ! -r conf.inc ]; \
-	then $(MAKE) config atslogd; \
-	fi
+all:	config atslogd
 
 atslogd:
 	@for sub in ${SUBDIR}; do \
@@ -31,22 +24,11 @@ atslogd:
 	    fi; \
 	done
 
+configure:	config
+
 config:
-	@if [ $(PREFIX) ]; \
-	then PREFIX?=/usr/local; \
-	CONFIGURE_ARGS+= --prefix=${PREFIX}; \
-	fi
-	@if [ $(PERL) ]; \
-	then PERL?=/usr/bin/perl; \
-	CONFIGURE_ARGS+= --with-perl=${PERL}; \
-	fi
-	@if [ $(WITH_POSTGRESQL) ]; \
-	then CONFIGURE_ARGS+= --sql-type=PostgreSQL; \
-	elif [ $(WITH_MYSQL) ]; \
-	then CONFIGURE_ARGS+= --sql-type=MySQL; \
-	fi
 	@if [ ! -r atslog.conf -o ! -r atslogdinit -o ! -r conf.inc ]; \
-	then ./configure $(CONFIGURE_ARGS); \
+	then ${SH} ./configure $(CONFIGURE_ARGS); \
 	fi
 
 clean:
@@ -70,19 +52,10 @@ clean:
 configure:	config
 uninstall:	deinstall
 remove:		deinstall
-clear:	clean
+clear:		clean
 
 install:	all
 	@$(SH) ./installing --install --sqlroot=${SQLROOT}
 
-disableupdate: to_disable all
-	@echo Disable automatic updating
-
 deinstall:
 	@$(SH) ./installing --deinstall
-
-to_disable:
-	ifdef $(IGNORE); \
-	    CONFIGURE_ARGS+=--disable-update; \
-	enif
-
