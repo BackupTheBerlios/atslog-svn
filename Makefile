@@ -11,15 +11,16 @@
 CC=gcc
 MAKE=make
 SH=/bin/sh
-RM = rm
-SUBDIR += src/atslogd
+RM= rm
+SUBDIR+= src/atslogd
+CURDIR?=`pwd`
 
 all:	config atslogd
 
 atslogd:
 	@for sub in ${SUBDIR}; do \
-	    if test -d ${.CURDIR}/$${sub}; then \
-		cd ${.CURDIR}/$${sub}; \
+	    if test -d ${CURDIR}/$${sub}; then \
+		cd ${CURDIR}/$${sub}; \
 		${MAKE}; \
 	    fi; \
 	done
