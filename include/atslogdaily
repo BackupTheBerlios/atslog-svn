@@ -32,6 +32,7 @@ PATH=$PATH:$bindir:$sharedir
 # Смотрите параметр $fastwrite в конфигурационном файле.
 case "$fastwrite" in
     [Yy][Ee][Ss])
+	echo ""
 	echo $msg10
     ;;
     *)
