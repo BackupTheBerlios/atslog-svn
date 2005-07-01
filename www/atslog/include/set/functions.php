@@ -609,12 +609,12 @@ function pagesNavigator($pages,$page){
 
 if ($pages>1 && !$toprint){
 	if ($page>0){
-		print("<td><a href=\"".complitLink($local_page="0",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['FirstPage']." (1)\"><font face=\"Webdings\">&#57;</font></a></td>");
+		print("<td><a href=\"".complitLink($local_page="0",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['FirstPage']." (1)\"><font face=\"Webdings\" class=webdings>&#57;</font></a></td>");
 	}
 
 	if ($page>1){
 		$prevGoPage = $page-1;
-		print("<td><a href=\"".complitLink($local_page="$prevGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousPage']." ($page)\"><font face=\"Webdings\">&#51;</font></a></td>");
+		print("<td><a href=\"".complitLink($local_page="$prevGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousPage']." ($page)\"><font face=\"Webdings\" class=webdings>&#51;</font></a></td>");
 	}
 
 	print("
@@ -623,12 +623,12 @@ if ($pages>1 && !$toprint){
 
 	if ($page<($pages-2)){
 		$nextGoPage = $page+1;
-		print("<td><a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextPage']." (".($nextGoPage+1).")\"><font face=\"Webdings\">&#52;</font></a></td>");
+		print("<td><a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextPage']." (".($nextGoPage+1).")\"><font face=\"Webdings\" class=webdings>&#52;</font></a></td>");
 	}
 
 	if ($page<($pages-1)){
 		$nextGoPage = $pages-1;
-		print("<td><a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['LastPage']." ($pages)\"><font face=\"Webdings\">&#58;</font></a></td>");
+		print("<td><a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['LastPage']." ($pages)\"><font face=\"Webdings\" class=webdings>&#58;</font></a></td>");
 	}
 
 ?>
@@ -648,7 +648,7 @@ if ($pages>1 && !$toprint){
 	$stopList=$startList+$numbers-1;
 	if ($startList > 1){
 	    $prevList = $startList-2;
-	    print("<a href=\"".complitLink($local_page="$prevList",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousListOfPages']."\"><font face=\"Webdings\">&#55;</font>...</a> ");
+	    print("<a href=\"".complitLink($local_page="$prevList",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousListOfPages']."\"><font face=\"Webdings\" class=webdings>&#55;</font>...</a> ");
 	}
 
 	$Num=$startList-1;
@@ -665,7 +665,7 @@ if ($pages>1 && !$toprint){
 
 	if ($stopList < $pages){
 		$nextList = $stopList;
-		print("<a href=\"".complitLink($local_page="$nextList",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextListOfPages']."\">...<font face=\"Webdings\">&#56;</font></a>");
+		print("<a href=\"".complitLink($local_page="$nextList",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextListOfPages']."\">...<font face=\"Webdings\" class=webdings>&#56;</font></a>");
 	}
     }
 }
