@@ -99,15 +99,21 @@ function LanguageSetup($lang){
 //  Color scheme
 // ---------------------------------------------------------------------------- 
 function ColorSetup($color){
-    global $COLORS;
+    global $COLORS,$skin_name;
 
     $file = "../include/colors/".$color.".php";
-    $classicfile = "../include/colors/classic.php";
+    $classic_file = "../include/colors/classic.php";
 
-    if(file_exists($classicfile)) include($classicfile);
+    if(file_exists($classic_file)) {
+	include($classic_file);
+	$skin_name = "classic";
+    }
 
     if(!empty($color)){
-	if(file_exists($file)) include($file);
+	if(file_exists($file)) {
+	    include($file);
+	    $skin_name = $color;
+	}
     }
 }
 
@@ -600,7 +606,8 @@ function complitLink(){
 
 
 function pagesNavigator($pages,$page){
-    global $local_page,$local_search,$GUI_LANG,$toprint,$local_order,$order,$local_sortBy,$sortBy,$search;
+    global $local_page,$local_search,$GUI_LANG,
+    $toprint,$local_order,$order,$local_sortBy,$sortBy,$search,$skin_name;
 ?>
 <table cellpadding=1 cellspacing=0 border=0 align=center>
 	<tr>
@@ -609,12 +616,12 @@ function pagesNavigator($pages,$page){
 
 if ($pages>1 && !$toprint){
 	if ($page>0){
-		print("<td><a href=\"".complitLink($local_page="0",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['FirstPage']." (1)\"><font face=\"Webdings\" class=webdings>&#57;</font></a></td>");
+		print("<td><a href=\"".complitLink($local_page="0",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['FirstPage']." (1)\"><img border=0 width=11 height=10 src=../include/img/colors/".$skin_name."/arrows/pages_left.gif></a>&nbsp;</td>");
 	}
 
 	if ($page>1){
 		$prevGoPage = $page-1;
-		print("<td><a href=\"".complitLink($local_page="$prevGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousPage']." ($page)\"><font face=\"Webdings\" class=webdings>&#51;</font></a></td>");
+		print("<td><a href=\"".complitLink($local_page="$prevGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousPage']." ($page)\"><img border=0 width=12 height=10 src=../include/img/colors/".$skin_name."/arrows/next_left.gif></a>&nbsp;</td>");
 	}
 
 	print("
@@ -623,12 +630,12 @@ if ($pages>1 && !$toprint){
 
 	if ($page<($pages-2)){
 		$nextGoPage = $page+1;
-		print("<td><a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextPage']." (".($nextGoPage+1).")\"><font face=\"Webdings\" class=webdings>&#52;</font></a></td>");
+		print("<td>&nbsp;<a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextPage']." (".($nextGoPage+1).")\"><img border=0 width=12 height=10 src=../include/img/colors/".$skin_name."/arrows/next_right.gif></a></td>");
 	}
 
 	if ($page<($pages-1)){
 		$nextGoPage = $pages-1;
-		print("<td><a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['LastPage']." ($pages)\"><font face=\"Webdings\" class=webdings>&#58;</font></a></td>");
+		print("<td>&nbsp;<a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['LastPage']." ($pages)\"><img border=0 width=11 height=10 src=../include/img/colors/".$skin_name."/arrows/pages_right.gif></td>");
 	}
 
 ?>
@@ -648,7 +655,7 @@ if ($pages>1 && !$toprint){
 	$stopList=$startList+$numbers-1;
 	if ($startList > 1){
 	    $prevList = $startList-2;
-	    print("<a href=\"".complitLink($local_page="$prevList",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousListOfPages']."\"><font face=\"Webdings\" class=webdings>&#55;</font>...</a> ");
+	    print("<a href=\"".complitLink($local_page="$prevList",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousListOfPages']."\"><img border=0 width=10 height=10 src=../include/img/colors/".$skin_name."/arrows/end_left.gif> ...</a> ");
 	}
 
 	$Num=$startList-1;
@@ -665,7 +672,7 @@ if ($pages>1 && !$toprint){
 
 	if ($stopList < $pages){
 		$nextList = $stopList;
-		print("<a href=\"".complitLink($local_page="$nextList",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextListOfPages']."\">...<font face=\"Webdings\" class=webdings>&#56;</font></a>");
+		print("<a href=\"".complitLink($local_page="$nextList",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextListOfPages']."\">... <img border=0 width=10 height=10 src=../include/img/colors/".$skin_name."/arrows/end_right.gif></a>");
 	}
     }
 }
