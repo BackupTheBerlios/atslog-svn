@@ -27,7 +27,23 @@ passwordgen(){
 	    echo "Program not exist! Aborting."
 	    exit 1
 	fi
-	PASSWORD=`head -c 64 < /dev/urandom | /usr/bin/md5sum | awk '{print $1}'| head -c 16`
+	echo -n "checking /bin/head for password generate: "
+        if [ -r /bin/head ];then
+	    echo "OK"
+	else
+	    echo "NONE"
+	    echo "Program not exist! Aborting."
+	    exit 1
+	fi
+	echo -n "checking /bin/awk for password generate: "
+        if [ -r /bin/awk ];then
+	    echo "OK"
+	else
+	    echo "NONE"
+	    echo "Program not exist! Aborting."
+	    exit 1
+	fi
+	PASSWORD=`/bin/head -c 64 < /dev/urandom | /usr/bin/md5sum | /bin/awk '{print $1}'| /bin/head -c 16`
     else
 # for FreeBSD
 	echo -n "checking /sbin/md5 for password generate: "
@@ -38,7 +54,23 @@ passwordgen(){
 	    echo "Program not exist! Aborting."
 	    exit 1
 	fi
-	PASSWORD=`head -c 64 < /dev/urandom | /sbin/md5 | awk '{print $1}'| head -c 16`
+	echo -n "checking /usr/bin/head for password generate: "
+        if [ -r /usr/bin/head ];then
+	    echo "OK"
+	else
+	    echo "NONE"
+	    echo "Program not exist! Aborting."
+	    exit 1
+	fi
+	echo -n "checking /usr/bin/awk for password generate: "
+        if [ -r /usr/bin/awk ];then
+	    echo "OK"
+	else
+	    echo "NONE"
+	    echo "Program not exist! Aborting."
+	    exit 1
+	fi
+	PASSWORD=`/usr/bin/head -c 64 < /dev/urandom | /sbin/md5 | /usr/bin/awk '{print $1}'| /usr/bin/head -c 16`
     fi
 }
 
