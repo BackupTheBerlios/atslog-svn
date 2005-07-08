@@ -39,6 +39,9 @@ do
 		"--linux-version=ASPlinux")
 		    LINUXVERSVION="asplinux"
 		;;
+		"--linux-version=ALTlinux")
+		    LINUXVERSVION="altlinux"
+		;;
 	    esac                        
 	    LINUXYES="YES"	    
 	;;
@@ -121,6 +124,7 @@ echo "--disable-update Произвести установку новой версии без учета
 		 --linux-version=SuSE
 		 --linux-version=RedHat
 		 --linux-version=ASPlinux
+		 --linux-version=ALTlinux
 		 
 		 Если параметр не будет указываться специально, то выбор
 		 происходит автоматически.
@@ -180,6 +184,9 @@ if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
 	elif [ -r /etc/asplinux-release ];then
 # ASP-Linux
 	    LINUXVERSVION="asplinux"
+	elif [ -r /etc/altlinux-release ];then
+# ALT Linux
+	    LINUXVERSVION="altlinux"
 	elif [ -r /etc/SuSE-release ];then
 # SuSE
 	    LINUXVERSVION="suse"
