@@ -48,6 +48,7 @@ clean:
 	conf.inc \
 	atslogdb.pl atslogcleardb.pl atslogrotate \
 	atslogmaster atslogdinit atslogdaily Makefile.out installing.out \
+	atslogdinit.out \
 	./src/atslogd/atslogd
 
 configure:	config

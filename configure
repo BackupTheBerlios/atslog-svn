@@ -8,12 +8,37 @@ UNAME=`uname`
 
 # Генерируем случайный пароль
 passwordgen(){
+    echo -n "checking /dev/urandom for password generate: "
+    if [ -r /dev/urandom ];then
+	echo "OK"
+    else
+	echo "NONE"
+	echo "Device not exist! Aborting."
+	exit 1
+    fi
+	   
     if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
 # for Linux
-	PASSWORD=`head -c 64 < /dev/urandom | md5sum | awk '{print $1}'| head -c 16`
+	echo -n "checking /usr/bin/md5sum for password generate: "
+        if [ -r /usr/bin/md5sum ];then
+	    echo "OK"
+	else
+	    echo "NONE"
+	    echo "Program not exist! Aborting."
+	    exit 1
+	fi
+	PASSWORD=`head -c 64 < /dev/urandom | /usr/bin/md5sum | awk '{print $1}'| head -c 16`
     else
 # for FreeBSD
-	PASSWORD=`head -c 64 < /dev/urandom | md5 | awk '{print $1}'| head -c 16`
+	echo -n "checking /sbin/md5 for password generate: "
+        if [ -r /sbin/md5 ];then
+	    echo "OK"
+	else
+	    echo "NONE"
+	    echo "Program not exist! Aborting."
+	    exit 1
+	fi
+	PASSWORD=`head -c 64 < /dev/urandom | /sbin/md5 | awk '{print $1}'| head -c 16`
     fi
 }
 
