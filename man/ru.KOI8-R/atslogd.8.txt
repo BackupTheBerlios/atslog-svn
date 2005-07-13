@@ -1,71 +1,41 @@
 NAME
 
-ATSlog gives the convenient interface for viewing and analysing bells of various models PBX.
+ATSlog предоставляет удобный интерфейс с доступом через web-браузер для просмотра и анализа звонков различных моделей АТС.
 
 SYNOPSIS
 
-atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits]
-        [-t type] [-P PIDfile][-d] [-e] [-a] [-o] [-i address] [tcp:port] dev 
+atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits]			[-t type] [-P PIDfile][-d] [-e] [-a] [-o] [-i address] [tcp:port] dev 
 
 DESCRIPTION
 
-CDR Reader for PBXs v.1.09 (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
-changed by Denis CyxoB www.yamiyam.dp.ua 2003-2004
-and Andrew Kornilov andy[at]eva.dp.ua 2004
-for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
-
-
+atslogd - это модификация CDR Reader for PBXs v.1.09 (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
+изменён Denis CyxoB www.yamiyam.dp.ua 2003-2004
+и Andrew Kornilov andy[at]eva.dp.ua 2004
+для прораммы ATSlog версии @version@ build @buildnumber@ www.atslog.dp.ua
 
 OPTIONS
 
-                                                                              
-
-	-D dir          directory where CDR files will be put, default is current dir 
-	-L logfile      file for error messages, default is stderr                    
-	-F filename     name of file where CDR messages will be put                   
-	-s speed        speed of serial device, default 9600                          
-	-c char_size    length of character; valid values from 5 to 8                 
-	-p parity       parity of serial device:                                      
-	                e - even parity, o - odd parity, n - no parity,               
-			-f stop_bits    number of stop bits; valid values 1 or 2                      
-			-d              output additional debug messages                              
-			-e              copy error messages to stderr (in case if -L has value)       
-			-a              write date at the beginning of file (for Definity type only)  
-			-o              write CDR additionally to stdout                              
-			-m              write log files on month-by-month instead of day-by-day basis 
-			-n              consider day in place of month and vice versa                 
-			-x number       maximum number of clients for TCP connections (default: 1)    
-			                see /etc/hosts.allow, /etc/hosts.deny)                        
-					-w seconds      timeout before I/O port will be opened next time after EOF    
-					-i address      IP address of interface for bind only to it                   
-					                (default to all interfaces)                                   
-							tcp:port        where port is a TCP port for listen on.                       
-							-b              become daemon                                                 
-							-P              PID file. /var/run/atslogd.pid by default                     
-							                                                                              
-							Use libwrap for contol access to TCP connections. See /etc/hosts.allow        
-							and /etc/hosts.deny                                                           
-							
--D dir		directory where CDR files will be put, default is current dir
--L logfile	file for error messages, default is stderr
--F filename	name of file where CDR messages will be put
--s speed	speed of serial device, default 9600
--c char_size	length of character; valid values from 5 to 8
--p parity	parity of serial device:
-		e - even parity, o - odd parity, n - no parity,
-		m - mark parity (Win32 only), s - space parity (Win32 only)
--f stop_bits	number of stop bits; valid values 1 or 2
--d		output additional debug messages
--e		copy error messages to stderr (in case if -L has value)
--a		write date at the beginning of file (for Definity type only)
--o		write CDR additionally to stdout
--m		write log files on month-by-month instead of day-by-day basis
--n		consider day in place of month and vice versa
--r x.x.x.x	accept TCP connections from this IP address only
--w seconds	timeout before I/O port will be opened next time after EOF
-tcp:N           where N is TCP port.
--b		become daemon
--P		PID file. /var/run/atslogd.pid by default
+-D dir		директория для текстовых лог-файлов; по умолчанию - текущая
+-F filename     имя текстового лог-файла в который будут записаны данные
+-L logfile      файл для сообщений об ошибках; по умолчанию stderr
+-s speed        скорость передачи для последовательного порта; по умолчанию 9600
+-c char_size    длинна символа (параметры последовательного порта); значения от 5 до 8
+-p parity       чётность последовательного порта: e - even parity, o - odd parity, n - no parity.
+-f stop_bits    number of stop bits; valid values 1 or 2                      
+-d              выводить дополнительную отладочную информацию                              
+-e              дублировать сообщения об ошибках в stderr (при наличии -L )
+-a              write date at the beginning of file (for Definity type only)  
+-o              выводить CDR данные дополнительно в stdout
+-m              write log files on month-by-month instead of day-by-day basis 
+-n              consider day in place of month and vice versa                 
+-x number       максимальное колличество TCP соединений (по умолчанию: 1) смотрите /etc/hosts.allow, /etc/hosts.deny)
+-w seconds      timeout before I/O port will be opened next time after EOF    
+-i address      привязываться только на IP адрес (address) интерфейса (по умолчанию принимать на всех интерфейсах)
+tcp:N       	где N номер TCP порта демона.
+-b              демонизироваться.
+-P              PID файл. /var/run/atslogd.pid по умолчанию.
+				                                                                              
+Ипользуйте стандартную libwrap для контроля доступа TCP соединений. Подробнее в документации на /etc/hosts.allow и /etc/hosts.deny
 
 FILES
 
@@ -78,4 +48,12 @@ atslogmaster(8), atslog.conf
 AUTHOR
 
 Denis CyxoB www.yamiyam.dp.ua
+
+Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
+
+Andrew Kornilov andy[at]eva.dp.ua 2004
+
+SITE
+
+www.atslog.dp.ua
 

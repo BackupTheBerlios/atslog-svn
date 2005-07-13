@@ -1,16 +1,38 @@
-Using server side of ATSlog.
+NAME
 
-/usr/local/etc/atslog.conf	конфигурационный файл. 
-atslogmaster start		запуск ATSlog. 
-atslogmaster stop		останов. 
-atslogmaster restart		перезагрузка. 
-atslogmaster writedb		запись последних звонков в базу SQL сервера. 
-atslogmaster rotate		ротация текстовых лог-файлов.
-atslogmaster cleardb		очистка таблиц SQL сервера.
-atslogmaster alltodb		запись всех (в т.ч. из архивов) звонков в
-				базу SQL сервера. Данные о текущих звонках
-				из файла /var/log/atslog/currentcalls.log не
-				добавляются из-за возможного дублирования
-				информации. Если есть необходимость записать
-				также и текущие звонки, то воспользуйтесь
-				функцией writedb
+ATSlog предоставляет удобный интерфейс с доступом через web-браузер для просмотра и анализа звонков различных моделей АТС
+
+SYNOPSIS
+
+atslogmaster [start] [stop] [restart] [writedb] [rotate] [cleardb] [alltodb]
+
+DESCRIPTION
+
+atslogmaster - управляет серверной частью ATSlog
+
+OPTIONS
+
+start			запуск ATSlog. 
+stop			останов. 
+restart			перезапуск. 
+writedb			запись последних звонков в базу SQL сервера. 
+rotate			ротация текстовых лог-файлов.
+cleardb			очистка таблиц SQL сервера с информацией о звонках.
+alltodb			запись всех (в т.ч. из архивов) звонков в базу SQL сервера. Данные о текущих звонках из файла			 /var/log/atslog/currentcalls.log не добавляются из-за возможного дублирования  информации. Если есть необходимость записи текущих звонков, то воспользуйтесь функцией writedb
+			    
+
+EXAMPLES
+
+atslogmaster start - запуск демона для сбора данных.
+
+SEE ALSO
+
+atslogd(8), atslog.conf
+
+AUTHOR
+
+Denis CyxoB www.yamiyam.dp.ua
+
+SITE
+
+www.atslog.dp.ua
