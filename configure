@@ -6,71 +6,42 @@
 # Установим рабочие переменные
 UNAME=`uname`
 
+# Проверим наличие необходимых системных утулит.
+checksysutils(){
+    if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
+	MD5_PRG=md5sum
+    else
+	MD5_PRG=md5
+    fi
+    for ac_prg in sed awk head md5 [ expr $MD5_PRG urandom
+    do
+	echo -n "checking if system file \"$ac_prg\" is existing: "
+	for ac_dir in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin /dev
+	do
+	    if [ -e "$ac_dir/$ac_prg" ]; then
+	        echo "YES"
+		FILE_NOT_EXISTS=0
+		break;
+	    else
+		FILE_NOT_EXISTS=1
+	    fi
+	done
+	if [ $FILE_NOT_EXISTS -ne 0 ]; then
+	    echo "NONE"
+	    echo "configure aborting!"
+	    exit 1
+	fi
+    done
+}
+
 # Генерируем случайный пароль
 passwordgen(){
-    echo -n "checking /dev/urandom for password generate: "
-    if [ -r /dev/urandom ];then
-	echo "OK"
-    else
-	echo "NONE"
-	echo "Device not exist! Aborting."
-	exit 1
-    fi
-	   
     if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
 # for Linux
-	echo -n "checking /usr/bin/md5sum for password generate: "
-        if [ -r /usr/bin/md5sum ];then
-	    echo "OK"
-	else
-	    echo "NONE"
-	    echo "Program not exist! Aborting."
-	    exit 1
-	fi
-	echo -n "checking /bin/head for password generate: "
-        if [ -r /bin/head ];then
-	    echo "OK"
-	else
-	    echo "NONE"
-	    echo "Program not exist! Aborting."
-	    exit 1
-	fi
-	echo -n "checking /bin/awk for password generate: "
-        if [ -r /bin/awk ];then
-	    echo "OK"
-	else
-	    echo "NONE"
-	    echo "Program not exist! Aborting."
-	    exit 1
-	fi
-	PASSWORD=`/bin/head -c 64 < /dev/urandom | /usr/bin/md5sum | /bin/awk '{print $1}'| /bin/head -c 16`
+	PASSWORD=`head -c 64 < /dev/urandom | md5sum | awk '{print $1}'| head -c 16`
     else
 # for FreeBSD
-	echo -n "checking /sbin/md5 for password generate: "
-        if [ -r /sbin/md5 ];then
-	    echo "OK"
-	else
-	    echo "NONE"
-	    echo "Program not exist! Aborting."
-	    exit 1
-	fi
-	echo -n "checking /usr/bin/head for password generate: "
-        if [ -r /usr/bin/head ];then
-	    echo "OK"
-	else
-	    echo "NONE"
-	    echo "Program not exist! Aborting."
-	    exit 1
-	fi
-	echo -n "checking /usr/bin/awk for password generate: "
-        if [ -r /usr/bin/awk ];then
-	    echo "OK"
-	else
-	    echo "NONE"
-	    echo "Program not exist! Aborting."
-	    exit 1
-	fi
-	PASSWORD=`/usr/bin/head -c 64 < /dev/urandom | /sbin/md5 | /usr/bin/awk '{print $1}'| /usr/bin/head -c 16`
+	PASSWORD=`head -c 64 < /dev/urandom | md5 | awk '{print $1}'| head -c 16`
     fi
 }
 
@@ -142,6 +113,14 @@ if [ "$PREFIX" = "/" ];then
     NOTCONTINUEPREFIX=YES
 fi
 
+echo "Usage: configure [options]
+Options: [defaults in brackets after descriptions]
+Use: configure --help for help.
+Configuration:"
+
+# Call to function
+checksysutils
+
 # Check for last slash "/" in the PREFIX
 # Проверка на завершающий слеш "/" в переменной PREFIX
 SUFIX=$(expr 0$PREFIX : 0".*\(\/\)\$")
@@ -160,10 +139,6 @@ then
     PERL="/usr/bin/perl"
 fi
 
-echo "Usage: configure [options]
-Options: [defaults in brackets after descriptions]
-Use: configure --help for help.
-Configuration:"
 
 if [ "$HELP" = "yes" ];then
 
@@ -197,7 +172,6 @@ echo "--disable-update Произвести установку новой версии без учета
 		 Database type. MySQL by default.
 		 --sql-type=MySQL
 		 --sql-type=PostgreSQL
-		 
 "
     exit 0
 fi
@@ -438,6 +412,10 @@ else
     then                            
 	pidfile=${PREFIX}${pidfile}
     fi
+fi
+
+if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
+    echo checking for Linux version is: $LINUXVERSVION
 fi
 
 echo checking for PID file path $pidfile
