@@ -1,5 +1,5 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
-# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# Copyright (C) 2.03 Denis CyxoB www.yamiyam.dp.ua
 #
 # Using:
 # make all - for building.
@@ -27,9 +27,9 @@ atslogd:
 
 configure:	config
 
-config:
+config:	version
 	@if [ ! -r atslog.conf -o ! -r atslogdinit -o ! -r conf.inc ]; \
-	then ${SH} ./configure $(CONFIGURE_ARGS); \
+	then ${SH} ${CURDIR}/configure $(CONFIGURE_ARGS); \
 	fi
 
 clean:
@@ -43,13 +43,13 @@ clean:
 	updatesqltables.mysql.sql.out \
 	updatesqltables.pgsql.sql.out \
 	install.log \
-	./scripts/createdb.out.pl \
-	./scripts/checkDBD.out.pl \
+	${CURDIR}/scripts/createdb.out.pl \
+	${CURDIR}/scripts/checkDBD.out.pl \
 	conf.inc \
 	atslogdb.pl atslogcleardb.pl atslogrotate \
 	atslogmaster atslogdinit atslogdaily Makefile.out installing.out \
 	atslogdinit.out \
-	./src/atslogd/atslogd
+	${CURDIR}/src/atslogd/atslogd
 
 configure:	config
 uninstall:	deinstall
@@ -57,7 +57,13 @@ remove:		deinstall
 clear:		clean
 
 install:	all
-	@$(SH) ./installing --install --sqlroot=${SQLROOT}
+	@$(SH) ${CURDIR}/installing --install --sqlroot=${SQLROOT}
 
 deinstall:
-	@$(SH) ./installing --deinstall
+	@$(SH) ${CURDIR}/installing --deinstall
+
+version:
+	@if [ -r ${CURDIR}/version.inc ]; then \
+	    $(SH) ${CURDIR}/scripts/version; \
+	    $(RM) ${CURDIR}/version.inc; \
+	fi
