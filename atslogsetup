@@ -800,7 +800,7 @@ done
 ##################################################################
 
 FOUNDDIALOG=0
-for ac_dir in /usr /usr/local/bin /usr/bin; do
+for ac_dir in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin; do
     if test -f "$ac_dir/dialog"; then
         FOUNDDIALOG=1
         break;
@@ -825,7 +825,7 @@ while [ "$SELECT1" != "Exit" ]
 do
 
 dialog --title "ATSlog setup " --menu "\n Welcome\
- to ATSlog (SQUID Account Management System) Setup." 15 74 6 \
+ to ATSlog (calls analyzing and accounting for PBX) Setup." 15 74 6 \
 "new" "Run the new installation of the ATSlog" \
 "update" "Update ATSlog" \
 "uninstall" "Delete ATSlog" \
