@@ -3,6 +3,8 @@
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #
 
+echo Prepare package version and build
+
 for ac_prg in sed find [
 do
     echo -n "checking if system file \"$ac_prg\" is existing: "
@@ -18,17 +20,23 @@ do
     done
     if [ $FILE_NOT_EXISTS -ne 0 ]; then
         echo "NONE"
-        echo "configure aborting!"
+        echo "prepare aborting!"
         exit 1
     fi
 done
 
-. ./version.inc
+if [ -r ./version.inc ];then
+    . ./version.inc
+else
+    echo Not see version.inc file
+    exit 1
+fi
+
 if [ -z $ver -o -z $build ];then
     echo Number of the version and the build not found!
     exit 1
 else
-    echo Prepare package for version $ver and build $build
+    echo prepare package for version $ver and build $build
     find ./ -type f -exec sed -i '' "s/@version@/$ver/g" {} \;                                              
     find ./ -type f -exec sed -i '' "s/@buildnumber@/$build/g" {} \;                                        
 fi
