@@ -107,7 +107,9 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
         require "$vars{libdir}/nx-820.lib";
     }elsif($vars{model} =~ /GHX-46/i){
         require "$vars{libdir}/ghx-46.lib";
-    }elsif($vars{model} =~ /LDK-100/i or $vars{model} =~ /LDK-300/i){
+     }elsif ($vars{model} =~ /GPS-6A/i){
+	require "$vars{libdir}/gps-6a.lib";
+     }elsif($vars{model} =~ /LDK-100/i or $vars{model} =~ /LDK-300/i){
         require "$vars{libdir}/ldk-300.lib";
     }else{
         $ERRORMESSAGE="$vars{msg31}";
