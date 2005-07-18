@@ -71,7 +71,7 @@ echomess(){
     ERRORMESSAGE=""
 }
 
-finc_restart(){
+func_restart(){
 # Останавливаем.
     stoploging 
     if [ $? -eq 0 ]
