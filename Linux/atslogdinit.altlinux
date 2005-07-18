@@ -1,17 +1,22 @@
 #!/bin/sh
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+# Basic support for IRIX style chkconfig (C) Slava Dubrovskiy slava[a_t]elan.com.ua
+###
+# chkconfig: 235 80 01
+# description: Manages the services needed to run ATSlog software
+###
 #
 # ALTlinux start script
-PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:.
 prog=ATSlog
 
 # Source function library.
 . /etc/init.d/functions
 
 # Reading config file
-if [ -r /usr/local/etc/atslog.conf ]; then
-    . /usr/local/etc/atslog.conf
+if [ -r /etc/atslog.conf ]; then
+    . /etc/atslog.conf
 else
     echo "Can't open config file"
     exit 1
@@ -30,11 +35,14 @@ stop)
 restart)
     action $"Restarting $prog: " $bindir/$masterscript restart
     ;;
+rload)
+    action $"Reloading $prog: " $bindir/$masterscript reload
+    ;;
 status)
     action $"Status $prog: " $bindir/$masterscript
     ;;
 *)
-  echo "Usage: `basename $0` {start|stop|restart|status}"
+  echo "Usage: `basename $0` {start|stop|restart|reload|status}"
     ;;
 esac
 
