@@ -15,6 +15,7 @@ OPTIONS
 start			запуск ATSlog. 
 stop			останов. 
 restart			перезапуск. 
+reload			синоним "restart"
 writedb			запись последних звонков в базу SQL сервера. 
 rotate			ротация текстовых лог-файлов.
 cleardb			очистка таблиц SQL сервера с информацией о звонках.

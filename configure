@@ -6,6 +6,13 @@
 # Установим рабочие переменные
 UNAME=`uname`
 
+<<<<<<< .mine
+# Генерируем случайный пароль
+passwordgen(){
+    if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
+# for Linux
+	PASSWORD=`/bin/head -c 64 < /dev/urandom | /usr/bin/md5sum | /bin/awk '{print $1}'| /bin/head -c 16`
+=======
 # Проверим наличие необходимых системных утулит.
 checksysutils(){
     if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
@@ -39,9 +46,14 @@ passwordgen(){
     if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
 # for Linux
 	PASSWORD=`head -c 64 < /dev/urandom | md5sum | awk '{print $1}'| head -c 16`
+>>>>>>> .r94
     else
 # for FreeBSD
+<<<<<<< .mine
+	PASSWORD=`/usr/bin/head -c 64 < /dev/urandom | /sbin/md5 | /usr/bin/awk '{print $1}'| /usr/bin/head -c 16`
+=======
 	PASSWORD=`head -c 64 < /dev/urandom | md5 | awk '{print $1}'| head -c 16`
+>>>>>>> .r94
     fi
 }
 
@@ -113,6 +125,40 @@ if [ "$PREFIX" = "/" ];then
     NOTCONTINUEPREFIX=YES
 fi
 
+<<<<<<< .mine
+echo "Usage: configure [options]
+Options: [defaults in brackets after descriptions]
+Use: configure --help for help.
+Configuration:"
+
+if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
+    for p in "/bin/awk" "/bin/head" "/usr/bin/md5sum" "/usr/bin/expr" "/usr/bin/["
+    do
+	echo -n "checking needed $p is existing: "
+	if [ -r $p ];then
+	    echo "YES"
+	else
+	    echo "NONE"
+	    echo "configure aborting!"
+#	    exit 1
+	fi
+    done
+else
+    for p in "/usr/bin/awk" "/usr/bin/head" "/sbin/md5" "/bin/[" "/bin/expr"
+    do
+	echo -n "checking needed $p is existing: "
+	if [ -r $p ];then
+	    echo "YES"
+	else
+	    echo "NONE"
+	    echo "configure aborting!"
+	    exit 1
+	fi
+    done
+fi
+
+
+=======
 echo "Usage: configure [options]
 Options: [defaults in brackets after descriptions]
 Use: configure --help for help.
@@ -121,6 +167,7 @@ Configuration:"
 # Call to function
 checksysutils
 
+>>>>>>> .r94
 # Check for last slash "/" in the PREFIX
 # Проверка на завершающий слеш "/" в переменной PREFIX
 SUFIX=$(expr 0$PREFIX : 0".*\(\/\)\$")

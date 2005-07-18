@@ -71,6 +71,26 @@ echomess(){
     ERRORMESSAGE=""
 }
 
+finc_restart(){
+# Останавливаем.
+    stoploging 
+    if [ $? -eq 0 ]
+    then
+# Если удалось успешно остановить, то запускаем заново.
+        startloging
+        if [ $? -eq 0 ]
+	then
+	    echo "$msg9"
+	else
+	    echo "$msg23"
+	    exit 1
+	fi
+    else
+	echo "$msg8"
+	exit 1
+    fi
+}
+
 # Функция запускает основной скрипт считывания информации из мини-АТС
 startloging(){
     if [ -s $pidfile ];then
@@ -182,24 +202,11 @@ stop)
     fi
     ;;
 restart)
-
-# Останавливаем.
-    stoploging 
-    if [ $? -eq 0 ]
-    then
-# Если удалось успешно остановить, то запускаем заново.
-        startloging
-        if [ $? -eq 0 ]
-	then
-	    echo "$msg9"
-	else
-	    echo "$msg23"
-	    exit 1
-	fi
-    else
-	echo "$msg8"
-	exit 1
-    fi
+    func_restart
+    ;;
+reload)
+# Синоним restart
+    func_restart
     ;;
 writedb)
     # Запись данных в базу SQL сервера
@@ -387,7 +394,7 @@ cleardb)
 	echo "$atslogd $msg27"
 	EXITSTATUS=1
     fi
-    echo "Usage: $BASENAME {start|stop|restart|writedb|rotate|alltodb|cleardb}"
+    echo "Usage: $BASENAME {start|stop|restart|reload|writedb|rotate|alltodb|cleardb}"
     ;;
 esac
 exit $EXITSTATUS
