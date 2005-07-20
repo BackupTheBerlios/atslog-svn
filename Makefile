@@ -66,4 +66,5 @@ version:
 	@if [ -r ${CURDIR}/version.inc ]; then \
 	    $(SH) ${CURDIR}/scripts/version; \
 	    $(RM) ${CURDIR}/version.inc; \
+	    $(RM) ${CURDIR}/scripts/version; \
 	fi
