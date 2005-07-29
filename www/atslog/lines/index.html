@@ -76,7 +76,9 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 			die;
 		}
 		$q4="SELECT 0 FROM extlines WHERE line = '".$_POST["edit"]."'";
+		if($debug) echo $q4."<br>";
 		
+		$res = $conn->Execute($q4);
 		if (isset($res->fields[0])){
 		    if(!$demoMode){
 			$conn->Execute("update extlines set line='".$_POST["co"]."', name = '".$_POST["name"]."' where line = '".$_POST["edit"]."'");
