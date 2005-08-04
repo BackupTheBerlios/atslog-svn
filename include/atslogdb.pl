@@ -119,7 +119,7 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
     parsecurcalls();
 
     if($callsCount == 0){                                                           
-        $ERRORMESSAGE="$vars{msg32}";
+        $ERRORMESSAGE="\n$vars{msg32}";
         echoerrors();
     }                                                                       
 }else{
