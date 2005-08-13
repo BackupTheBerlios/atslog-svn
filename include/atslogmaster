@@ -265,7 +265,12 @@ writedb)
 		    exit 1
 		fi
 	    else
-		ECHOMESSAGE=$msg25
+		# Т.к. затея не удалась, то вернём файлу прежнее имя,
+		# предварительно проверив, нет ли на его месте старого!
+		if [ ! -s $logdir/$curcallslogfile -a -s $logdir/$curcallslogfile.tmp ];then
+		    mv $logdir/$curcallslogfile.tmp $logdir/$curcallslogfile
+		fi
+		ERRORMESSAGE=$msg25
 		echomess
 		exit 1
 	    fi
