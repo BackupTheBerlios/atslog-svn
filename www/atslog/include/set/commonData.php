@@ -27,9 +27,10 @@ if (!empty($rvar_co)) $co=translateHtml($rvar_co);
 if (!empty($rvar_int)) $int=translateHtml($rvar_int);
 if (!empty($rvar_toprint)) $toprint=translateHtml($rvar_toprint);
 if (!empty($rvar_incoming)) $incoming=translateHtml($rvar_incoming);
-if (!empty($rvar_CityOnly)) $CityOnly=translateHtml($rvar_CityOnly);
-if (!empty($rvar_noMobLine)) $noMobLine=translateHtml($rvar_noMobLine);
-if (!empty($rvar_noNationalLine)) $noNationalLine=translateHtml($rvar_noNationalLine);
+if (!empty($rvar_CityLine)) $CityLine=translateHtml($rvar_CityLine);
+if (!empty($rvar_MobLine)) $MobLine=translateHtml($rvar_MobLine);
+if (!empty($rvar_TrunkLine)) $TrunkLine=translateHtml($rvar_TrunkLine);
+if (!empty($rvar_NationalLine)) $NationalLine=translateHtml($rvar_NationalLine);
 if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 if (isset($rvar_num)) $num=translateHtml($rvar_num);
 
@@ -92,16 +93,19 @@ if(!empty($newStatus)){
 
 if(empty($type)) $type="IntAll"; elseif(!empty($search)) $type="AllCalls";
 if(empty($incoming)) $incoming="2";
-if($noMobLine!="1") $noMobLine=0;
-if($noNationalLine!="1") $noNationalLine=0;
+if($CityLine!="1") $CityLine=0;
+if($TrunkLine!="2") $TrunkLine=0;
+if($MobLine!="4") $MobLine=0;
+if($NationalLine!="8") $NationalLine=0;
 if(empty($sortBy)) $sortBy="1";
 if(!empty($cRows)) $rows = $cRows;
 if(empty($rows)) $rows="100";
 if(empty($page)) $page = 0;
-if(empty($CityOnly)) $CityOnly=0;
 if(!empty($baseOrder) && empty($order)) $order=$baseOrder;
 if($order!="ASC") $order="DESC";
 $additionalReq="";
+$hideExcludes=FALSE;
+if($CityLine==0 && $TrunkLine==0 && $MobLine==0 && $NationalLine==0) $hideExcludes=TRUE;
 //if($cacheflush) $conn->CacheFlush();
 
 // Опишем в массиве те модели АТС, которые имеют АОН.
@@ -116,31 +120,11 @@ while(list ($key, $val) = each ($withAON)){
 	}
 }
 
-if($sqltype == 'PostgreSQL'){
-    $REGEXP = "~*";
-    $NOT_REGEXP = "!~*";
-}else{
-    $REGEXP = "RLIKE";
-    $NOT_REGEXP = "NOT RLIKE";
-}
 
-if($CityOnly==1){
-    $additionalReq.=" AND (calls.number $REGEXP '".$LocalCalls."')";
-}
+// Вычисление дополнения к SQL запросу в зависимости от направления звонков
+// осуществяется посредством вызова математической функции.
 
-if($CityOnly==2){
-    $additionalReq.=" AND (calls.number $NOT_REGEXP '".$LocalCalls."')";
-}
-
-if($CityOnly!=1){
-    if($noMobLine){
-	$additionalReq.=" AND (calls.number $NOT_REGEXP '".$MobileCallsR."')";
-    }
-
-    if($noNationalLine){
-	$additionalReq.=" AND (calls.number $NOT_REGEXP '".$InternationalCalls."')";
-    }
-}
+$vectorReq=VectorOfCall(MathVector(0));
 
 // Формируем запрос в зависимости от типа звонков: исходящие,
 // входящие, или оба типа.
@@ -150,11 +134,11 @@ switch($incoming){
 		break;
 	case "2":
 		$additionalEcho = $GUI_LANG['OutgoingCalls'];
-		$additionalReq=" AND (calls.way = '2')";
+		$additionalReq.=" AND (calls.way = '2')";
 		break;
 	case "3":
-		$additionalReq=" AND (calls.way = '1')";
 		$additionalEcho = $GUI_LANG['IncomingCalls'];
+		$additionalReq.=" AND (calls.way = '1')";
 		break;
 }
 

@@ -43,22 +43,6 @@ echo("
 	<input TYPE=Text size=4 name=year2 maxlength=5 tabindex=1 VALUE=$year2>
 	<br>");
 
-	echo("	".$GUI_LANG['ExcludeCityCalls']."<input type=radio name=CityOnly value=2 ${CityOnlyCheck[2]}>
-	<br>");
-
-	echo("	".$GUI_LANG['CityCallsOnly']." <input type=radio name=CityOnly value=1 ${CityOnlyCheck[1]}>
-	<br>");
-
-	echo("	".$GUI_LANG['CityAndTrunkCalls']." <input type=radio name=CityOnly value=0 ${CityOnlyCheck[0]}>
-	<br>");
-
-if($CityOnly!=1){
-echo("	".$GUI_LANG['ExcludeCellularCalls']." <input type=checkbox name=noMobLine value=1 ${noMobLineCheck[$noMobLine]}>
-	<br>
-	".$GUI_LANG['ExcludeLongDistanceCalls']." <input type=checkbox name=noNationalLine value=1 ${noNationalLineCheck[$noNationalLine]}>
-	<br>");
-}
-
 // Строка поиска
 // ----------------------------------------------------------------------------
 echo("
@@ -66,12 +50,49 @@ echo("
 ");
 
 if (preg_match ("/MSIE|Gecko/i", $_SERVER["HTTP_USER_AGENT"]) && ! preg_match ("/Opera/i", $_SERVER["HTTP_USER_AGENT"]) ){
+    $dom_browser=TRUE;
+}else{
+    $dom_browser=FALSE;
+}
+
+if($dom_browser){
+    echo ("
+    <tr id=\"i739\">
+    	<td align=right width=100%><a href=\"javascript:changeTree('739');\" title=\"".$GUI_LANG['Excludes']."\">".$GUI_LANG['Excludes']."</a></td>
+    </tr>
+    ");
+}
+echo ("
+    <tr id=\"t739\" class=treeElem>
+	<td align=right width=100%>
+");
+	echo("	".$GUI_LANG['ExcludeCityCalls']."<input type=checkbox name=CityLine value=1${CityLineCheck[$CityLine]}><br>
+	");
+	echo("	".$GUI_LANG['ExcludeTrunkCalls']."<input type=checkbox name=TrunkLine value=2${TrunkLineCheck[$TrunkLine]}><br>
+	");
+	echo("	".$GUI_LANG['ExcludeCellularCalls']." <input type=checkbox name=MobLine value=4${MobLineCheck[$MobLine]}><br>
+	".$GUI_LANG['ExcludeLongDistanceCalls']." <input type=checkbox name=NationalLine value=8 ${NationalLineCheck[$NationalLine]}><br>
+	");
+
+echo ("
+	</td>
+    </tr>
+");
+
+if(!$hideExcludes){
+    echo("
+    <script type=\"text/javascript\" language=\"javascript\">
+	changeTree('739');
+    </script>
+    ");
+}
+
+if($dom_browser){
     echo ("
     <tr id=\"i740\">
     	<td align=right width=100%><a href=\"javascript:changeTree('740');\" title=\"".$GUI_LANG['Search']."\">".$GUI_LANG['NumberLookUp']."</a></td>
     </tr>
     ");
-
 }
 echo ("
     <tr id=\"t740\" class=treeElem>
@@ -79,6 +100,7 @@ echo ("
     </tr>
 </table>
 ");
+
 // ----------------------------------------------------------------------------
 
 if(!empty($debugMode)){

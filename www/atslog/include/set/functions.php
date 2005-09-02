@@ -52,6 +52,25 @@ Life:) Ukraine - 063
 МСС Russia - 901
 
 */
+
+
+
+// ----------------------------------------------------------------------------
+/*
+
+ Опишем синтаксис регуляного выражения для разных SQL серверов
+
+*/
+
+if($sqltype == 'PostgreSQL'){
+    $REGEXP = "~*";
+    $NOT_REGEXP = "!~*";
+}else{
+    $REGEXP = "RLIKE";
+    $NOT_REGEXP = "NOT RLIKE";
+}
+
+
 // ----------------------------------------------------------------------------
 
  /*
@@ -79,6 +98,83 @@ if($debug==2) $conn->debug = true;
  /*
    Опишем функции
  */
+
+ /*
+ 
+  Математическая составляющая для VectorOfCall.
+ 
+ */
+ 
+function MathVector($delta){
+// $delta - Дополнительное сочетание исключений.
+
+    global $CityLine,$TrunkLine,$MobLine,$NationalLine;
+    $z=0; $y=0; $x=0; $w=0; $vect_summ=0;
+    if ($debug) $f_delta=$delta;
+
+    $c=($delta > 0) ? $delta/8 : 0;
+    if($c >= 1) {$delta-=8;}
+    if ($NationalLine > 0 or $c >= 1) {$z=8;$vect_summ+=$z;}
+
+    $c=($delta > 0) ? $delta/4 : 0;
+    if($c >= 1) {$delta-=4;}
+    if ($MobLine > 0 or $c >= 1) {$y=4;$vect_summ+=$y;}
+
+    $c=($delta > 0) ? $delta/2 : 0;
+    if($c >= 1) {$delta-=2;}
+    if ($TrunkLine > 0 or $c >= 1) {$x=2;$vect_summ+=$x;}
+
+    $c=$delta-1;
+    if($c >= 0) {$delta-=1;}
+    if ($CityLine > 0 or $c >= 0) {$w=1;$vect_summ+=$w;}
+
+    if ($debug) echo "$f_delta $vect_summ<BR>";
+    return $vect_summ;;
+}
+
+
+ /*
+ 
+  Выясним часть SQL запроса зависящего от направления звонка.
+ 
+ */
+function VectorOfCall($vector){
+    global $REGEXP,$NOT_REGEXP;
+    global $LocalCalls,$LongDistanceCalls,$MobileCallsR,$InternationalCalls;
+
+    // Все возможные варианты дополнений к SQL запросу в зависимости от направления звонков.
+    // 1  - Исключить городские
+    $result[1]=" AND ((calls.number $REGEXP '".$LongDistanceCalls."') OR (calls.number $REGEXP '".$MobileCallsR."' OR calls.number $REGEXP '".$InternationalCalls."'))";
+    // 2  - Исключить межгород
+    $result[2]=" AND ((calls.number $REGEXP '".$LocalCalls."') OR (calls.number $REGEXP '".$MobileCallsR."') OR (calls.number $REGEXP '".$InternationalCalls."'))";
+    // 3  - Исключить городские и межгород
+    $result[3]=" AND ((calls.number $REGEXP '".$MobileCallsR."' OR calls.number $REGEXP '".$InternationalCalls."'))";
+    // 4  - Исключить сотовую связь
+    $result[4]=" AND (calls.number $NOT_REGEXP '".$MobileCallsR."')";
+    // 5  - Исключить сотовую связь и городские
+    $result[5]=" AND ((calls.number $REGEXP '".$LongDistanceCalls."') OR calls.number $REGEXP '".$InternationalCalls."'))";
+    // 6  - Исключить межгород и сотовую связь
+    $result[6]=" AND ((calls.number $REGEXP '".$LocalCalls."' OR calls.number $REGEXP '".$InternationalCalls."'))";
+    // 7  - Исключить городские, межгород и сотовую
+    $result[7]=" AND (calls.number $REGEXP '".$InternationalCalls."')";
+    // 8  - Исключить международку
+    $result[8]=" AND (calls.number $NOT_REGEXP '".$InternationalCalls."')";
+    // 9  - Исключить городские и международку
+    $result[9]=" AND ((calls.number $NOT_REGEXP '".$InternationalCalls."' AND (calls.number $REGEXP '".$LongDistanceCalls."' OR calls.number $REGEXP '".$MobileCallsR."')))";
+    // 10 - Исключить межгород и международку
+    $result[10]=" AND ((calls.number $REGEXP '".$LocalCalls."' OR calls.number $REGEXP '".$MobileCallsR."'))";
+    // 11 - Исключить городские, межгород и международку
+    $result[11]=" AND (calls.number $REGEXP '".$MobileCallsR."')";
+    // 12 - Исключить сотовую и международку
+    $result[12]=" AND ((calls.number $NOT_REGEXP '".$MobileCallsR."' AND calls.number $NOT_REGEXP '".$InternationalCalls."'))";
+    // 13 - Исключить городские, сотовую и международку
+    $result[13]=" AND ((calls.number $REGEXP '".$LongDistanceCalls."' AND calls.number $NOT_REGEXP '".$MobileCallsR."' AND calls.number $NOT_REGEXP '".$InternationalCalls."'))";
+    // 14 - Исключить межгород, сотовую и международку
+    $result[14]=" AND (calls.number $REGEXP '".$LocalCalls."')";
+    // 15 - Исключить все: город, межгород, сотовая и международку
+    $result[15]=" AND 0 > 1";
+    return ($result[$vector]);
+}
 
 //  Language file
 // ---------------------------------------------------------------------------- 
@@ -371,7 +467,7 @@ function pechat_ishodnyh()
 {
     global $from_date,$to_date,$int_echo,$incoming;
     global $additionalEcho,$coLineDescription,$co,$int,$num;
-    global $toprint,$CityOnly,$noMobLine,$noNationalLine;
+    global $toprint,$CityLine,$MobLine,$NationalLine,$TrunkLine;
     global $intPhoneDescription,$vhodjashij,$GUI_LANG;
     global $NumberDescription;
     
@@ -400,10 +496,10 @@ function pechat_ishodnyh()
 	echo (strtr($GUI_LANG['Number'],$GUI_LANG['UpperCase'],$GUI_LANG['LowerCase']).": $numEcho<br>");
     }
     if ($toprint=="yes") echo (strtr($GUI_LANG['PeriodFrom'],$GUI_LANG['UpperCase'],$GUI_LANG['LowerCase']).": $from_date ".$GUI_LANG['To'].": $to_date<br>");
-    if ($toprint=="yes" && $CityOnly==1) echo $GUI_LANG['CityCallsOnly']."<br>";
-    if ($toprint=="yes" && $CityOnly==2) echo $GUI_LANG['AreExcludedCity']."<br>";
-    if ($toprint=="yes" && $noMobLine) echo $GUI_LANG['AreExcludedCellularCommunication']."<br>";
-    if ($toprint=="yes" && $noNationalLine) echo $GUI_LANG['AreExcludedLongDistance']."<br>";
+    if ($toprint=="yes" && $TrunkLine) echo $GUI_LANG['AreExcludedTrunk']."<br>";
+    if ($toprint=="yes" && $CityLine) echo $GUI_LANG['AreExcludedCity']."<br>";
+    if ($toprint=="yes" && $MobLine) echo $GUI_LANG['AreExcludedCellularCommunication']."<br>";
+    if ($toprint=="yes" && $NationalLine) echo $GUI_LANG['AreExcludedLongDistance']."<br>";
     echo ("</h3>");
 }
 
@@ -448,26 +544,54 @@ function totalTableFooter($field,$returnType){
 	switch($field){
 	    case "4":
 		// Всего: общее количество звонков
-		$q="SELECT COUNT(*) from calls where ((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')".$additionalReq.")";
+		$q="SELECT COUNT(*)
+		from calls
+		where
+		((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')
+		".$additionalReq."
+		".VectorOfCall(MathVector(0))."
+		)";
 		break;
 	    case "5":
 		// Всего: городские
-		$q="SELECT SUM(calls.duration),COUNT(*) from calls where ((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')".$additionalReq." AND (calls.number $REGEXP '".$LocalCalls."'))";
+		$q="SELECT SUM(calls.duration),COUNT(*)
+		from calls
+		where
+		((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')
+		".$additionalReq."
+		".VectorOfCall(MathVector(14))."
+		)";
 		$Qcomment=$GUI_LANG['City'];
 		break;
 	    case "6":
 		// Всего: межгород
-		$q="SELECT SUM(calls.duration),COUNT(*) from calls where ((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')".$additionalReq." AND (calls.number $REGEXP '".$LongDistanceCalls."' AND calls.number $NOT_REGEXP '".$MobileCallsR."'))";
+		$q="SELECT SUM(calls.duration),COUNT(*)
+		from calls
+		where
+		((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')
+		".$additionalReq."
+		".VectorOfCall(MathVector(13))."
+		)";
 		$Qcomment=$GUI_LANG['Trunk'];
 		break;
 	    case "7":
 		// Всего:  мобильная связь
-		$q="SELECT SUM(calls.duration),COUNT(*) from calls where ((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')".$additionalReq." AND (calls.number $REGEXP '".$MobileCallsR."'))";
+		$q="SELECT SUM(calls.duration),COUNT(*)
+		from calls
+		where ((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')
+		".$additionalReq."
+		".VectorOfCall(MathVector(11))."
+		)";
 		$Qcomment=$GUI_LANG['Mobile'];
 		break;
 	    case "8":
 		// Всего: международная связь
-		$q="SELECT SUM(calls.duration),COUNT(*) from calls where ((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')".$additionalReq." AND (calls.number $REGEXP '".$InternationalCalls."'))";
+		$q="SELECT SUM(calls.duration),COUNT(*)
+		from calls
+		where ((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')
+		".$additionalReq."
+		".VectorOfCall(MathVector(7))."
+		)";
 		$Qcomment=$GUI_LANG['LongDistance'];
 		break;
 	}
@@ -526,14 +650,14 @@ function complitLink(){
 
     global $day,$mon,$year,$day2,$mon2,$year2,
     $sortBy,$type,$co,$int,$toprint,$incoming,
-    $CityOnly,$noMobLine,$noNationalLine,$debug,$debugMode,
+    $CityLine,$TrunkLine,$MobLine,$NationalLine,$debug,$debugMode,
     $num,$rows;
 
     global $local_day,$local_mon,$local_year,$local_day2,
     $local_mon2,$local_year2,$local_order,
     $local_sortBy,$local_type,$local_co,$local_int,$local_toprint,
-    $local_incoming,$local_CityOnly,$local_noMobLine,
-    $local_noNationalLine,$local_debug,$local_cacheflush,
+    $local_incoming,$local_CityLine,$local_TrunkLine,$local_MobLine,
+    $local_NationalLine,$local_debug,$local_cacheflush,
     $local_num,$local_page,$local_search,$local_export,$local_diatype;
 
     $cL['day'] = (empty($local_day)) ? $day : $local_day;
@@ -549,9 +673,10 @@ function complitLink(){
     $cL['int'] = (empty($local_int)) ? $int : $local_int;
     $cL['toprint'] = (empty($local_toprint)) ? $toprint : $local_toprint;
     $cL['incoming']= (empty($local_incoming)) ? $incoming : $local_incoming;
-    $cL['CityOnly']= (empty($local_CityOnly)) ? $CityOnly : $local_CityOnly;
-    $cL['noMobLine']= (empty($local_noMobLine))	? $noMobLine : $local_noMobLine;
-    $cL['noNationalLine'] = (empty($local_noNationalLine)) ? $noNationalLine : $local_noNationalLine;
+    $cL['CityLine']= (empty($local_CityLine)) ? $CityLine : $local_CityLine;
+    $cL['TrunkLine']= (empty($local_TrunkLine)) ? $TrunkLine : $local_TrunkLine;
+    $cL['MobLine']= (empty($local_MobLine))	? $MobLine : $local_MobLine;
+    $cL['NationalLine'] = (empty($local_NationalLine)) ? $NationalLine : $local_NationalLine;
     $cL['num'] = ($local_num == "") ? "$num" : "$local_num";
     $cL['cacheflush'] = (empty($local_cacheflush)) ? $cacheflush : $local_cacheflush;
     if(!empty($local_page)) $cL['page'] = $local_page;
@@ -589,9 +714,10 @@ function complitLink(){
     $local_int="";
     $local_toprint="";
     $local_incoming="";
-    $local_CityOnly="";
-    $local_noMobLine="";
-    $local_noNationalLine="";
+    $local_CityLine="";
+    $local_TrunkLine="";
+    $local_MobLine="";
+    $local_NationalLine="";
     $local_debug="";
     $local_cacheflush="";
     $local_num="";

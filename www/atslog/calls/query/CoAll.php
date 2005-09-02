@@ -21,8 +21,8 @@ INSERT INTO tmp_A SELECT calls.co,SUM(duration)
 from calls
 where ((calls.timeofcall>='".$from_date."')
 AND (calls.timeofcall<='".$to_date."')
-AND (calls.number $REGEXP '".$LocalCalls."')
 ".$additionalReq."
+".VectorOfCall(MathVector(14))."
 )
 group by calls.co
 ";
@@ -44,8 +44,8 @@ INSERT INTO tmp_B SELECT calls.co,SUM(duration)
 from calls
 where ((calls.timeofcall>='".$from_date."')
 AND (calls.timeofcall<='".$to_date."')
-AND (calls.number $REGEXP '".$LongDistanceCalls."' AND calls.number $NOT_REGEXP '".$MobileCallsR."')
 ".$additionalReq."
+".VectorOfCall(MathVector(13))."
 )
 group by calls.co
 ";
@@ -66,8 +66,8 @@ INSERT INTO tmp_C SELECT calls.co,SUM(duration)
 from calls
 where ((calls.timeofcall>='".$from_date."')
 AND (calls.timeofcall<='".$to_date."')
-AND (calls.number $REGEXP '".$MobileCallsR."')
 ".$additionalReq."
+".VectorOfCall(MathVector(11))."
 )
 group by calls.co
 ";
@@ -88,8 +88,8 @@ INSERT INTO tmp_D SELECT calls.co,SUM(duration)
 from calls
 where ((calls.timeofcall>='".$from_date."')
 AND (calls.timeofcall<='".$to_date."')
-AND (calls.number $REGEXP '".$InternationalCalls."')
 ".$additionalReq."
+".VectorOfCall(MathVector(7))."
 )
 group by calls.co
 ";
@@ -113,6 +113,8 @@ FROM calls
 where ((calls.timeofcall>='".$from_date."')
 AND (calls.timeofcall<='".$to_date."')
 ".$additionalReq."
+".$vectorReq."
+
 )
 GROUP BY calls.co";
 
@@ -121,26 +123,17 @@ SELECT COUNT(*) FROM tmp_P
 ";
 
 
-
 $conn->Execute($qA1);
-if($CityOnly!=2){
-    $conn->Execute($qA2);
-}
+if(empty($CityLine)) $conn->Execute($qA2);
 
 $conn->Execute($qB1);
-if($CityOnly!=1){
-    $conn->Execute($qB2);
-}
+if(empty($TrunkLine)) $conn->Execute($qB2);
 
 $conn->Execute($qC1);
-if(empty($noMobLine) && $CityOnly!=1){
-    $conn->Execute($qC2);
-}
+if(empty($MobLine)) $conn->Execute($qC2);
 
 $conn->Execute($qD1);
-if(empty($noNationalLine) && $CityOnly!=1){
-    $conn->Execute($qD2);
-}
+if(empty($NationalLine)) $conn->Execute($qD2);
 
 $conn->Execute($qP1);
 $conn->Execute($qP2);
@@ -164,11 +157,12 @@ LEFT JOIN tmp_D ON calls.co=tmp_D.co
 where (calls.timeofcall>='".$from_date."'
 AND (calls.timeofcall<='".$to_date."')
 ".$additionalReq."
+".$vectorReq."
 )
 group by calls.co,extlines.name,tmp_A.duration,tmp_B.duration,tmp_C.duration,tmp_D.duration
 ORDER BY ".$sortBy." ".$order.$limitsP;
 
-// Выполним основной запрос използуя заранее подготовленный LIMIT
+// Выполним основной запрос используя заранее подготовленный LIMIT
 if($cacheflush) $res = $conn->CacheFlush($q);
 $res = $conn->CacheExecute($q);
 
@@ -203,24 +197,24 @@ if ($res && $res->RecordCount() > 0) {
 	AddTableHeader("3",$GUI_LANG['QuantityOfCalls'],$toprint);
 	echo ("</td>");
 
-	if($CityOnly!=2){
+	if(empty($CityLine)){
 	    echo ("<td>");
 	    AddTableHeader("4",$GUI_LANG['DurationOfCityCalls'],$toprint);
 	    echo("</td>");
 	}
 
-	if($CityOnly!=1){
+	if(empty($TrunkLine)){
 	    echo("<td>");
 	    AddTableHeader("5",$GUI_LANG['DurationOfTrunkCalls'],$toprint);
 	    echo("</td>");
 	}
-	if(empty($noMobLine) && $CityOnly!=1){
+	if(empty($MobLine)){
 	    echo("<td>");
 	    AddTableHeader("6",$GUI_LANG['DurationOfCellularCalls'],$toprint);
 	    echo("</td>");
 	}
 
-	if(empty($noNationalLine) && $CityOnly!=1){
+	if(empty($NationalLine)){
 	    echo("<td>");
 	    AddTableHeader("7",$GUI_LANG['DurationOfLongDistanceCalls'],$toprint);
 	    echo("</td>");
@@ -230,16 +224,16 @@ if ($res && $res->RecordCount() > 0) {
     }else{
 	$expor_excel->MontaConteudo(0, 0,$GUI_LANG['ExternalLine']);
 	$expor_excel->MontaConteudo(0, 1,$GUI_LANG['QuantityOfCalls']);
-	if($CityOnly!=2){
+	if(empty($CityLine)){
 	    $expor_excel->MontaConteudo(0, 2,$GUI_LANG['DurationOfCityCalls']);
 	}
-	if($CityOnly!=1){
+	if(empty($TrunkLine)){
 	    $expor_excel->MontaConteudo(0, 3,$GUI_LANG['DurationOfTrunkCalls']);
 	}
-	if(empty($noMobLine) && $CityOnly!=1){
+	if(empty($MobLine)){
 	    $expor_excel->MontaConteudo(0, 4,$GUI_LANG['DurationOfCellularCalls']);
 	}
-	if(empty($noNationalLine) && $CityOnly!=1){
+	if(empty($NationalLine)){
 	    $expor_excel->MontaConteudo(0, 5,$GUI_LANG['DurationOfLongDistanceCalls']);
 	}
 	$expor_excel->MontaConteudo(1, 0, "   ");
@@ -268,28 +262,28 @@ if ($res && $res->RecordCount() > 0) {
 			    $expor_excel->MontaConteudo($linha+2, 0, $row[0]." ".$intPhoneDescription);
 			    $expor_excel->MontaConteudo($linha+2, 1, $row[2]);
 			}
-			if($CityOnly!=2){
+			if(empty($CityLine)){
 			    if(empty($export)){
 				echo ("<td>".sumTotal($row[3],0)."</td>");
 			    }else{
 				$expor_excel->MontaConteudo($linha+2, 2, sumTotal($row[3],0));
 			    }
 			}
-			if($CityOnly!=1){
+			if(empty($TrunkLine)){
 			    if(empty($export)){
 				echo ("<td>".sumTotal($row[4],0)."</td>");
 			    }else{
 				$expor_excel->MontaConteudo($linha+2, 3, sumTotal($row[4],0));
 			    }
 			}
-			if(empty($noMobLine) && $CityOnly!=1){
+			if(empty($MobLine)){
 			    if(empty($export)){
 				echo ("<td>".sumTotal($row[5],0)."</td>");
 			    }else{
 				$expor_excel->MontaConteudo($linha+2, 4, sumTotal($row[5],0));
 			    }
 			}
-			if(empty($noNationalLine) && $CityOnly!=1){
+			if(empty($NationalLine)){
 			    if(empty($export)){
 				echo ("<td>".sumTotal($row[6],0)."</td>");
 			    }else{
@@ -319,33 +313,37 @@ if ($res && $res->RecordCount() > 0) {
     if(empty($export)){
 	echo ("<tr ".$COLORS['AltogetherTrBgcolor']."><td>".$GUI_LANG['Total'].": <b>".$InAll[0]."</b></td>");
 	echo ("<td nowrap><b>".$InAll[2]."</b></td>");
-	if($CityOnly!=2)echo ("<td nowrap>".sumTotal($InAll[3],1)."</td>");
-	if($CityOnly!=1)echo ("<td nowrap>".sumTotal($InAll[4],1)."</td>");
-	if(empty($noMobLine) && $CityOnly!=1)echo ("<td nowrap>".sumTotal($InAll[5],1)."</td>");
-	if(empty($noNationalLine) && $CityOnly!=1)echo ("<td nowrap>".sumTotal($InAll[6],1)."</td>");
+	if(empty($CityLine))echo ("<td nowrap>".sumTotal($InAll[3],1)."</td>");
+	if(empty($TrunkLine))echo ("<td nowrap>".sumTotal($InAll[4],1)."</td>");
+	if(empty($MobLine))echo ("<td nowrap>".sumTotal($InAll[5],1)."</td>");
+	if(empty($NationalLine))echo ("<td nowrap>".sumTotal($InAll[6],1)."</td>");
 	print ("</tr>\n");
-	echo ("<tr ".$COLORS['TotalTrBgcolor']."><td>".$GUI_LANG['Altogether'].":</td>");
-	echo ("<td nowrap><b>".totalTableFooter('4',1)."</b></td>");
-	if($CityOnly!=2)echo ("<td nowrap>".sumTotal(totalTableFooter('5',1),1)."</td>");
-	if($CityOnly!=1)echo ("<td nowrap>".sumTotal(totalTableFooter('6',1),1)."</td>");
-	if(empty($noMobLine) && $CityOnly!=1)echo ("<td nowrap>".sumTotal(totalTableFooter('7',1),1)."</td>");
-	if(empty($noNationalLine) && $CityOnly!=1)echo ("<td nowrap>".sumTotal(totalTableFooter('8',1),1)."</td>");
-	print ("</tr>\n");
+	if($pages > 1 or $debug){
+	    echo ("<tr ".$COLORS['TotalTrBgcolor']."><td>".$GUI_LANG['Altogether'].":</td>");
+	    echo ("<td nowrap><b>".totalTableFooter('4',1)."</b></td>");
+	    if(empty($CityLine))echo ("<td nowrap>".sumTotal(totalTableFooter('5',1),1)."</td>");
+	    if(empty($TrunkLine))echo ("<td nowrap>".sumTotal(totalTableFooter('6',1),1)."</td>");
+	    if(empty($MobLine))echo ("<td nowrap>".sumTotal(totalTableFooter('7',1),1)."</td>");
+	    if(empty($NationalLine))echo ("<td nowrap>".sumTotal(totalTableFooter('8',1),1)."</td>");
+	    print ("</tr>\n");
+	}
 	print ("</table>\n\n </td></tr></table>");
     }else{
 	$expor_excel->MontaConteudo($linha+3, 0, $GUI_LANG['Total'].": ".$InAll[0]);
 	$expor_excel->MontaConteudo($linha+3, 1, $InAll[2]);
-	if($CityOnly!=2) $expor_excel->MontaConteudo($linha+3, 2, sumTotal($InAll[3],0));
-	if($CityOnly!=1) $expor_excel->MontaConteudo($linha+3, 3, sumTotal($InAll[4],0));
-	if(empty($noMobLine) && $CityOnly!=1) $expor_excel->MontaConteudo($linha+3, 4, sumTotal($InAll[5],0));
-	if(empty($noNationalLine) && $CityOnly!=1) $expor_excel->MontaConteudo($linha+3, 5, sumTotal($InAll[6],0));
+	if(empty($CityLine)) $expor_excel->MontaConteudo($linha+3, 2, sumTotal($InAll[3],0));
+	if(empty($TrunkLine)) $expor_excel->MontaConteudo($linha+3, 3, sumTotal($InAll[4],0));
+	if(empty($MobLine)) $expor_excel->MontaConteudo($linha+3, 4, sumTotal($InAll[5],0));
+	if(empty($NationalLine)) $expor_excel->MontaConteudo($linha+3, 5, sumTotal($InAll[6],0));
 
-	$expor_excel->MontaConteudo($linha+4, 0, $GUI_LANG['Altogether'].":");
-	$expor_excel->MontaConteudo($linha+4, 1, totalTableFooter('4',1));
-	if($CityOnly!=2) $expor_excel->MontaConteudo($linha+4, 2, sumTotal(totalTableFooter('5',1),0));
-	if($CityOnly!=1) $expor_excel->MontaConteudo($linha+4, 3, sumTotal(totalTableFooter('6',1),0));
-	if(empty($noMobLine) && $CityOnly!=1) $expor_excel->MontaConteudo($linha+4, 4, sumTotal(totalTableFooter('7',1),0));
-	if(empty($noNationalLine) && $CityOnly!=1) $expor_excel->MontaConteudo($linha+4, 5, sumTotal(totalTableFooter('8',1),0));
+	if($pages > 1 or $debug){
+	    $expor_excel->MontaConteudo($linha+4, 0, $GUI_LANG['Altogether'].":");
+	    $expor_excel->MontaConteudo($linha+4, 1, totalTableFooter('4',1));
+	    if(empty($CityLine)) $expor_excel->MontaConteudo($linha+4, 2, sumTotal(totalTableFooter('5',1),0));
+	    if(empty($TrunkLine)) $expor_excel->MontaConteudo($linha+4, 3, sumTotal(totalTableFooter('6',1),0));
+	    if(empty($MobLine)) $expor_excel->MontaConteudo($linha+4, 4, sumTotal(totalTableFooter('7',1),0));
+	    if(empty($NationalLine)) $expor_excel->MontaConteudo($linha+4, 5, sumTotal(totalTableFooter('8',1),0));
+	}
     }
 
     if(!empty($export)) $expor_excel->GeraArquivo();

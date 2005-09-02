@@ -126,6 +126,8 @@ treeOpen = new Array();
 treeItems = new Array();
 treeOpen[740] = false;
 treeItems[740] = new Array('t740','i740');
+treeOpen[740] = false;
+treeItems[739] = new Array('t739','i739');
 function changeTree(which) {
 	if (treeOpen[which]) {
 		removeElem(treeItems[which][0]);

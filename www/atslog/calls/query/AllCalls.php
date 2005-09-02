@@ -4,7 +4,10 @@
 
 // Подзапрос для выяснения общего количества страниц
 // ----------------------------------------------------------------------------
-		$qP="SELECT COUNT(*) from calls where ((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."') ".$additionalReq.")";
+		$qP="SELECT COUNT(*) from calls where ((calls.timeofcall>='".$from_date."') AND (calls.timeofcall<='".$to_date."')
+		".$additionalReq."
+		".$vectorReq."
+		)";
 		$limitsP = getLimits($qP);
 // ----------------------------------------------------------------------------
 
@@ -13,11 +16,13 @@
 		LEFT JOIN extlines ON calls.co = extlines.line
 		LEFT JOIN intphones ON calls.internally = intphones.intnumber
 		LEFT JOIN phonebook ON
-		    calls.number LIKE phonebook.number AND phonebook.login = '".$_SERVER['PHP_AUTH_USER']."'
+		       calls.number LIKE phonebook.number AND phonebook.login = '".$_SERVER['PHP_AUTH_USER']."'
 		    OR calls.number LIKE phonebook.number AND phonebook.login IS NULL
 		where ((calls.timeofcall>='".$from_date."')
-		AND (calls.timeofcall<='".$to_date."') ".$additionalReq.")
-		ORDER BY ".$sortBy." ".$order.$limitsP;
+		AND (calls.timeofcall<='".$to_date."')
+		".$additionalReq."
+		".$vectorReq."
+		) ORDER BY ".$sortBy." ".$order.$limitsP;
 
 		if($debug) echo $q."<br>";
 		if($cacheflush) $res = $conn->CacheFlush($q);
@@ -136,27 +141,31 @@
 	    echo("&nbsp;</td>");
 	    print ("</tr>\n");
 
-	    echo("<tr ".$COLORS['TotalTrBgcolor']."><td>".$GUI_LANG['Altogether'].":&nbsp;&nbsp;</td>");
-    	    echo("<td colspan=4>");
-	    echo totalTableFooter('5',0);
-	    echo totalTableFooter('6',0);
-	    echo totalTableFooter('7',0);
-	    echo totalTableFooter('8',0);
-	    echo("&nbsp;</td>");
-	    print ("</tr>\n");
+	    if($pages > 1 or $debug){
+		echo("<tr ".$COLORS['TotalTrBgcolor']."><td>".$GUI_LANG['Altogether'].":&nbsp;&nbsp;</td>");
+    		echo("<td colspan=4>");
+		echo totalTableFooter('5',0);
+		echo totalTableFooter('6',0);
+		echo totalTableFooter('7',0);
+		echo totalTableFooter('8',0);
+		echo("&nbsp;</td>");
+		print ("</tr>\n");
+	    }
 
 	    print ("</table>\n\n </td></tr></table>");
 	}else{
-	    array($TTF);
-	    $TTF[2]=$GUI_LANG['GeneralDuration'].": ".sumTotal($InAll[2],2);
+	    if($pages > 1 or $debug){
+		array($TTF);
+		$TTF[2]=$GUI_LANG['GeneralDuration'].": ".sumTotal($InAll[2],2);
 
-	    array($TTFa);
-	    $TTFa[5]=totalTableFooter('5',2);
-	    $TTFa[6]=totalTableFooter('6',2);
-	    $TTFa[7]=totalTableFooter('7',2);
-	    $TTFa[8]=totalTableFooter('8',2);
+		array($TTFa);
+		$TTFa[5]=totalTableFooter('5',2);
+		$TTFa[6]=totalTableFooter('6',2);
+		$TTFa[7]=totalTableFooter('7',2);
+		$TTFa[8]=totalTableFooter('8',2);
 	    
-	    TTFprint();
+		TTFprint();
+	    }
 	}
 	
 	if(!empty($export)) $expor_excel->GeraArquivo();

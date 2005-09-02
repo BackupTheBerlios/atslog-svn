@@ -23,7 +23,10 @@ include('../include/set/commonData.php');
     $q="SELECT timeofcall,duration,way
     FROM calls
     where ((calls.timeofcall>='".$from_date."')               
-    AND (calls.timeofcall<='".$to_date."') ".$additionalReq.")";
+    AND (calls.timeofcall<='".$to_date."')
+    ".$additionalReq."
+    ".$vectorReq."
+    )";
     if($debug) echo $q."<br>";                   
     if($cacheflush) $res = $conn->CacheFlush($q);
     $rs = $conn->CacheExecute($q);

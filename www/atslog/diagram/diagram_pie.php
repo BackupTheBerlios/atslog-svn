@@ -22,7 +22,10 @@ include('../include/set/commonData.php');
     $q="SELECT COUNT(*),way
     FROM calls
     where ((calls.timeofcall>='".$from_date."')               
-    AND (calls.timeofcall<='".$to_date."') ".$additionalReq.")
+    AND (calls.timeofcall<='".$to_date."')
+    ".$additionalReq."
+    ".$vectorReq."
+    )
     GROUP BY way";
     if($debug) echo $q."<br>";                   
     if($cacheflush) $res = $conn->CacheFlush($q);

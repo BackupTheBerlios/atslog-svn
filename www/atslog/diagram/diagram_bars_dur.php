@@ -23,7 +23,10 @@ include('../include/set/commonData.php');
     $q="SELECT timeofcall,duration,way
     FROM calls
     where ((calls.timeofcall>='".$from_date."')               
-    AND (calls.timeofcall<='".$to_date."') ".$additionalReq.")";
+    AND (calls.timeofcall<='".$to_date."')
+    ".$additionalReq."
+    ".$vectorReq."
+    )";
     if($debug) echo $q."<br>";                   
     if($cacheflush) $res = $conn->CacheFlush($q);
     $rs = $conn->CacheExecute($q);
@@ -127,7 +130,7 @@ include('../include/set/commonData.php');
 include("../include/phplot/phplot.php");
 $graph = new PHPlot(600,300);
 if($Columns > 30){
-    $graph->SetYTitle("Duration days hours:minutes:seconds");
+    $graph->SetYTitle("Duration days shours:minutes:seconds");
     $graph->SetYTimeFormat("z H:i:s");
 }else{
     $graph->SetYTitle("Duration hours:minutes:seconds");

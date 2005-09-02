@@ -170,7 +170,12 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 			echo "<div><font color=red><b>".$GUI_LANG['EnterAPhoneNumber']."</b></font></div><br>";
 			break;
 	}
-	$q2="SELECT login,number,description from phonebook where phonebook.login = '".$_SERVER['PHP_AUTH_USER']."' OR phonebook.login IS NULL order by number ASC";
+	$q2="SELECT
+	login,number,description
+	from phonebook
+	where phonebook.login = '".$_SERVER['PHP_AUTH_USER']."'
+	   OR phonebook.login IS NULL
+	order by number ASC";
 	if($debug) echo $q2."<br>";
 
 	$conn->setFetchMode(ADODB_FETCH_NUM);
