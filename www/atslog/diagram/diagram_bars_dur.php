@@ -130,7 +130,7 @@ include('../include/set/commonData.php');
 include("../include/phplot/phplot.php");
 $graph = new PHPlot(600,300);
 if($Columns > 30){
-    $graph->SetYTitle("Duration days shours:minutes:seconds");
+    $graph->SetYTitle("Duration days hours:minutes:seconds");
     $graph->SetYTimeFormat("z H:i:s");
 }else{
     $graph->SetYTitle("Duration hours:minutes:seconds");
