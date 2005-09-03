@@ -6,10 +6,8 @@
 // ------------------------------------------------------------------------------------------------------
 //
 		$qP1="CREATE TEMPORARY TABLE tmpNum_P (
-		     number decimal(100,0) unsigned NOT NULL default '0',
-		     Count decimal(100,0) unsigned NOT NULL default '0',
-		     KEY number (number),
-		     KEY Count (Count)
+		     number decimal(100,0) NULL default '0',
+		     count decimal(100,0) NULL default '0'
 		    )";
 
 
@@ -48,7 +46,7 @@
 		".$additionalReq."
 		".$vectorReq."
 		)
-		GROUP BY calls.number,calls.way,extlines.name
+		GROUP BY calls.number,calls.way,extlines.name,phonebook.description
 		ORDER BY ".$sortBy." ".$order.$limitsP;
 		if($debug) echo $q.";<br>";
 		if($cacheflush) $res = $conn->CacheFlush($q);
@@ -157,19 +155,18 @@
 
 	    print ("</table>\n\n </td></tr></table>");
 	}else{
-	    if($pages > 1 or $debug){
-		array($TTF);
-		$TTF[1]=$GUI_LANG['QuantityOfCalls'].": ".$InAll[1];
-		$TTF[2]=$GUI_LANG['GeneralDuration'].": ".sumTotal($InAll[2],2);
+	    array($TTF);
+	    $TTF[1]=$GUI_LANG['QuantityOfCalls'].": ".$InAll[1];
+	    $TTF[2]=$GUI_LANG['GeneralDuration'].": ".sumTotal($InAll[2],2);
 
-		array($TTFa);
+	    if($pages > 1 or $debug){
+	    	array($TTFa);
 		$TTFa[5]=totalTableFooter('5',2);
 		$TTFa[6]=totalTableFooter('6',2);
 		$TTFa[7]=totalTableFooter('7',2);
 		$TTFa[8]=totalTableFooter('8',2);
-	    
-		TTFprint();
-	    }
+	    }	    
+	    TTFprint();
 	}
 	if(!empty($export)) $expor_excel->GeraArquivo();
 
