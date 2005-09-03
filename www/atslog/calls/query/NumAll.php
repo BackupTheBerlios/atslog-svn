@@ -5,10 +5,8 @@
 // ------------------------------------------------------------------------------------------------------
 //
 		$qP1="CREATE TEMPORARY TABLE tmpNumAll_P (
-		     number decimal(100,0) unsigned NOT NULL default '0',
-		     Count decimal(100,0) unsigned NOT NULL default '0',
-		     KEY number (number),
-		     KEY Count (Count)
+		     number decimal(100,0) NULL default '0',
+		     count decimal(100,0) NULL default '0'
 		    )";
 
 
@@ -46,7 +44,7 @@
 		".$additionalReq."
 		".$vectorReq."
 		)
-		GROUP BY calls.number,calls.way
+		GROUP BY calls.number,calls.way,phonebook.description
 		ORDER BY ".$sortBy." ".$order.$limitsP;
 		if($debug) echo $q."<br>";
 		if($cacheflush) $res = $conn->CacheFlush($q);
