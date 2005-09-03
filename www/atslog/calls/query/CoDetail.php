@@ -137,18 +137,17 @@
 
 	    print ("</table>\n\n </td></tr></table>");
 	}else{
-	    if($pages > 1 or $debug){
-		array($TTF);
-		$TTF[3]=$GUI_LANG['GeneralDuration'].": ".sumTotal($InAll[3],2);
+	    array($TTF);
+	    $TTF[3]=$GUI_LANG['GeneralDuration'].": ".sumTotal($InAll[3],2);
 
+	    if($pages > 1 or $debug){
 		array($TTFa);
 		$TTFa[5]=totalTableFooter('5',2);
 		$TTFa[6]=totalTableFooter('6',2);
 		$TTFa[7]=totalTableFooter('7',2);
 		$TTFa[8]=totalTableFooter('8',2);
-	    
-		TTFprint();
 	    }
+	    TTFprint();
 	}
 
 	if(!empty($export)) $expor_excel->GeraArquivo();

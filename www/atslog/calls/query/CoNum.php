@@ -166,6 +166,7 @@
 		$TTFa[7]=totalTableFooter('7',2);
 		$TTFa[8]=totalTableFooter('8',2);
 	    }	    
+
 	    TTFprint();
 	}
 	if(!empty($export)) $expor_excel->GeraArquivo();
