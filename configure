@@ -13,7 +13,7 @@ checksysutils(){
     else
 	MD5_PRG=md5
     fi
-    for ac_prg in sed awk head md5 [ expr $MD5_PRG urandom
+    for ac_prg in sed awk head [ expr $MD5_PRG urandom
     do
 	echo -n "checking if system file \"$ac_prg\" is existing: "
 	for ac_dir in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin /dev
