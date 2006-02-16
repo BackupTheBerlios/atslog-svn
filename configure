@@ -616,7 +616,7 @@ esac
  fi
 # Check for Perl DBI.
     echo -n "checking for DBI $sqltype class for Perl: "
-    ./scripts/checkDBD.out.pl $sqltype
+    ./scripts/checkDBD.out.pl $sqltype 1> /dev/null 2> /dev/null
     if [ $? -ne 0 ];then
 	echo "ERROR"
 	if [ "$SQLTYPE" = "pgsql" ];then
