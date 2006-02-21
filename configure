@@ -6,6 +6,16 @@
 # Установим рабочие переменные
 UNAME=`uname`
 
+# Переменную $LANG - берём из настройки локали.
+if [ -f ./lang/$LANG ]; then
+    . ./lang/$LANG
+elif [ -f ./lang/en_US ]; then
+    . ./lang/en_US
+else
+    echo "Can't open language file"
+    exit 1
+fi
+
 # Проверим наличие необходимых системных утулит.
 checksysutils(){
     if [ "$UNAME" = "Linux" -o "$LINUXYES" = "YES" ];then
@@ -13,7 +23,7 @@ checksysutils(){
     else
 	MD5_PRG=md5
     fi
-    for ac_prg in sed awk head [ expr $MD5_PRG urandom
+    for ac_prg in sed awk head [ expr $MD5_PRG urandom printf
     do
 	echo -n "checking if system file \"$ac_prg\" is existing: "
 	for ac_dir in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin /dev
@@ -271,10 +281,10 @@ fi
 if [ "$CONFONE" = "YES" -o "$CONFTWO" = "YES" ];then
     echo " OK"
 	if [ "$CONFONE" = "YES" ];then
-	    echo "В системе найден конфигурационный файл $PREFIX/etc/panalog.conf"
+	    echo $msg36
 	fi
 	if [ "$CONFTWO" = "YES" ];then
-	    echo "В системе найден конфигурационный файл $PREFIX/etc/atslog.conf"
+	    echo $msg37
 	fi
 else
     echo " NONE"
@@ -284,7 +294,7 @@ echo checking for Perl path $PERL
 
 case "$UPDATE" in
 [Yy][Ee][Ss])
-    echo "Продолжение конфигурирования с учётом данных из файлов, имеющихся в системе."
+    echo $msg38
 	if [ -r $PREFIX/etc/panalog.conf ]; then
 	    SHAREDIR=$sharedir
 	    MASTERSCRIPT=$masterscript
@@ -324,7 +334,7 @@ case "$UPDATE" in
 	fi
     ;;
     *)
-	echo "Продолжение конфигурирования для новой установки ATSlog"
+	echo $msg39
 	echo -n "checking for PostgreSQL database: "
 	if [ "$MYSQLBASE" != "yes" ];then
 	    if [ -x $PGSQLPATH ];then
@@ -423,9 +433,7 @@ echo checking for PID file path $pidfile
 
 
 if [ -z "$sqlmaspasswd" ];then
-    echo "Зададим пароль для пользователя $sqlmasteruser;"
-    echo "модули ATSlog от имени этого пользователя инициализируют"
-    echo "все обращения к SQL серверу".
+    printf "$msg40" $sqlmasteruser
 # Используем генерированный пароль для работы с SQL сервером
     passwordgen
     sqlmaspasswd=$PASSWORD
@@ -484,7 +492,7 @@ case "$UPDATE" in
 	    rm ./updatesqltables.pgsql.sql.out
 	fi
 
-	echo "Конфигурируем таблицы SQL сервера для обновления"
+	echo $msg41
     ;;
         *)
 	if [ -f ./sql/createsqltables.$SQLTYPE.sql ];then
@@ -507,7 +515,7 @@ case "$UPDATE" in
 	     < ./sql/createuser.$SQLTYPE.sql > ./createuser.$SQLTYPE.sql
 	fi
 
-	echo "Конфигурируем таблицы SQL сервера для новой установки"
+	echo $msg42
     ;;
 esac
 
@@ -620,19 +628,9 @@ esac
     if [ $? -ne 0 ];then
 	echo "ERROR"
 	if [ "$SQLTYPE" = "pgsql" ];then
-	    echo ======================================================
-	    echo Пожалуйста, установите DBD::Pg модуль для Perl
-	    echo Смотрите http://search.cpan.org/~rudy/DBD-Pg/
-	    echo и        http://search.cpan.org/~timb/DBI/
-	    echo ======================================================
-	    echo
+	    printf "$msg43"
 	else
-	    echo =======================================================
-	    echo Пожалуйста, установите DBD::MySQL модуль для Perl
-	    echo Смотрите http://search.cpan.org/~timb/DBI/
-	    echo и        http://search.cpan.org/~rudy/DBD-mysql/
-	    echo =======================================================
-	    echo
+	    printf "$msg44"
 	fi
 	exit 1
     else
