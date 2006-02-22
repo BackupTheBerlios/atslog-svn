@@ -151,38 +151,7 @@ fi
 
 
 if [ "$HELP" = "yes" ];then
-
-echo "--disable-update Произвести установку новой версии без учета
-                 имеющихся в системе конфигурационных файлов.
-
-		 Если параметр \" --disable-update\" не указан, то
-		 будет произведён поиск старых файлов с настройками
-		 ($PREFIX/etc/panalog.conf или $PREFIX/etc/atslog.conf)
-		 и при положительном результате конфигурирование будет
-		 происходить с учетом параметров из этих файлов.
-
---linux-version= Производитель Linux.
-                 Возможные варианты (проверенные в работе версии Linux):
-		 --linux-version=SuSE
-		 --linux-version=RedHat
-		 --linux-version=ASPlinux
-		 --linux-version=ALTlinux
-		 
-		 Если параметр не будет указываться специально, то выбор
-		 происходит автоматически.
-
---prefix=PREFIX  install architecture-independent files in PREFIX
-                 [$PREFIX]
-
---with-perl=PERL
-		 architecture-independen path to Perl
-		 [$PERL]
-
---sql-type=[PostgreSQL|MySQL]
-		 Database type. MySQL by default.
-		 --sql-type=MySQL
-		 --sql-type=PostgreSQL
-"
+    printf "$msg45" $PREFIX $PREFIX $PREFIX $PERL
     exit 0
 fi
 
