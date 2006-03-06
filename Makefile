@@ -11,11 +11,22 @@
 CC=gcc
 MAKE=make
 SH=/bin/sh
-RM= rm
-SUBDIR+= src/atslogd
+RM=rm
+SUBDIR+= tmp/src/atslogd
 CURDIR?=`pwd`
+PREFIX?=/usr/local
 
-all:	config atslogd
+# Cnfigure args
+DISABLELIBWRAP?=NO
+DISABLEUPDATE?=NO
+SQLTYPE?=MySQL
+
+CONFIGURE_ARGS+= --disable-libwrap=${DISABLELIBWRAP}
+CONFIGURE_ARGS+= --disable-update=${DISABLEUPDATE}
+CONFIGURE_ARGS+= --sql-type=${SQLTYPE}
+CONFIGURE_ARGS+= --prefix=${PREFIX}
+
+all:	version atslogd
 
 atslogd:
 	@for sub in ${SUBDIR}; do \
@@ -27,29 +38,13 @@ atslogd:
 
 configure:	config
 
-config:	version
-	@if [ ! -r atslog.conf -o ! -r atslogdinit -o ! -r conf.inc ]; \
+config:
+	@if [ ! -r ${CURDIR}/tmp/configure.flag ]; \
 	then ${SH} ${CURDIR}/configure $(CONFIGURE_ARGS); \
 	fi
 
 clean:
-	@$(RM) -f atslogdinit atslog.conf \
-	createsqltables.mysql.sql \
-	createuser.pgsql.sql \
-	createuser.mysql.sql \
-	createsqltables.pgsql.sql \
-	updatesqltables.mysql.sql \
-	updatesqltables.pgsql.sql \
-	updatesqltables.mysql.sql.out \
-	updatesqltables.pgsql.sql.out \
-	install.log \
-	${CURDIR}/scripts/createdb.out.pl \
-	${CURDIR}/scripts/checkDBD.out.pl \
-	conf.inc \
-	atslogdb.pl atslogcleardb.pl atslogrotate \
-	atslogmaster atslogdinit atslogdaily Makefile.out installing.out \
-	atslogdinit.out \
-	${CURDIR}/src/atslogd/atslogd
+	@$(RM) -rf ${CURDIR}/tmp
 
 configure:	config
 uninstall:	deinstall
@@ -57,14 +52,14 @@ remove:		deinstall
 clear:		clean
 
 install:	all
-	@$(SH) ${CURDIR}/installing --install --sqlroot=${SQLROOT}
+	@$(SH) ${CURDIR}/tmp/installing --install --sqlroot=${SQLROOT}
 
 deinstall:
 	@$(SH) ${CURDIR}/installing --deinstall
 
-version:
-	@if [ -r ${CURDIR}/version.inc ]; then \
+version: config
+	@if [ -r ${CURDIR}/tmp/version.inc ]; then \
 	    $(SH) ${CURDIR}/scripts/version; \
-	    $(RM) ${CURDIR}/version.inc; \
-	    $(RM) ${CURDIR}/scripts/version; \
+	    $(RM) ${CURDIR}/tmp/version.inc; \
+	    $(RM) ${CURDIR}/tmp/scripts/version; \
 	fi

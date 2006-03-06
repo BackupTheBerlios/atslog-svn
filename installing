@@ -6,6 +6,32 @@
 # Установим рабочие переменные
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.:$bindir:$sharedir
 UNAME=`uname`
+PREFIX_FROM_CONFIGURE_SCRIPT=/usr/local
+ETC_PREFX_FROM_CONFIGURE_SCRIPT=/usr/local/etc
+
+# Проверим наличие необходимых системных утулит.
+checksysutils(){
+    for ac_prg in printf mkdir cp install chown chmod touch read stty [ dirname
+    do
+	echo -n "checking if system file \"$ac_prg\" is existing: "
+	for ac_dir in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin /dev
+	do
+	    if [ -e "$ac_dir/$ac_prg" ]; then
+	        echo "YES"
+		FILE_NOT_EXISTS=0
+		break;
+	    else
+		FILE_NOT_EXISTS=1
+	    fi
+	done
+	if [ $FILE_NOT_EXISTS -ne 0 ]; then
+	    echo "NONE"
+	    echo "install aborted!"
+	    exit 1
+	fi
+    done
+}
+
 for i
 do
     case "$1" in
@@ -17,7 +43,6 @@ do
 	;;
 	--deinstall)
 	    TODO="deinstall"
-	                  
 	;;
 	--install)
 	    TODO="install"
@@ -25,13 +50,21 @@ do
 	--prefix=*)
 	    PREFIX=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
 	;;
+	--etc-prefix=*)
+	    ETC_PREFX=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
+	;;
     esac
     shift
 done
 
 if [ -z "$PREFIX" ]
 then
-    PREFIX="/usr/local"
+    PREFIX=$PREFIX_FROM_CONFIGURE_SCRIPT
+fi
+
+if [ -z "$ETC_PREFX" ]
+then
+    ETC_PREFX=$ETC_PREFX_FROM_CONFIGURE_SCRIPT
 fi
 
 if [ -z "$TODO" ]
@@ -39,34 +72,33 @@ then
     HELP="yes"
 fi
 
+# Переменную $LANG - берём из настройки локали.
+if [ -f ./lang/$LANG ]; then
+	. ./lang/$LANG
+    elif [ -f ./lang/en_US ]; then
+	. ./lang/en_US
+    else
+        echo "Can't open language file"
+    exit 1
+fi
+
 echo "Usage: installing [options]
 Options: [defaults in brackets after descriptions]
 Use: installing --help for help."
 
+# Call to function
+checksysutils
+
 if [ "$HELP" = "yes" ];then
-
-echo "
---sqlroot=PASSWORD Пароль пользователя root SQL сервера (не системного
-                   пользователя root). Этот пароль  нужен только для
-		   инсталляции или обновления ATSlog. В дальнейшей работе
-		   не используется.
-
---deinstall        Удаление ATSlog.
-
---install          Установка ATSlog.
-
---prefix=PREFIX    install architecture-independent files in PREFIX
-                    [/usr/local]
-"
+    printf "$msg47" $PREFIX $ETC_PREFX
     exit 0
 fi
 
+
 readpasswd(){
-    echo "Введите пароль для суперпользователя SQL сервера (не для системного"
-    echo "суперпользователя). Этот пароль  нужен только для установки или"
-    echo "обновления ATSlog. В дальнейшей работе он не будет использоваться."
+    printf "$msg48"
     trap 'exit;' 0 1 2 3 15
-    echo -n "Пароль: "
+    echo -n $msg49
     stty -echo
     read sqlrootpassword
     stty echo
@@ -109,8 +141,8 @@ copying(){
         mkdir -p $sharedir/sql
 	chmod 555 $sharedir/sql
     fi
-    if [ ! -d $PREFIX/etc ];then
-        mkdir -p $PREFIX/etc
+    if [ ! -d $ETC_PREFX ];then
+        mkdir -p $ETC_PREFX
     fi
 
     touch $logdir/$callslogfile
@@ -141,60 +173,53 @@ copying(){
 	done
 
 	if [ ! -L /etc/atslog.conf ];then
-	    ln -s $PREFIX/etc/atslog.conf /etc/atslog.conf
+	    ln -s $ETC_PREFX/atslog.conf /etc/atslog.conf
 	fi
     fi
-    if [ "$UNAME" = "FreeBSD" ];then
-	if [ ! -d $PREFIX/etc/rc.d ];then
-	    mkdir -p $PREFIX/etc/rc.d
-	fi                          
-    fi
+    if [ ! -d $ETC_PREFX/rc.d ];then
+        mkdir -p $ETC_PREFX/rc.d
+    fi                          
 
-    install -m 755 ./atslogdinit $initscript
-    install -m 755 ./atslogrotate $monthlyscript
-    install -m 755 ./atslogdaily $dailyscript
-    install -m 755 ./atslogdb.pl $bindir/$atslogdb
-    install -m 600 ./atslog.conf $PREFIX/etc/atslog.conf
-    install -m 644 ./atslog.conf $PREFIX/etc/atslog.conf.default
-    install -m 644 ./atslog.conf $sharedir/atslog.conf.default
-    install -m 644 ./libexec/kx-ta616-308-ru.lib $libdir/kx-ta616-308-ru.lib
-    install -m 644 ./libexec/gd-320.lib $libdir/gd-320.lib
-    install -m 644 ./libexec/gdk-100.lib $libdir/gdk-100.lib
-    install -m 644 ./libexec/ghx-46.lib $libdir/ghx-46.lib
-    install -m 644 ./libexec/skp-816.lib $libdir/skp-816.lib
-    install -m 644 ./libexec/nx-820.lib $libdir/nx-820.lib
-    install -m 644 ./libexec/hicom-350h.lib $libdir/hicom-350h.lib
-    install -m 644 ./libexec/kx-td1232.lib $libdir/kx-td1232.lib
-    install -m 644 ./libexec/kx-td816ru.lib $libdir/kx-td816ru.lib
-    install -m 755 ./src/atslogd/atslogd $bindir/$atslogd
-    install -m 755 ./atslogmaster $bindir/$masterscript
-    install -m 755 ./atslogcleardb.pl $bindir/$cleardb
-    install -m 644 ./installing.out $sharedir/installing
-    install -m 644 ./INSTALL $sharedir/INSTALL
-    install -m 644 ./Makefile.out $sharedir/Makefile
-    install -m 644 ./README $sharedir/README
-    install -m 644 ./DEINSTALL $sharedir/DEINSTALL
-    install -m 644 ./UPDATING $sharedir/UPDATING
-    install -m 644 ./USING $sharedir/USING
-    install -m 644 ./CHANGES $sharedir/CHANGES
-    cp -R textlogs $sharedir
-    cp -R www/* $PREFIX/www
-    cp -R sql/* $sharedir/sql
-    cp -R conf.inc $PREFIX/www/atslog/include/set
+    install -m 755 ./tmp/rc.d/atslogdinit $initscript
+    install -m 755 ./tmp/include/atslogrotate $monthlyscript
+    install -m 755 ./tmp/include/atslogdaily $dailyscript
+    install -m 755 ./tmp/include/atslogdb.pl $bindir/$atslogdb
+    install -m 600 ./tmp/include/atslog.conf $ETC_PREFX/atslog.conf
+    install -m 644 ./tmp/include/atslog.conf $ETC_PREFX/atslog.conf.default
+    install -m 644 ./tmp/include/atslog.conf $sharedir/atslog.conf.default
+
+    install -m 644 ./tmp/libexec/* $libdir/
+
+    install -m 755 ./tmp/src/atslogd/atslogd $bindir/$atslogd
+    install -m 755 ./tmp/include/atslogmaster $bindir/$masterscript
+    install -m 755 ./tmp/include/atslogcleardb.pl $bindir/$cleardb
+    install -m 644 ./tmp/installing $sharedir/installing
+    install -m 644 ./tmp/INSTALL $sharedir/INSTALL
+    install -m 644 ./tmp/Makefile $sharedir/Makefile
+    install -m 644 ./tmp/README $sharedir/README
+    install -m 644 ./tmp/DEINSTALL $sharedir/DEINSTALL
+    install -m 644 ./tmp/UPDATING $sharedir/UPDATING
+    install -m 644 ./tmp/USING $sharedir/USING
+    install -m 644 ./tmp/CHANGES $sharedir/CHANGES
+    cp -R ./tmp/textlogs $sharedir
+    cp -R ./tmp/www/* $PREFIX/www
+    cp -R ./tmp/sql/* $sharedir/sql
     chmod -R a-w,a+rX $PREFIX/www/atslog
-    cp -R lang/* $sharedir/$langdir
+    cp -R ./tmp/lang/* $sharedir/$langdir
 }
 
 case "$TODO" in
 deinstall)
 
 # Start deinstalling
-    if [ -r $PREFIX/etc/atslog.conf ];then
-	. $PREFIX/etc/atslog.conf
+    if [ -r $ETC_PREFX/atslog.conf ];then
+	. $ETC_PREFX/atslog.conf
+    elif [ -r ./tmp/include/atslog.conf ]; then
+    	. ./tmp/include/atslog.conf
+    elif [ -r ./tmp/include/atslog.conf.default ]; then
+    	. ./tmp/include/atslog.conf.default
     elif [ -r ./include/atslog.conf.default ]; then
     	. ./include/atslog.conf.default
-    elif [ -r ./atslog.conf.default ]; then
-    	. ./atslog.conf.default
     else
         echo "Can't open config file."
         exit 1
@@ -213,17 +238,9 @@ deinstall)
     rm $monthlyscript
     rm $dailyscript
     rm $bindir/$atslogdb
-    rm $PREFIX/etc/atslog.conf.default
+    rm $ETC_PREFX/atslog.conf.default
     rm $sharedir/atslog.conf.default
-    rm $libdir/kx-ta616-308-ru.lib
-    rm $libdir/gd-320.lib
-    rm $libdir/gdk-100.lib
-    rm $libdir/ghx-46.lib
-    rm $libdir/skp-816.lib
-    rm $libdir/nx-820.lib
-    rm $libdir/hicom-350h.lib
-    rm $libdir/kx-td1232.lib
-    rm $libdir/kx-td816ru.lib
+    rm $libdir/*
     rm $bindir/$masterscript
     rm $bindir/$atslogd
     rm $bindir/$cleardb
@@ -265,25 +282,28 @@ deinstall)
 	    if [ `ls -1l $PERPATH | grep -c -` = 0 ];then
 		rmdir -p $PERPATH 2> /dev/null
 	    else
-		echo "Директория $PERPATH содержит файлы и не может быть удалена!"
+		printf "$msg50" $PERPATH
 	    fi
 	fi
     done
 
-    echo "Удаление завершено. Не забудьте очистить базы SQL сервера"
+    echo $msg51
     ;;
 install)
 
 # Readin config file
-    if [ -r ./atslog.conf ]; then
-	. ./atslog.conf
+    if [ -r ./tmp/include/atslog.conf ]; then
+	. ./tmp/include/atslog.conf
     else
         echo "Can't open config file. Please start configure."
         exit 1
     fi
 
+# Начнём наш install.log
+echo -n >./tmp/install.log
+
 # Start SQL operations
-    if [ -f updatesqltables.pgsql.sql -o -f createsqltables.pgsql.sql -o -f createuser.pgsql.sql ];then
+    if [ -f ./tmp/sql/thisupdatesqltables.pgsql.sql -o -f ./tmp/sql/thiscreatesqltables.pgsql.sql -o -f ./tmp/sql/thiscreateuser.pgsql.sql ];then
 	SQLTYPE=pgsql
 	sqltype=PostgreSQL
     else
@@ -291,29 +311,29 @@ install)
 	sqltype=MySQL
     fi
 
-    for sqlinfo in createuser.$SQLTYPE.sql createsqltables.$SQLTYPE.sql updatesqltables.$SQLTYPE.sql
+    for sqlinfo in thiscreateuser.$SQLTYPE.sql thiscreatesqltables.$SQLTYPE.sql thisupdatesqltables.$SQLTYPE.sql
     do
-	if [ -f ./$sqlinfo ];then
+	if [ -f ./tmp/sql/$sqlinfo ];then
 	    DBOPERATIONS=true
 	fi
     done
 
     if [ $DBOPERATIONS ];then
-    	echo -n "Проводятся операции с базами данных $sqltype сервера: "
+    	printf "$msg52" $sqltype
     fi
 
     ERROECHO=0
     LASTOPERAT=0
-    for sqlfile in createuser.$SQLTYPE.sql createsqltables.$SQLTYPE.sql updatesqltables.$SQLTYPE.sql
+    for sqlfile in thiscreateuser.$SQLTYPE.sql thiscreatesqltables.$SQLTYPE.sql thisupdatesqltables.$SQLTYPE.sql
     do
-    if [ -f ./$sqlfile ];then
-        if [ "$sqlfile" = "createsqltables.pgsql.sql" ];then
-    	    cat ./$sqlfile | ./scripts/createdb.out.pl $sqlmaspasswd $sqlmasteruser 2>>./install.log
+    if [ -f ./tmp/sql/$sqlfile ];then
+        if [ "$sqlfile" = "thiscreatesqltables.pgsql.sql" ];then
+    	    cat ./tmp/sql/$sqlfile | ./tmp/scripts/createdb.pl $sqlmaspasswd $sqlmasteruser 2>>./tmp/install.log
 	    if [ $? -ne 0 ];then
 		ERROECHO=1
 	    fi
 	else
-	    cat ./$sqlfile | ./scripts/createdb.out.pl 2>>./install.log
+	    cat ./tmp/sql/$sqlfile | ./tmp/scripts/createdb.pl 2>>./tmp/install.log
 	    LASTOPERAT=$?
 	    if [ $LASTOPERAT -eq 1 ];then
 	        ERROECHO=1
@@ -325,9 +345,9 @@ install)
 		    # Call to function
 	    	    readpasswd
 		else
-		    echo -n "Продолжение операций с базами данных: "
+		    echo -n $msg53
 	    	fi
-		cat ./$sqlfile | ./scripts/createdb.out.pl $sqlrootpassword 2>>./install.log
+		cat ./tmp/sql/$sqlfile | ./tmp/scripts/createdb.pl $sqlrootpassword 2>>./tmp/install.log
 		if [ $? -ne 0 ];then
 		    ERROECHO=1
 		fi
@@ -340,23 +360,20 @@ install)
 	if [ $ERROECHO != 1 ];then
     	    echo "OK"
 	else
-    	    echo "ОШИБКА"
+    	    echo $msg54
 	fi
     fi
 
-    echo "Копирование файлов"
+    echo $msg55
 # Call to function
     copying
 
     if [ "$ERROECHO" != "1" ]
     then
-	echo "Установка завершена успешно. Конфигурационный файл $PREFIX/etc/atslog.conf"
+	printf "$msg56" $ETC_PREFX
     else
-	echo "Установка завершена с ошибками. Подробнее смотрите install.log"
-	echo "В результате некоторые действия не были выполнены."
-	echo "Конфигурационный файл $PREFIX/etc/atslog.conf"
+	printf "$msg57" $ETC_PREFX
     fi
     ;;
 esac
-
 exit $?

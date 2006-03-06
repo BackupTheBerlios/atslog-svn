@@ -16,8 +16,10 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include "atslogd.h"
+#ifdef USE_LIBWRAP
 #include <tcpd.h>
-
+#endif /* USE_LIBWRAP */
 #include <signal.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -498,6 +500,7 @@ int read_string( HANDLE hCom,char *buf,int blen )
 
 int auth_libwrap(struct sockaddr_in sa_rem)
 {
+#ifdef USE_LIBWRAP
 	struct request_info req;
 	request_init(&req,RQ_DAEMON,"atslogd",RQ_CLIENT_SIN,&sa_rem,0);
 	fromhost(&req);
@@ -507,6 +510,9 @@ int auth_libwrap(struct sockaddr_in sa_rem)
 			return 0;
 	}
 	return 1;
+#else /* USE_LIBWRAP */
+	return 1;
+#endif /* USE_LIBWRAP */
 
 }
 
@@ -556,16 +562,22 @@ void usage( void )
 "-m\t\twrite log files on month-by-month instead of day-by-day basis\n"
 "-n\t\tconsider day in place of month and vice versa\n"
 "-x number\tmaximum number of clients for TCP connections (default: 1)\n"
+#ifdef USE_LIBWRAP
 "\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
+#endif /* USE_LIBWRAP */
 "-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
 "-i address\tIP address of interface for bind only to it\n"
 "\t\t(default to all interfaces)\n"
 "tcp:port\twhere port is a TCP port for listen on.\n"
 "-b\t\tbecome daemon\n"
 "-P\t\tPID file. /var/run/atslogd.pid by default\n"
-"\n"
+"\n",CDRR_VER);
+
+#ifdef USE_LIBWRAP
+    (void)fprintf( stderr,
 "Use libwrap for contol access to TCP connections. See /etc/hosts.allow\n"
-"and /etc/hosts.deny\n",CDRR_VER);
+"and /etc/hosts.deny\n\n");
+#endif /* USE_LIBWRAP */
 
 my_exit(1);
 }

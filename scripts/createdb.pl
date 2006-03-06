@@ -5,7 +5,7 @@
 # Скрипт умеет делать записи в БД. Создан для упрощения процедуры
 # создания БД и таблиц.
 
-$config_file="./atslog.conf";
+$config_file="./tmp/include/atslog.conf";
 
 use DBI;
 use POSIX qw(locale_h); # Для правильной обработки языковых настроек.
