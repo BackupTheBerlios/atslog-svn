@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# Startup script for the ATSlog
+#
+# chkconfig: 2345 80 30
+# description: ATSlog
+# processname: atslogd
+# pidfile: /var/run/atslogd.pid
+# config: /usr/local/etc/atslog.conf
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+[ -x /usr/bin/atslogd ] || exit 0
+
+# Reading config file
+if [ -r /usr/local/etc/atslog.conf ]; then
+    . /usr/local/etc/atslog.conf
+else
+    echo "Can't open config file"
+    exit 1
+fi
+
+# Установим рабочие переменные
+PATH=$PATH:$bindir:$sharedir
+
+# See how we were called.
+case "$1" in
+  start)
+	$bindir/$masterscript start
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/atslogd
+	;;
+  stop)
+	$bindir/$masterscript stop
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/atslogd
+	;;
+  status)
+	$bindir/$masterscript
+	RETVAL=$?
+	;;
+  restart|reload)
+	$bindir/$masterscript restart
+	RETVAL=$?
+	;;
+  *)
+	gprintf "Usage: `basename $0` {start|stop|status|restart}\n"
+	exit 1
+esac
+
+exit $RETVAL
