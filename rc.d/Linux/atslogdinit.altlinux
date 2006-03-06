@@ -15,8 +15,8 @@ prog=ATSlog
 . /etc/init.d/functions
 
 # Reading config file
-if [ -r /etc/atslog.conf ]; then
-    . /etc/atslog.conf
+if [ -r /usr/local/etc/atslog.conf ]; then
+    . /usr/local/etc/atslog.conf
 else
     echo "Can't open config file"
     exit 1
