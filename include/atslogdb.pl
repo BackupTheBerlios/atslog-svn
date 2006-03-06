@@ -101,7 +101,9 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
         require "$vars{libdir}/gd-320.lib";
     }elsif($vars{model} =~ /HICOM-350H/i){
         require "$vars{libdir}/hicom-350h.lib";
-    }elsif($vars{model} =~ /GDK-100/i or $vars{model} =~ /GDK-162/i){
+    }elsif($vars{model} =~ /HICOM-250/i){
+            require "$vars{libdir}/hicom-250.lib";
+     }elsif($vars{model} =~ /GDK-100/i or $vars{model} =~ /GDK-162/i){
         require "$vars{libdir}/gdk-100.lib";
     }elsif($vars{model} =~ /NX-820/i){
         require "$vars{libdir}/nx-820.lib";
