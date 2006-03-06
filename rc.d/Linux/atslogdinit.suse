@@ -6,7 +6,7 @@
 
 . /etc/rc.status
 # Reading config file
-ATS_coNFIG=/usr/local/etc/atslog.conf
+ATS_CONFIG=/usr/local/etc/atslog.conf
 test -r $ATS_coNFIG || exit 6
 . $ATS_coNFIG
 
