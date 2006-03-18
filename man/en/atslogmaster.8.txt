@@ -28,7 +28,7 @@ atslogmaster start - запуск демона для сбора данных.
 
 SEE ALSO
 
-atslogd(8), atslog.conf
+atslogd(8), /usr/local/etc/atslog.conf
 
 AUTHOR
 

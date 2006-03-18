@@ -611,6 +611,35 @@ esac
     rm ./tmp/include/atslogcleardb.pl.tmp
  fi
 
+ echo checking for config file path in manuals:
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
+ < ./USING > ./tmp/USING
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
+ < ./man/en/atslogd.8 > ./tmp/man/en/atslogd.8
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
+ < ./man/en/atslogd.8.txt > ./tmp/man/en/atslogd.8.txt
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
+ < ./man/ru.KOI8-R/atslogd.8 > ./tmp/man/ru.KOI8-R/atslogd.8
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
+ < ./man/ru.KOI8-R/atslogd.8.txt > ./tmp/man/ru.KOI8-R/atslogd.8.txt
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
+ < ./man/ru.KOI8-R/atslogmaster.8 > ./tmp/man/ru.KOI8-R/atslogmaster.8
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
+ < ./man/ru.KOI8-R/atslogmaster.8.txt > ./tmp/man/ru.KOI8-R/atslogmaster.8.txt
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
+ < ./man/en/atslogmaster.8 > ./tmp/man/en/atslogmaster.8
+ sed \
+ -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
+ < ./man/en/atslogmaster.8.txt > ./tmp/man/en/atslogmaster.8.txt
+
  echo checking for Perl path in atslogdb.pl
  sed \
  -e "s%/usr/bin/perl%$PERL%g" \

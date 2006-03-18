@@ -44,7 +44,7 @@ atslog.conf
 
 SEE ALSO
 
-atslogmaster(8), atslog.conf
+atslogmaster(8), /usr/local/etc/atslog.conf
 
 AUTHOR
 
