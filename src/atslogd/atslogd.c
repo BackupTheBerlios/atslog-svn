@@ -2,7 +2,7 @@
 
     (C) Alexey V. Kuznetsov, avk@gamma.ru, 2001, 2002
     changed by Denis CyxoB www.yamiyam.dp.ua
-    and Andrew Kornilov andy[at]eva.dp.ua
+    and Andrew Kornilov akornilov@gmail.com
     for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
 
 */
@@ -20,6 +20,8 @@
 #ifdef USE_LIBWRAP
 #include <tcpd.h>
 #endif /* USE_LIBWRAP */
+#include <netdb.h>
+
 #include <signal.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -31,6 +33,7 @@
 #ifndef GETOPT
 #include <unistd.h>
 #endif
+
 
 typedef long HANDLE;
 typedef long DWORD;
@@ -61,7 +64,6 @@ int gpid;
 int filenamelen=0;
 // count of childrens
 int childcount=0;
-int is_tcp=0;
 // default maximum clients for TCP port
 int maxtcpclients=1;
 
@@ -180,7 +182,7 @@ static void *my_malloc( int size,char do_clr )
 {
 	void *p=malloc(size);
 	if( p==NULL ) {
-		my_syslog( "can't allocate %d bytes: %s",strerror(errno) );
+		my_syslog( "Can't allocate %d bytes: %s",strerror(errno) );
 		my_exit( 1 );
 	}
 	if( do_clr ) memset( p,0,size );
@@ -216,17 +218,17 @@ static void sighandler(int sig)
 {
 	pid_t pid;
 	if( h2close!=INVALID_HANDLE_VALUE ) {
-		my_syslog( "closing CDR stream" );
+		my_syslog( "Closing CDR stream" );
 		close( h2close );
 	}
 	pid=waitpid(-1,NULL,WNOHANG);
-	my_syslog( "exiting on signal %d",sig );
+	my_syslog( "Exiting on signal %d",sig );
 	my_exit( 0 );
 }
 
 static void sighuphandler(int sig)
 {
-	my_syslog( "catch SIGHUP, recreate logfile");
+	my_syslog( "Catch SIGHUP, recreate logfile");
 	if( cur_logfile!=NULL )
 		{
 			fclose( cur_logfile );
@@ -236,7 +238,7 @@ static void sighuphandler(int sig)
 	memcpy( dirname+dirlen,filename,strlen(filename));
 	if( (cur_logfile=fopen(dirname,"at"))==NULL )
 	{
-	    my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
+	    my_syslog( "Can't open CDR file '%s': %s",dirname,strerror(errno) );
 	    my_exit(1);
 	}
 }
@@ -244,13 +246,9 @@ static void sighuphandler(int sig)
 static void sigchldhandler(int sig)
 {
 	pid_t pid;
-	my_syslog( "catch SIGCHLD, waiting for childs");
+	my_syslog( "Catch SIGCHLD, waiting for childs");
 	pid=waitpid(-1,NULL,WNOHANG);
 	childcount--;
-//	if (pid>0)
-//	{
-//		my_syslog( "child [%d]",);
-//	}
 }
 
 static void setsighandler(int sig )
@@ -260,7 +258,7 @@ static void setsighandler(int sig )
 	sigemptyset( &ss );
 	sigaddset( &ss,sig );
 	if( sigprocmask( SIG_UNBLOCK,&ss,NULL )==(-1) ) {
-		my_syslog( "can't unblock signal %d: %s",sig,strerror(errno) );
+		my_syslog( "Can't unblock signal %d: %s",sig,strerror(errno) );
 		my_exit( 1 );
 	}
 	memset( &sa,0,sizeof(sa) );
@@ -272,7 +270,7 @@ static void setsighandler(int sig )
 	else
 		sa.sa_handler=sighandler;
 	if( sigaction( sig,&sa,NULL )==(-1) ) {
-		my_syslog( "can't set signal handler on %d: %s",sig,strerror(errno) );
+		my_syslog( "Can't set signal handler on %d: %s",sig,strerror(errno) );
 		my_exit( 1 );
 	}
 }
@@ -345,7 +343,7 @@ void open_cur_logfile( char do_flush_q )
 		sprintf( dirname+dirlen,"%02d.%02d",cur_month,cur_day );
 	}
 	if( (cur_logfile=fopen(dirname,"at"))==NULL ) {
-		my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
+		my_syslog( "Can't open CDR file '%s': %s",dirname,strerror(errno) );
 		my_exit( 1 );
 	}
 	my_syslog( "CDR file '%s' opened",dirname );
@@ -498,24 +496,21 @@ int read_string( HANDLE hCom,char *buf,int blen )
 	return count;
 }
 
-int auth_libwrap(struct sockaddr_in sa_rem)
-{
 #ifdef USE_LIBWRAP
+int auth_libwrap(struct sockaddr_in sa_rclient)
+{
 	struct request_info req;
-	request_init(&req,RQ_DAEMON,"atslogd",RQ_CLIENT_SIN,&sa_rem,0);
+	request_init(&req,RQ_DAEMON,"atslogd",RQ_CLIENT_SIN,&sa_rclient,0);
 	fromhost(&req);
 	if (!hosts_access(&req))
 	{
-			my_syslog( "connection from host %s refused by libwrap",inet_ntoa(sa_rem.sin_addr));
+			my_syslog( "Connection from host %s refused by libwrap",inet_ntoa(sa_rclient.sin_addr));
 			return 0;
 	}
 	return 1;
-#else /* USE_LIBWRAP */
-	return 1;
-#endif /* USE_LIBWRAP */
 
 }
-
+#endif /* USE_LIBWRAP */
 
 
 HANDLE open_io( char *io_name,long speed,int data_bits,char parity,int stop_bits )
@@ -525,7 +520,7 @@ HANDLE open_io( char *io_name,long speed,int data_bits,char parity,int stop_bits
 
 		hCom = open_tty( io_name );
 		if (hCom == INVALID_HANDLE_VALUE) {
-			my_syslog( "can't open serial device '%s'",io_name );
+			my_syslog( "Can't open serial device '%s'",io_name );
 			return INVALID_HANDLE_VALUE;
 		}
 		rc = set_tty_params( hCom,speed,data_bits,parity,stop_bits );
@@ -542,11 +537,11 @@ void usage( void )
 	(void)fprintf( stderr,
 "CDR Reader for PBXs v.%s (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002\n"
 "changed by Denis CyxoB www.yamiyam.dp.ua\n"
-"and Andrew Kornilov andy[at]eva.dp.ua\n"
+"and Andrew Kornilov akornilov@gmail.com\n"
 "for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua\n"
 "\n"
-"atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits]\n"
-"        [-t type] [-P PIDfile][-d] [-e] [-a] [-o] [-i address] [tcp:port] dev\n"
+"atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits] [-d] [-e] [-a] [-o]\n"
+"        [-m] [-n] [-x number] [-w seconds] [-b] [-P pidfile] tcp:address:port|rtcp:address:port|dev\n"
 "-D dir\t\tdirectory where CDR files will be put, default is current dir\n"
 "-L logfile\tfile for error messages, default is stderr\n"
 "-F filename\tname of file where CDR messages will be put\n"
@@ -566,17 +561,18 @@ void usage( void )
 "\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
 #endif /* USE_LIBWRAP */
 "-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
-"-i address\tIP address of interface for bind only to it\n"
 "\t\t(default to all interfaces)\n"
-"tcp:port\twhere port is a TCP port for listen on.\n"
 "-b\t\tbecome daemon\n"
 "-P\t\tPID file. /var/run/atslogd.pid by default\n"
-"\n",CDRR_VER);
-
+"tcp:address:port\twhere address:port is an IP address and port for listen on.\n"
+"rtcp:address:port\twhere address:port is a remote IP address and port to connect\n"
+"dev \t\tserial device to use\n"
+"\n"
 #ifdef USE_LIBWRAP
-    (void)fprintf( stderr,
 "Use libwrap for contol access to TCP connections. See /etc/hosts.allow\n"
-"and /etc/hosts.deny\n\n");
+"and /etc/hosts.deny\n\n",CDRR_VER);
+#else /* USE_LIBWRAP */	
+,CDRR_VER);
 #endif /* USE_LIBWRAP */
 
 my_exit(1);
@@ -592,23 +588,25 @@ int main( int argc, char *argv[] )
 	int next_open_timeout=5;
 	char buf[MAXSTRINGLEN+1];
 	char write_date=0;
-	// move tcp section here
-	// 
-	unsigned short tcpPort=0;
-	char *hostname=NULL;
+	int is_tcp=0,is_rtcp=0;
+	unsigned short tcpPort=0,rtcpPort=0;
+	char *hostname=NULL,*rhostname=NULL;
+	char *token=NULL,*saveptr=NULL,*port=NULL;
 	
 	int opt=1;
 	int pid;
 	HANDLE s,new_s;
-	struct sockaddr_in sa_loc,sa_rem;
-	socklen_t sa_rem_len;
-	//
+	
+	struct sockaddr_in sa_lserver,sa_rclient;
+	socklen_t sa_rclient_len;
+	struct hostent *he_rserver;
+	
 	char do_daemonize=0;
 	sigset_t ss;
 	
 	HANDLE hCom;
 
-	while( (rc=getopt(argc,argv,"boahdemnws:D:L:P:F:p:c:f:r:x:i:"))!=(-1) ) {
+	while( (rc=getopt(argc,argv,"boahdemnws:D:L:P:F:p:c:f:r:x:"))!=(-1) ) {
 		switch( rc ) {
 		case 'D':
 			dirlen=strlen(optarg);
@@ -665,9 +663,6 @@ int main( int argc, char *argv[] )
 		case 'x':
 			maxtcpclients=atoi(optarg);
 			break;
-		case 'i':
-			hostname=optarg;
-			break;
 		case 'w':
 			next_open_timeout=atoi(optarg);
 			break;
@@ -713,12 +708,12 @@ int main( int argc, char *argv[] )
 		usage();
 	}
 
-	my_syslog( "starting" );
-
+	my_syslog( "Starting" );
+	
 	gpid = daemonize();
 
 	if( do_daemonize && gpid==(-1) ) {
-		my_syslog( "can't become daemon, exiting" );
+		my_syslog( "Can't become daemon, exiting" );
 		my_exit( 1 );
 	}
 
@@ -727,13 +722,13 @@ int main( int argc, char *argv[] )
 	    (void)fprintf(pfd, "%ld\n", (long)gpid);
 	    fclose(pfd);
 	}else{
-	    my_syslog( "can't write PID file, exiting" );
+	    my_syslog( "Can't write PID file, exiting" );
 	    my_exit( 1 );
 	}
 
 	sigfillset( &ss );
 	if( sigprocmask( SIG_SETMASK,&ss,NULL )==(-1) ) {
-		my_syslog( "can't block all signals: %s",strerror( errno ) );
+		my_syslog( "Can't block all signals: %s",strerror( errno ) );
 		my_exit( 1 );
 	}
 	setsighandler( SIGHUP );
@@ -741,155 +736,187 @@ int main( int argc, char *argv[] )
 	setsighandler( SIGTERM );
 	setsighandler( SIGCHLD );
 
-	if( strncasecmp( argv[0],"tcp:",4 )==0 ) {
-		tcpPort=atoi(argv[0]+4);
-		if( tcpPort==0 ) {
-			my_syslog( "Invalid TCP port number" );
-			hCom=INVALID_HANDLE_VALUE;
-		}
+	if (strchr(argv[0],':')!=NULL)
+		token=(char *)strtok_r(argv[0],":",&saveptr);
+	if( token!=NULL ) {
+		if (strcasecmp(token,"tcp")==0)
+			{
+				is_tcp=1;
+				hostname=(char *)strtok_r(NULL,":",&saveptr);
+				if (hostname==NULL) 
+					usage();
+				port=(char *)strtok_r(NULL,":",&saveptr);
+				if (port==NULL) 
+					usage();
+				tcpPort=atoi(port);
+			}
+		else if (strcasecmp(token,"rtcp")==0) 
+			{
+				is_rtcp=1;
+				rhostname=(char *)strtok_r(NULL,":",&saveptr);
+				if (rhostname==NULL) 
+					usage();
+				port=(char *)strtok_r(NULL,":",&saveptr);
+				if (port==NULL) 
+					usage();
+				rtcpPort=atoi(port);
+			}
 		else
+			{
+				my_syslog("Unknown token %s",token);
+				my_exit(1);
+			}
+
+		}
+		if (is_tcp)
+		// listen
 		{
-			s=socket(PF_INET,SOCK_STREAM,0);
-			if(s==INVALID_HANDLE_VALUE) {
-				my_syslog( "socket() failed: %s",my_strerror() );
-				return s;
-			}
-			if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(char *)&opt,sizeof(opt)) < 0)
+			if( tcpPort==0 )
 			{
-				my_syslog( "sotsockopt() failed: %s",my_strerror() );
-				return INVALID_HANDLE_VALUE;
+				my_syslog( "Invalid TCP port number to listen");
+				hCom=INVALID_HANDLE_VALUE;
+				return hCom;
 			}
-			// send keepalive packets. if remote end hangs then we'll can know
-			// this ?
-			if (setsockopt(s,SOL_SOCKET,SO_KEEPALIVE,(char *)&opt,sizeof(opt)) < 0)
-			{
-				my_syslog( "sotsockopt() failed: %s",my_strerror() );
-				return INVALID_HANDLE_VALUE;
-			}
-			h2close=s;
-			memset( &sa_loc,0,sizeof(sa_loc) );
-			memset( &sa_rem,0,sizeof(sa_loc) );
-			sa_rem.sin_family=sa_loc.sin_family=AF_INET;
-			sa_loc.sin_port=htons(tcpPort);
-			if (hostname!=NULL)
-			{
-				if (inet_aton(hostname,&sa_loc.sin_addr)==0)
-				{
-					my_syslog( "bind() on IP %s failed: %s",hostname,my_strerror() );
-					my_exit(1);
+				s=socket(AF_INET,SOCK_STREAM,0);
+				if(s==INVALID_HANDLE_VALUE) {
+					my_syslog( "socket() failed: %s",my_strerror() );
+					return s;
 				}
-			}
-			
-			if( bind(s,(struct sockaddr*)&sa_loc,sizeof(sa_loc) )==(-1) ) {
+				if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(char *)&opt,sizeof(opt)) < 0)
+				{
+					my_syslog( "setsockopt() failed: %s",my_strerror() );
+					return INVALID_HANDLE_VALUE;
+				}
+				// send keepalive packets. if remote end hangs then we'll can know
+				// this ?
+				if (setsockopt(s,SOL_SOCKET,SO_KEEPALIVE,(char *)&opt,sizeof(opt)) < 0)
+				{
+					my_syslog( "setsockopt() failed: %s",my_strerror() );
+					return INVALID_HANDLE_VALUE;
+				}
+				h2close=s;
+				memset( &sa_lserver,0,sizeof(sa_lserver) );
+				memset( &sa_rclient,0,sizeof(sa_rclient) );
+				sa_rclient.sin_family=sa_lserver.sin_family=AF_INET;
+				sa_lserver.sin_port=htons(tcpPort);
 				if (hostname!=NULL)
-					my_syslog( "bind() on port %s:%d failed: %s",hostname,tcpPort,my_strerror() );
-				else
-					my_syslog( "bind() on port %d failed: %s",tcpPort,my_strerror() );
-				goto err_ret;
-			}
-			if( listen(s,5)==(-1) ) {
-				my_syslog( "listen() failed: %s",my_strerror() );
-				goto err_ret;
-			}
-			if (hostname!=NULL)
-				my_syslog( "waiting TCP connection on port %s:%d",hostname,tcpPort );
-			else
-				my_syslog( "waiting TCP connection on port %d",tcpPort );
-			for( ;; ) {
-				sa_rem_len=sizeof(sa_rem);
-				if( (new_s=accept(s,(struct sockaddr*)&sa_rem,&sa_rem_len ))==(-1) ) {
-					my_syslog( "accept() failed: %s",my_strerror() );
-					err_ret:
-					h2close=INVALID_HANDLE_VALUE;
-					hCom=h2close;
-					close(s);
-					break;
-				}
-				if ( childcount >= maxtcpclients )
 				{
-					my_syslog( "connection from %s:%d refused because maximum number of clients [%d] has been reached",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port),maxtcpclients );
-					close( new_s );
-					h2close=INVALID_HANDLE_VALUE;
-					hCom=h2close;
-					sleep(2);
-					continue;
-				}
-				else
-					my_syslog( "connection from %s:%d",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port) );
-				// using libwrap for controll access
-				if( !auth_libwrap(sa_rem) ) 
-				{
-					h2close=INVALID_HANDLE_VALUE;
-					hCom=h2close;
-					close( new_s );
-					continue;
-				}
-				else
-				{
-					pid=fork();
-					if (pid==0)
+					if (inet_aton(hostname,&sa_lserver.sin_addr)==0)
 					{
-						// now we are the champions...errr...child ;-)
-						
-						// close input socket
-						close(s);
-						// temp. disable handler to revent closing NULL in signal
-						// handler
-						h2close=INVALID_HANDLE_VALUE;
-						hCom=new_s;
-						break;
+						my_syslog( "bind() on IP %s failed: %s",hostname,my_strerror() );
+						my_exit(1);
 					}
-					else if (pid==-1)
-					{
-						// can't fork. system error
-						switch(errno)
-						{
-							case EAGAIN:
-								{
-									// resource temp. unavail. try again later ;-)
-									my_syslog( "fork() failed: %s",my_strerror() );
-									h2close=INVALID_HANDLE_VALUE;
-									hCom=h2close;
-									close(new_s);
-									close(s);
-									//continue;
-									my_exit(1);
-								};
-							case ENOMEM:
-								{
-									// not enough system memory. hangup?
-									my_syslog( "fork() failed: %s",my_strerror() );
-									h2close=INVALID_HANDLE_VALUE;
-									hCom=h2close;
-									close(new_s);
-									close(s);
-									//continue;
-									my_exit(1);
-								};
-						}			
-					}
+				}
+			
+				if( bind(s,(struct sockaddr*)&sa_lserver,sizeof(sa_lserver) )==(-1) ) {
+					if (hostname!=NULL)
+						my_syslog( "bind() on port %s:%d failed: %s",hostname,tcpPort,my_strerror() );
 					else
-					{
-						// parent code
-						
-						// close child socket 
-						childcount++;
+						my_syslog( "bind() on port %d failed: %s",tcpPort,my_strerror() );
+					goto err_ret;
+				}
+				if( listen(s,5)==(-1) ) {
+					my_syslog( "listen() failed: %s",my_strerror() );
+					goto err_ret;
+				}
+				if (hostname!=NULL)
+					my_syslog( "Waiting TCP connection on port %s:%d",hostname,tcpPort );
+				else
+					my_syslog( "Waiting TCP connection on port %d",tcpPort );
+				for( ;; ) {
+					sa_rclient_len=sizeof(sa_rclient);
+					if( (new_s=accept(s,(struct sockaddr*)&sa_rclient,&sa_rclient_len ))==(-1) ) {
+						my_syslog( "accept() failed: %s",my_strerror() );
+						err_ret:
 						h2close=INVALID_HANDLE_VALUE;
 						hCom=h2close;
-						close(new_s);
-						// continue accepting connection
+						close(s);
+						break;
+					}
+					if ( childcount >= maxtcpclients )
+					{
+						my_syslog( "Connection from %s:%d refused because maximum number of clients [%d] has been reached",inet_ntoa(sa_rclient.sin_addr),ntohs(sa_rclient.sin_port),maxtcpclients );
+						close( new_s );
+						h2close=INVALID_HANDLE_VALUE;
+						hCom=h2close;
+						sleep(2);
 						continue;
 					}
+					else
+						my_syslog( "Connection from %s:%d",inet_ntoa(sa_rclient.sin_addr),ntohs(sa_rclient.sin_port) );
+#ifdef USE_LIBWRAP
+					// using libwrap for controll access
+					if( !auth_libwrap(sa_rclient) ) 
+					{
+						h2close=INVALID_HANDLE_VALUE;
+						hCom=h2close;
+						close( new_s );
+						continue;
+					}
+					else
+#endif /* USE_LIBWRAP */
+					{
+						pid=fork();
+						if (pid==0)
+						{
+							// now we are the champions...errr...child ;-)
+						
+							// close input socket
+							close(s);
+							// temp. disable handler to revent closing NULL in signal
+							// handler
+							h2close=INVALID_HANDLE_VALUE;
+							hCom=new_s;
+							break;
+						}
+						else if (pid==-1)
+						{
+							// can't fork. system error
+							switch(errno)
+							{
+								case EAGAIN:
+									{
+										// resource temp. unavail. try again later ;-)
+										my_syslog( "fork() failed: %s",my_strerror() );
+										h2close=INVALID_HANDLE_VALUE;
+										hCom=h2close;
+										close(new_s);
+										close(s);
+										//continue;
+										my_exit(1);
+									};
+								case ENOMEM:
+									{
+										// not enough system memory. hangup?
+										my_syslog( "fork() failed: %s",my_strerror() );
+										h2close=INVALID_HANDLE_VALUE;
+										hCom=h2close;
+										close(new_s);
+										close(s);
+										//continue;
+										my_exit(1);
+									};
+							}			
+						}
+						else
+						{
+							// parent code
+							
+							// close child socket 
+							childcount++;
+							h2close=INVALID_HANDLE_VALUE;
+							hCom=h2close;
+							close(new_s);
+							// continue accepting connection
+							continue;
+						}
+					}
 				}
-			}
-	
-
-			///
 			if (hCom == INVALID_HANDLE_VALUE) {
 				if (hostname!=NULL)
-					my_syslog( "can't open '%s:%s'",hostname,tcpPort );
+					my_syslog( "Can't open '%s:%s'",hostname,tcpPort );
 				else
-					my_syslog( "can't open '%s'",tcpPort );
+					my_syslog( "Can't open '%s'",tcpPort );
 
 				hCom=INVALID_HANDLE_VALUE;
 				h2close=hCom;
@@ -898,33 +925,86 @@ int main( int argc, char *argv[] )
 			{
 				h2close=hCom;
 			}
+	
 		}
-	}
+		else if (is_rtcp)
+		{
+			//connect
+			if ((he_rserver = gethostbyname(rhostname)) == NULL)
+			{
+				my_syslog( "Invalid hostname to connect: %s",rhostname);
+				hCom=INVALID_HANDLE_VALUE;
+				return hCom;
+			}
+				
+			if (rtcpPort==0)
+			{
+				my_syslog( "Invalid TCP port number to connect: %d",rtcpPort);
+				hCom=INVALID_HANDLE_VALUE;
+				return hCom;
+			}
+rtcp:
+			s=socket(AF_INET,SOCK_STREAM,0);
+			if(s==INVALID_HANDLE_VALUE) {
+				my_syslog( "socket() failed: %s",my_strerror() );
+				return s;
+			}
+			// send keepalive packets. if remote end hangs then we'll can know
+			// this ?
+			if (setsockopt(s,SOL_SOCKET,SO_KEEPALIVE,(char *)&opt,sizeof(opt)) < 0)
+			{
+				my_syslog( "setsockopt() failed: %s",my_strerror() );
+				return INVALID_HANDLE_VALUE;
+			}
+			memset(&sa_rclient,0,sizeof(sa_rclient));
+			memcpy(&sa_rclient.sin_addr.s_addr, he_rserver->h_addr_list[0], he_rserver->h_length);
+			sa_rclient.sin_family = AF_INET;
+			sa_rclient.sin_port = htons(rtcpPort);
+			if (connect(s, (struct sockaddr *)&sa_rclient, sizeof(sa_rclient)) < 0)
+				{
+					my_syslog( "connect() failed: %s",my_strerror() );
+					hCom=INVALID_HANDLE_VALUE;
+					h2close=hCom;
+					return INVALID_HANDLE_VALUE;
+				}
+			else
+				my_syslog( "Connected to %s:%d",inet_ntoa(sa_rclient.sin_addr),ntohs(sa_rclient.sin_port) );
+				hCom=s;
+				h2close=hCom;
+
+		}
+			
 	else
 		hCom = open_io( argv[0],speed,data_bits,parity,stop_bits );
 
 	if( hCom==INVALID_HANDLE_VALUE ) {
-		my_syslog( "can't open '%s', exiting",argv[0] );
+		my_syslog( "Can't open '%s', exiting",argv[0] );
 		return 1;
 	}
 
 	memcpy( dirname+dirlen,filename,strlen(filename));
 	if( (cur_logfile=fopen(dirname,"at"))==NULL ){
-		my_syslog( "can't open CDR file '%s': %s",dirname,strerror(errno) );
+		my_syslog( "Can't open CDR file '%s': %s",dirname,strerror(errno) );
 		return 1;
 	}
 
 	while( (rc=read_string( hCom,buf,MAXSTRINGLEN ))>=0 ) {
 		if( rc==0 ) {
-			if( strncasecmp( argv[0],"tcp:",4 )==0 ) {
+			if ((is_tcp) || (is_rtcp)) {
 				// because we read() in blocking mode so if we've got 0 ->
 				// remote peer hangs
 				if (errno != EINTR)
 				{
-					my_syslog( "connection with remote peer %s:%d has been closed, exiting",inet_ntoa(sa_rem.sin_addr),ntohs(sa_rem.sin_port));
+					my_syslog( "Connection with remote peer %s:%d has been closed, exiting",inet_ntoa(sa_rclient.sin_addr),ntohs(sa_rclient.sin_port));
 					h2close=INVALID_HANDLE_VALUE;
 					close( hCom );
-					my_exit(0);
+					if (is_rtcp)
+					{
+						my_syslog("Reconnect");
+						goto rtcp;
+					}
+					else
+						my_exit(0);
 					
 				}
 			}
@@ -935,7 +1015,7 @@ int main( int argc, char *argv[] )
 				sleep( next_open_timeout );
 				hCom = open_io( argv[0],speed,data_bits,parity,stop_bits );
 				if( hCom==INVALID_HANDLE_VALUE ) {
-					my_syslog( "can't open '%s', exiting",argv[0] );
+					my_syslog( "Can't open '%s', exiting",argv[0] );
 					return 1;
 				}
 			}
