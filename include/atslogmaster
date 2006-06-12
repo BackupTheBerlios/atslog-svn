@@ -205,8 +205,10 @@ restart)
     func_restart
     ;;
 reload)
-# Синоним restart
-    func_restart
+    # Reload
+    if [ -n "$GROUPPid" ];then
+        kill -HUP $GROUPPid
+    fi
     ;;
 writedb)
     # Запись данных в базу SQL сервера
