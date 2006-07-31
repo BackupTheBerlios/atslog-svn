@@ -541,32 +541,33 @@ void usage( void )
 "for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua\n"
 "\n"
 "atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits] [-d] [-e] [-a] [-o]\n"
-"        [-m] [-n] [-x number] [-w seconds] [-b] [-P pidfile] tcp:address:port|rtcp:address:port|dev\n"
-"-D dir\t\tdirectory where CDR files will be put, default is current dir\n"
-"-L logfile\tfile for error messages, default is stderr\n"
-"-F filename\tname of file where CDR messages will be put\n"
-"-s speed\tspeed of serial device, default 9600\n"
-"-c char_size\tlength of character; valid values from 5 to 8\n"
-"-p parity\tparity of serial device:\n"
-"\t\te - even parity, o - odd parity, n - no parity,\n"
-"-f stop_bits\tnumber of stop bits; valid values 1 or 2\n"
-"-d\t\toutput additional debug messages\n"
-"-e\t\tcopy error messages to stderr (in case if -L has value)\n"
-"-a\t\twrite date at the beginning of file (for Definity type only)\n"
-"-o\t\twrite CDR additionally to stdout\n"
-"-m\t\twrite log files on month-by-month instead of day-by-day basis\n"
-"-n\t\tconsider day in place of month and vice versa\n"
-"-x number\tmaximum number of clients for TCP connections (default: 1)\n"
+"        [-m] [-n] [-x number] [-w seconds] [-b] [-P pidfile] tcp[:address]:port|rtcp:address:port|dev\n"
+"-D dir\t\t\tdirectory where CDR files will be put, default is current dir\n"
+"-L logfile\t\tfile for error messages, default is stderr\n"
+"-F filename\t\tname of file where CDR messages will be put\n"
+"-s speed\t\tspeed of serial device, default 9600\n"
+"-c char_size\t\tlength of character; valid values from 5 to 8\n"
+"-p parity\t\tparity of serial device:\n"
+"\t\t\te - even parity, o - odd parity, n - no parity,\n"
+"-f stop_bits\t\tnumber of stop bits; valid values 1 or 2\n"
+"-d\t\t\toutput additional debug messages\n"
+"-e\t\t\tcopy error messages to stderr (in case if -L has value)\n"
+"-a\t\t\twrite date at the beginning of file (for Definity type only)\n"
+"-o\t\t\twrite CDR additionally to stdout\n"
+"-m\t\t\twrite log files on month-by-month instead of day-by-day basis\n"
+"-n\t\t\tconsider day in place of month and vice versa\n"
+"-x number\t\tmaximum number of clients for TCP connections (default: 1)\n"
 #ifdef USE_LIBWRAP
-"\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
+"\t\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
 #endif /* USE_LIBWRAP */
-"-w seconds\ttimeout before I/O port will be opened next time after EOF\n"
-"\t\t(default to all interfaces)\n"
-"-b\t\tbecome daemon\n"
-"-P\t\tPID file. /var/run/atslogd.pid by default\n"
-"tcp:address:port\twhere address:port is an IP address and port for listen on.\n"
+"-w seconds\t\ttimeout before I/O port will be opened next time after EOF\n"
+"\t\t\t(default to all interfaces)\n"
+"-b\t\t\tbecome daemon\n"
+"-P\t\t\tPID file. /var/run/atslogd.pid by default\n"
+"tcp[:address]:port\twhere address:port is an IP address and port for listen on\n"
+"\t\t\tyou may omit address and daemon will bind on all available IP addresses\n"
 "rtcp:address:port\twhere address:port is a remote IP address and port to connect\n"
-"dev \t\tserial device to use\n"
+"dev \t\t\tserial device to use\n"
 "\n"
 #ifdef USE_LIBWRAP
 "Use libwrap for contol access to TCP connections. See /etc/hosts.allow\n"
@@ -600,6 +601,7 @@ int main( int argc, char *argv[] )
 	struct sockaddr_in sa_lserver,sa_rclient;
 	socklen_t sa_rclient_len;
 	struct hostent *he_rserver;
+	struct hostent *he_lserver;
 	
 	char do_daemonize=0;
 	sigset_t ss;
@@ -747,7 +749,18 @@ int main( int argc, char *argv[] )
 					usage();
 				port=(char *)strtok_r(NULL,":",&saveptr);
 				if (port==NULL) 
-					usage();
+				{
+					port=my_strdup(hostname);
+					hostname=NULL;
+				}
+				if (hostname!=NULL)
+				{
+					 if ((he_lserver=gethostbyname(hostname))==NULL)
+					 {
+						my_syslog( "Invalid hostname: %s",hostname);
+						exit(1);
+					 }
+				}
 				tcpPort=atoi(port);
 			}
 		else if (strcasecmp(token,"rtcp")==0) 
@@ -801,11 +814,7 @@ int main( int argc, char *argv[] )
 				sa_lserver.sin_port=htons(tcpPort);
 				if (hostname!=NULL)
 				{
-					if (inet_aton(hostname,&sa_lserver.sin_addr)==0)
-					{
-						my_syslog( "bind() on IP %s failed: %s",hostname,my_strerror() );
-						my_exit(1);
-					}
+					memcpy(&sa_lserver.sin_addr,he_lserver->h_addr_list[0],he_lserver->h_length);
 				}
 			
 				if( bind(s,(struct sockaddr*)&sa_lserver,sizeof(sa_lserver) )==(-1) ) {
