@@ -52,8 +52,6 @@ HANDLE h2close=INVALID_HANDLE_VALUE;
 char dbg=0;
 char copy_to_stderr=0;
 char copy_to_stdout=0;
-char by_month=0;
-char swap_day_month=0;
 FILE *errout;
 FILE *pfd=NULL;
 char *pid_file="/var/run/atslogd.pid";
@@ -331,39 +329,6 @@ char *my_strerror(void)
 	return ret_err;
 }
 
-void open_cur_logfile( char do_flush_q )
-{
-	if( cur_logfile!=NULL ) {
-		fclose( cur_logfile );
-		cur_logfile=NULL;
-	}
-	if( by_month ) {
-		sprintf( dirname+dirlen,"%02d.log",cur_month );
-	} else {
-		sprintf( dirname+dirlen,"%02d.%02d",cur_month,cur_day );
-	}
-	if( (cur_logfile=fopen(dirname,"at"))==NULL ) {
-		my_syslog( "Can't open CDR file '%s': %s",dirname,strerror(errno) );
-		my_exit( 1 );
-	}
-	my_syslog( "CDR file '%s' opened",dirname );
-	fputs( "\n",cur_logfile );
-	if( do_flush_q ) {
-		flush_cdr_q();
-		free_cdr_q();
-	}
-}
-
-void open_cur_logfile_with_check( char do_flush_q )
-{
-	if( swap_day_month ) {
-		int i;
-		i=new_day; new_day=new_month; new_month=i;
-	}
-	if( new_day==cur_day && new_month==cur_month ) return;
-	cur_day=new_day; cur_month=new_month;
-	open_cur_logfile( do_flush_q );
-}
 
 
 HANDLE open_tty( char *tty_name )
@@ -540,11 +505,11 @@ void usage( void )
 "and Andrew Kornilov akornilov@gmail.com\n"
 "for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua\n"
 "\n"
-"atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits] [-d] [-e] [-a] [-o]\n"
-"        [-m] [-n] [-x number] [-w seconds] [-b] [-P pidfile] tcp[:address]:port|rtcp:address:port|dev\n"
+"atslogd [-D dir] [-L logfile] [-F filename] [-s speed] [-c csize] [-p parity] [-f sbits] [-d] [-e] [-o]\n"
+"        [-x number] [-w seconds] [-b] [-P pidfile] tcp[:address]:port|rtcp:address:port|dev\n"
 "-D dir\t\t\tdirectory where CDR files will be put, default is current dir\n"
 "-L logfile\t\tfile for error messages, default is stderr\n"
-"-F filename\t\tname of file where CDR messages will be put\n"
+"-F filename\t\tname of file where CDR messages will be put, default is 'raw'\n"
 "-s speed\t\tspeed of serial device, default 9600\n"
 "-c char_size\t\tlength of character; valid values from 5 to 8\n"
 "-p parity\t\tparity of serial device:\n"
@@ -552,25 +517,22 @@ void usage( void )
 "-f stop_bits\t\tnumber of stop bits; valid values 1 or 2\n"
 "-d\t\t\toutput additional debug messages\n"
 "-e\t\t\tcopy error messages to stderr (in case if -L has value)\n"
-"-a\t\t\twrite date at the beginning of file (for Definity type only)\n"
 "-o\t\t\twrite CDR additionally to stdout\n"
-"-m\t\t\twrite log files on month-by-month instead of day-by-day basis\n"
-"-n\t\t\tconsider day in place of month and vice versa\n"
-"-x number\t\tmaximum number of clients for TCP connections (default: 1)\n"
+"-x number\t\tmaximum number of clients for TCP connections; default is 1\n"
 #ifdef USE_LIBWRAP
-"\t\t\tsee /etc/hosts.allow, /etc/hosts.deny)\n"
+"\t\t\tsee also /etc/hosts.allow, /etc/hosts.deny\n"
 #endif /* USE_LIBWRAP */
-"-w seconds\t\ttimeout before I/O port will be opened next time after EOF\n"
-"\t\t\t(default to all interfaces)\n"
+"-w seconds\t\ttimeout before I/O port will be opened next time after EOF;\n"
+"\t\tdefault is 5\n"
 "-b\t\t\tbecome daemon\n"
-"-P\t\t\tPID file. /var/run/atslogd.pid by default\n"
-"tcp[:address]:port\twhere address:port is an IP address and port for listen on\n"
+"-P\t\t\tpid-file; /var/run/atslogd.pid by default\n"
+"tcp[:address]:port\tIP-address and TCP-port for listen on\n"
 "\t\t\tyou may omit address and daemon will bind on all available IP addresses\n"
-"rtcp:address:port\twhere address:port is a remote IP address and port to connect\n"
+"rtcp:address:port\tremote IP-address and TCP-port to connect\n"
 "dev \t\t\tserial device to use\n"
 "\n"
 #ifdef USE_LIBWRAP
-"Use libwrap for contol access to TCP connections. See /etc/hosts.allow\n"
+"Use libwrap for contol access to TCP/IP connections. See /etc/hosts.allow\n"
 "and /etc/hosts.deny\n\n",CDRR_VER);
 #else /* USE_LIBWRAP */	
 ,CDRR_VER);
@@ -588,7 +550,6 @@ int main( int argc, char *argv[] )
 	char parity=0;
 	int next_open_timeout=5;
 	char buf[MAXSTRINGLEN+1];
-	char write_date=0;
 	int is_tcp=0,is_rtcp=0;
 	unsigned short tcpPort=0,rtcpPort=0;
 	char *hostname=NULL,*rhostname=NULL;
@@ -608,7 +569,7 @@ int main( int argc, char *argv[] )
 	
 	HANDLE hCom;
 
-	while( (rc=getopt(argc,argv,"boahdemnws:D:L:P:F:p:c:f:r:x:"))!=(-1) ) {
+	while( (rc=getopt(argc,argv,"bohdes:D:L:P:F:p:c:f:x:w:s:"))!=(-1) ) {
 		switch( rc ) {
 		case 'D':
 			dirlen=strlen(optarg);
@@ -659,9 +620,6 @@ int main( int argc, char *argv[] )
 		case 'e':
 			copy_to_stderr=1;
 			break;
-		case 'a':
-			write_date=1;
-			break;
 		case 'x':
 			maxtcpclients=atoi(optarg);
 			break;
@@ -676,12 +634,6 @@ int main( int argc, char *argv[] )
 			break;
 		case 'o':
 			copy_to_stdout=1;
-			break;
-		case 'm':
-			by_month=1;
-			break;
-		case 'n':
-			swap_day_month=1;
 			break;
 		case 'h':
 			usage();
@@ -790,7 +742,7 @@ int main( int argc, char *argv[] )
 				hCom=INVALID_HANDLE_VALUE;
 				return hCom;
 			}
-				s=socket(AF_INET,SOCK_STREAM,0);
+				s=socket(PF_INET,SOCK_STREAM,0);
 				if(s==INVALID_HANDLE_VALUE) {
 					my_syslog( "socket() failed: %s",my_strerror() );
 					return s;
@@ -953,7 +905,7 @@ int main( int argc, char *argv[] )
 				return hCom;
 			}
 rtcp:
-			s=socket(AF_INET,SOCK_STREAM,0);
+			s=socket(PF_INET,SOCK_STREAM,0);
 			if(s==INVALID_HANDLE_VALUE) {
 				my_syslog( "socket() failed: %s",my_strerror() );
 				return s;
