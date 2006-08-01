@@ -1,58 +1,64 @@
 NAME
 
-ATSlog предоставляет удобный интерфейс с доступом через web-браузер для просмотра и анализа звонков различных моделей АТС.
+    ATSlog предоставляет удобный интерфейс с доступом через web-браузер для просмотра и анализа
+	звонков различных моделей АТС.
 
 SYNOPSIS
 
-atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits]			[-t type] [-P PIDfile][-d] [-e] [-a] [-o] [-i address] [tcp:port] dev 
+	atslogd [-D каталог] [-L лог-файл] [-F имя файла] [-s скорость] [-c длина символа] [-p чётность]
+	[-f стоповые биты] [-d] [-e] [-a] [-o] [-m] [-n] [-x количество] [-w секунды] [-b] [-P pid-файл]
+	tcp[:адрес]:порт|rtcp:адрес:порт|устройство
 
 DESCRIPTION
 
-atslogd - это модификация CDR Reader for PBXs v.1.09 (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
-изменён Denis CyxoB www.yamiyam.dp.ua 2003-2004
-и Andrew Kornilov andy[at]eva.dp.ua 2004
-для прораммы ATSlog версии @version@ build @buildnumber@ www.atslog.dp.ua
+	atslogd - это модификация CDR Reader for PBXs v.1.09 (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
+	изменен by Denis CyxoB www.yamiyam.dp.ua 2003-2004
+	и Andrew Kornilov akornilov@gmail.com 2004-2006
+	для программы ATSlog версии @version@ build @buildnumber@ www.atslog.dp.ua
 
 OPTIONS
 
--D dir		директория для текстовых лог-файлов; по умолчанию - текущая
--F filename     имя текстового лог-файла в который будут записаны данные
--L logfile      файл для сообщений об ошибках; по умолчанию stderr
--s speed        скорость передачи для последовательного порта; по умолчанию 9600
--c char_size    длинна символа (параметры последовательного порта); значения от 5 до 8
--p parity       чётность последовательного порта: e - even parity, o - odd parity, n - no parity.
--f stop_bits    number of stop bits; valid values 1 or 2                      
--d              выводить дополнительную отладочную информацию                              
--e              дублировать сообщения об ошибках в stderr (при наличии -L )
--a              write date at the beginning of file (for Definity type only)  
--o              выводить CDR данные дополнительно в stdout
--m              write log files on month-by-month instead of day-by-day basis 
--n              consider day in place of month and vice versa                 
--x number       максимальное колличество TCP соединений (по умолчанию: 1) смотрите /etc/hosts.allow, /etc/hosts.deny)
--w seconds      timeout before I/O port will be opened next time after EOF    
--i address      привязываться только на IP адрес (address) интерфейса (по умолчанию принимать на всех интерфейсах)
-tcp:N       	где N номер TCP порта демона.
--b              демонизироваться.
--P              PID файл. /var/run/atslogd.pid по умолчанию.
-				                                                                              
-Ипользуйте стандартные настройки libwrap для контроля доступа TCP соединений. Подробнее в документации на /etc/hosts.allow и /etc/hosts.deny
+	-D каталог              директория для текстовых лог-файлов; по умолчанию текущая
+	-L лог-файл             файл для сообщений об ошибках; по умолчанию stderr
+	-F имя файла            имя текстового лог-файла в который будут записаны CDR-данные; по умолчанию 'raw'
+	-s скорость             скорость передачи для последовательного порта; по умолчанию 9600
+	-c длина символа        длина символа (параметры последовательного	порта); значения от 5 до 8	
+	-p чётность             тип контроля по чётности для последовательного порта:
+	                        e - дополнение до чётности, o - дополнение до нечётности, n - не используется
+	-f стоповые биты        количество стоповых битов; допустимое значение 1 или 2
+	-d                      выводить дополнительную отладочную информацию
+	-e                      дублировать сообщения об ошибках в stderr (при наличии -L )
+	-o                      выводить CDR данные дополнительно в stdout
+	-x количество           максимальное количество TCP соединений; по умолчанию 1
+	                        см. также /etc/hosts.allow, /etc/hosts.deny
+	-w секунды              время ожидания, после которого порт будет переоткрыт после получения EOF;
+							по умолчанию 5
+	-b                      работать в фоновом режиме (режим 'демона')
+	-P                      pid-файл; по умолчанию /var/run/atslogd.pid
+	tcp[:адрес]:порт        IP-адрес и TCP-порт, на которых ожидать	соединение; вы можете не указывать
+							IP-адрес и демон будет ожидать соединение на всех доступных IP-адресах
+	rtcp:адрес:порт         IP-адрес и TCP-порт удалённой системы, к которой необходимо подключиться
+	устройство              последовательный порт для чтения данных
+
+	Используйте libwrap для контроля доступа к TCP/IP-соединениям. Смотрите /etc/hosts.allow и
+	/etc/hosts.deny
 
 FILES
 
-atslog.conf
+    atslogmaster, atslog.conf
 
 SEE ALSO
 
-atslogmaster(8), /usr/local/etc/atslog.conf
+    atslogmaster(8), atslog.conf(8)
 
 AUTHOR
 
-Denis CyxoB www.yamiyam.dp.ua
+    Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
 
-Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
+    Denis CyxoB www.yamiyam.dp.ua
 
-Andrew Kornilov andy[at]eva.dp.ua 2004
-
+    Andrew Kornilov akornilov@gmail.com 2004-2006
+	
 SITE
 
 www.atslog.dp.ua

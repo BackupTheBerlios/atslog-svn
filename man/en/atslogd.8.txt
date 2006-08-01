@@ -1,55 +1,58 @@
 NAME
 
-ATSlog gives the convenient interface for viewing and analysing bells of various models PBX.
+    ATSlog gives the convenient interface for viewing and analysing bells of various models PBX.
 
 SYNOPSIS
 
-atslogd [-D dir] [-L logfile] [-s speed] [-c csize] [-p parity] [-f sbits]
- [-t type] [-P PIDfile][-d] [-e] [-a] [-o] [-i address] [tcp:port] dev 
+	atslogd [-D dir] [-L logfile] [-F filename] [-s speed] [-c csize] [-p parity] [-f sbits] [-d] [-e] [-o]
+			[-n] [-x number] [-w seconds] [-b] [-P pidfile] tcp[:address]:port|rtcp:address:port|dev
 
 DESCRIPTION
 
-atslogd it is a modified CDR Reader for PBXs v.1.09 (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
-changed by Denis CyxoB www.yamiyam.dp.ua 2003-2004
-and Andrew Kornilov andy[at]eva.dp.ua 2004
-for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+	CDR Reader for PBXs v.1.09 (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
+	changed by Denis CyxoB www.yamiyam.dp.ua
+	and Andrew Kornilov akornilov@gmail.com
+	for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
 
 OPTIONS
 
--D dir		directory where CDR files will be put; default is current dir
--F filename     name of file where CDR messages will be put
--L logfile      file for error messages; default is stderr
--s speed        speed of serial device; default 9600
--c char_size    length of character; valid values from 5 to 8
--p parity       parity of serial device: e - even parity, o - odd parity, n - no parity.
--f stop_bits    number of stop bits; valid values 1 or 2                      
--d              output additional debug messages                              
--e              copy error messages to stderr (in case if -L has value)       
--a              write date at the beginning of file (for Definity type only)  
--o              write CDR additionally to stdout                              
--m              write log files on month-by-month instead of day-by-day basis 
--n              consider day in place of month and vice versa
--x number       maximum number of clients for TCP connections (default: 1) see /etc/hosts.allow, /etc/hosts.deny)
--w seconds      timeout before I/O port will be opened next time after EOF    
--i address      IP address of interface for bind only to it (default to all interfaces)
-tcp:N       	where N is a TCP port for listen on.
--b              become daemon                                                 
--P              PID file. /var/run/atslogd.pid by default                     
-				                                                                              
-Use libwrap for contol access to TCP connections. See /etc/hosts.allow and /etc/hosts.deny
+	-D dir                  directory where CDR files will be put; default is current dir
+	-L logfile              file for error messages, default is stderr
+	-F filename             name of file where CDR messages will be put; default is 'raw'
+	-s speed                speed of serial device; default 9600
+	-c char_size            length of character; valid values from 5 to 8
+	-p parity               parity of serial device:
+	                        e - even parity, o - odd parity, n - no parity,
+	-f stop_bits            number of stop bits; valid values 1 or 2
+	-d                      output additional debug messages
+	-e                      copy error messages to stderr (in case if -L has value)
+	-o                      write CDR additionally to stdout
+	-x number               maximum number of clients for TCP connections; default is 1
+	                        see also /etc/hosts.allow, /etc/hosts.deny
+	-w seconds              timeout before I/O port will be opened next time after EOF;
+							default is 5
+	-b                      become daemon
+	-P                      pid-file; /var/run/atslogd.pid by default
+	tcp[:address]:port      IP-address and TCP-port for listen on
+	                        you may omit address and daemon will bind on all available IP addresses
+	rtcp:address:port       IP-address and TCP-port to connect
+	dev                     serial device to use
+
+	Use libwrap for contol access to TCP connections. See /etc/hosts.allow
+	and /etc/hosts.deny
 
 FILES
 
-atslog.conf
+    atslogmaster, atslog.conf
 
 SEE ALSO
 
-atslogmaster(8), /usr/local/etc/atslog.conf
+    atslogmaster(8), atslog.conf(8)
 
 AUTHOR
 
-Denis CyxoB www.yamiyam.dp.ua
+    Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
 
-Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
+    Denis CyxoB www.yamiyam.dp.ua
 
-Andrew Kornilov andy[at]eva.dp.ua 2004
+    Andrew Kornilov akornilov@gmail.com
