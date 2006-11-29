@@ -45,7 +45,7 @@ case "$debug" in
 esac
 
 # Проверим, используется tcp порт, или порт в /dev/
-TCPPORT=$(expr $port : "\.*tcp:.*\$")
+TCPPORT=$(expr $port : ".*tcp:.*\$")
 if [ $TCPPORT = 0 ];then
     port="/dev/"${port}
 fi
