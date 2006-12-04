@@ -58,7 +58,7 @@ char *pid_file="/var/run/atslogd.pid";
 char dirname[MAXPATHLEN+1+MAXFILENAMELEN+1];
 char filename[MAXFILENAMELEN+1]="raw";
 int dirlen=0;
-int gpid;
+int gpid=0;
 int filenamelen=0;
 // count of childrens
 int childcount=0;
@@ -664,7 +664,8 @@ int main( int argc, char *argv[] )
 
 	my_syslog( "Starting" );
 	
-	gpid = daemonize();
+	if (do_daemonize) 
+		gpid = daemonize();
 
 	if( do_daemonize && gpid==(-1) ) {
 		my_syslog( "Can't become daemon, exiting" );
