@@ -89,6 +89,9 @@ if($vars{sqlhost} ne "localhost"){
 }
 
 if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0})){
+    if($vars{sqltype}  =~ /MySQL/i){
+        $dbh->{mysql_auto_reconnect} = 1;
+    }
     if ($vars{model} =~ /SKP-816/i){
         require "$vars{libdir}/skp-816.lib";
     }elsif($vars{model} =~ /KX-TA308RU/i or $vars{model} =~ /KX-TA308/i or $vars{model} =~ /KX-TA616RU/i){
