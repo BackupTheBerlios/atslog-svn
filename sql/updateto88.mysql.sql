@@ -15,9 +15,9 @@ ALTER TABLE @sqldatabase@.calls CHANGE Forwarded forwarded CHAR(3);
 ALTER TABLE @sqldatabase@.calls CHANGE Internally internally SMALLINT(6) UNSIGNED;
 ALTER TABLE @sqldatabase@.calls CHANGE CO co SMALLINT(6) UNSIGNED;
 ALTER TABLE @sqldatabase@.calls CHANGE Way way CHAR(3);
-ALTER TABLE @sqldatabase@.calls CHANGE Number number DECIMAL(100, 0) UNSIGNED DEFAULT '0' NOT NULL;
+ALTER TABLE @sqldatabase@.calls CHANGE Number number DECIMAL(65, 0) UNSIGNED DEFAULT '0' NOT NULL;
 ALTER TABLE @sqldatabase@.calls CHANGE Duration duration INT(10) UNSIGNED DEFAULT '0' NOT NULL;
-ALTER TABLE @sqldatabase@.calls CHANGE cost cost DECIMAL(100, 3) UNSIGNED DEFAULT '0';
+ALTER TABLE @sqldatabase@.calls CHANGE cost cost DECIMAL(65, 3) UNSIGNED DEFAULT '0';
 ALTER TABLE @sqldatabase@.calls DROP INDEX Internally;
 ALTER TABLE @sqldatabase@.calls DROP INDEX CO;
 ALTER TABLE @sqldatabase@.calls DROP INDEX TimeOfCall;
@@ -57,7 +57,7 @@ ALTER TABLE @sqldatabase@.intphones COMMENT = 'Names of internally phones';
 
 CREATE TABLE @sqldatabase@.phonebook (
     login varchar(25) default NULL,
-    number decimal(100,0) unsigned default '0',
+    number decimal(65,0) unsigned default '0',
     description varchar(255) default NULL,
     UNIQUE KEY number (number),
     KEY login (login),

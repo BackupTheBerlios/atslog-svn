@@ -6,8 +6,8 @@
 // ------------------------------------------------------------------------------------------------------
 //
 		$qP1="CREATE TEMPORARY TABLE tmpNum_P (
-		     number decimal(100,0) NULL default '0',
-		     count decimal(100,0) NULL default '0'
+		     number decimal(65,0) NULL default '0',
+		     count decimal(65,0) NULL default '0'
 		    )";
 
 

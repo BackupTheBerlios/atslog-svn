@@ -19,9 +19,9 @@ CREATE TABLE `calls` (
   `internally` smallint(6) unsigned default NULL,
   `co` smallint(6) unsigned default NULL,
   `way` char(3) default NULL,
-  `number` decimal(100,0) unsigned NOT NULL default '0',
+  `number` decimal(65,0) unsigned NOT NULL default '0',
   `duration` int(10) unsigned NOT NULL default '0',
-  `cost` decimal(100,3) unsigned default '0.000',
+  `cost` decimal(65,3) unsigned default '0.000',
   KEY `co` (`co`),
   KEY `internally` (`internally`),
   KEY `timeofcall` (`timeofcall`),
@@ -138,7 +138,7 @@ CREATE TABLE `intphones` (
 
 CREATE TABLE `phonebook` (
   `login` varchar(25) default NULL,
-  `number` decimal(100,0) unsigned default '0',
+  `number` decimal(65,0) unsigned default '0',
   `description` varchar(255) default NULL,
   UNIQUE KEY `number` (`number`),
   KEY `login` (`login`),

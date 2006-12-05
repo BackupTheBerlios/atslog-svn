@@ -12,7 +12,7 @@ if(empty($sortBy)) $sortBy="1";
 $qA1="
 CREATE TEMPORARY TABLE tmp_A (
 internally smallint NULL default '0',
-duration decimal(100,0) NULL default '0'
+duration decimal(65,0) NULL default '0'
 )
 ";
 
@@ -35,7 +35,7 @@ group by calls.internally
 $qB1="
 CREATE TEMPORARY TABLE tmp_B (
 internally smallint NULL default '0',
-duration decimal(100,0) NULL default '0'
+duration decimal(65,0) NULL default '0'
 )
 ";
 
@@ -57,7 +57,7 @@ group by calls.internally
 $qC1="
 CREATE TEMPORARY TABLE tmp_C (
 internally smallint NULL default '0',
-duration decimal(100,0) NULL default '0'
+duration decimal(65,0) NULL default '0'
 )
 ";
 
@@ -79,7 +79,7 @@ group by calls.internally
 $qD1="
 CREATE TEMPORARY TABLE tmp_D (
 internally smallint NULL default '0',
-duration decimal(100,0) NULL default '0'
+duration decimal(65,0) NULL default '0'
 )
 ";
 
@@ -102,7 +102,7 @@ group by calls.internally
 $qP1="
 CREATE TEMPORARY TABLE tmp_P (
  internally smallint NULL default '0',
- duration decimal(100,0) NULL default '0'
+ duration decimal(65,0) NULL default '0'
 )
 ";
 
