@@ -98,6 +98,8 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
         require "$vars{libdir}/kx-ta616-308-ru.lib";
     }elsif ($vars{model} =~ /KX-TD1232/i){
 	require "$vars{libdir}/kx-td1232.lib";
+    }elsif ($vars{model} =~ /ALCATEL-4200/i){
+	require "$vars{libdir}/alcatel-4200.lib";
     }elsif ($vars{model} =~ /KX-TD816RU/i){
 	require "$vars{libdir}/kx-td816ru.lib";
     }elsif($vars{model} =~ /GD-320/i){
