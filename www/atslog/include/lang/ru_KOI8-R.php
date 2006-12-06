@@ -1,9 +1,10 @@
 <?php
 
-// Russian KOI8-R language file
+// Russian 1251 language file
 
 $GUI_LANG = array (
-    'LANG'	                	=> 'Russian KOI8-R',
+    'LANG'	                	=> 'Russian',
+    'Charset'	                	=> 'koi8-r',
     'Number'                   		=> 'Номер',
     'QuantityOfCalls'			=> 'Количество звонков',
     'DateOfCall'			=> 'Дата звонка',

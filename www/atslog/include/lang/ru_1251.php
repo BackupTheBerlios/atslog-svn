@@ -3,7 +3,8 @@
 // Russian 1251 language file
 
 $GUI_LANG = array (
-    'LANG'	                	=> 'Russian 1251',
+    'LANG'	                	=> 'Russian',
+    'Charset'	                	=> 'windows-1251',
     'Number'                   		=> 'Номер',
     'QuantityOfCalls'			=> 'Количество звонков',
     'DateOfCall'			=> 'Дата звонка',

@@ -859,7 +859,7 @@ function TTFprint(){
 
 function Langname($filename){
     include $filename;
-    return $GUI_LANG['LANG'];
+    return $GUI_LANG['LANG'].' '.$GUI_LANG['Charset'];
 }
 
 function ColorName($filenameC){

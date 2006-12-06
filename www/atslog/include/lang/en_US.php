@@ -4,6 +4,7 @@
 
 $GUI_LANG = array (
     'LANG'				=> 'English US',
+    'Charset'				=> '',
     'Number'                    	=> 'Number',
     'QuantityOfCalls'			=> 'Quantity of calls',
     'DateOfCall'              		=> 'Date of call',
