@@ -131,7 +131,7 @@ $graph = new PHPlot(600,300);
 $graph->SetDataType("text-data");
 $graph->SetDataValues($allDays);
 $graph->SetYTickIncrement();
-$graph->y_tick_increment=ceil($graph->y_tick_increment);
+$graph->y_tick_increment=ceil(@$graph->y_tick_increment);
 $graph->SetXLabelType("time");
 $graph->SetXTimeFormat("M d");
 if ($incoming=='2'){
