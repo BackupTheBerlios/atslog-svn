@@ -54,7 +54,7 @@ if($vars{sqlhost} ne "localhost"){
 	
 $dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0});
 
-$del_query="DELETE FROM calls;";
+$del_query="TRUNCATE TABLE calls;";
 #print $del_query;
 
 $sth = $dbh->prepare($del_query);
