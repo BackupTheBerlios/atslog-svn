@@ -133,7 +133,7 @@ $graph->SetDataValues($allDays);
 $graph->SetYTickIncrement();
 $graph->y_tick_increment=ceil(@$graph->y_tick_increment);
 $graph->SetXLabelType("time");
-$graph->SetXTimeFormat("M d");
+$graph->SetXTimeFormat("%b %d");
 if ($incoming=='2'){
     $graph->SetLegend(array("Outgoing"));
     $graph->SetDataColors(array('green'));
@@ -146,6 +146,9 @@ if ($incoming=='2'){
 $graph->SetYTitle("Quantity of calls");
 $graph->SetPlotType("bars");
 $graph->SetXLabelAngle(90);
+// Turn off X tick labels and ticks because they don't apply here:
+$graph->SetXTickLabelPos('none');
+$graph->SetXTickPos('none');
 $graph->DrawGraph();
 
 ?>

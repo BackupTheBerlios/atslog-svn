@@ -131,26 +131,31 @@ include("../include/phplot/phplot.php");
 $graph = new PHPlot(600,300);
 if($Columns > 30){
     $graph->SetYTitle("Duration days hours:minutes:seconds");
-    $graph->SetYTimeFormat("z H:i:s");
+    $graph->SetYTimeFormat("%e %H:%M:%S");
 }else{
     $graph->SetYTitle("Duration hours:minutes:seconds");
-    $graph->SetYTimeFormat("H:i:s");
+    $graph->SetYTimeFormat("%H:%M:%S");
 }
 $graph->SetDataType("text-data");
 $graph->SetDataValues($allDays);
 $graph->SetYLabelType("time");
 $graph->SetXLabelType("time");
-$graph->SetXTimeFormat("M d");
+$graph->SetXTimeFormat("%b %d");
 if ($incoming=='2'){
     $graph->SetLegend(array("Outgoing"));
     $graph->SetDataColors(array('green'));
 }elseif ($incoming=='3'){
-    $graph->SetLegend(array("Incomming"));
+    $graph->SetLegend(array("Incoming"));
     $graph->SetDataColors(array('orange'));
 }else{
     $graph->SetLegend(array("All","Outgoing","Incomming"));
 }
 $graph->SetPlotType("bars");
+
+// Turn off X tick labels and ticks because they don't apply here:
+$graph->SetXTickLabelPos('none');
+$graph->SetXTickPos('none');
+
 $graph->SetXLabelAngle(90);
 $graph->DrawGraph();
 
