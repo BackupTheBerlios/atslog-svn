@@ -13,10 +13,6 @@
 build=@buildnumber@
 
 #
-# Пароль для пользователя $sqlmasteruser
-# Серверные программы ATSlog от имени этого пользователя
-# инициализируют все обращения к SQL серверу для внесения изменений
-# в базы данных.
 # The password for the user $sqlmasteruser
 # Server ATSlog programs on behalf of this user initialize all references to
 # SQL server for modifications in databases.
