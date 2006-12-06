@@ -148,7 +148,7 @@ if ($incoming=='2'){
     $graph->SetLegend(array("Incoming"));
     $graph->SetDataColors(array('orange'));
 }else{
-    $graph->SetLegend(array("All","Outgoing","Incomming"));
+    $graph->SetLegend(array("All","Outgoing","Incoming"));
 }
 $graph->SetPlotType("bars");
 

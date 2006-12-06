@@ -48,7 +48,7 @@ include("../include/phplot/phplot.php");
 $graph = new PHPlot(600,300);
 $graph->SetDataType("text-data");
 $graph->SetDataValues($allDays);
-$graph->SetLegend(array("Outgoing","Incomming"));
+$graph->SetLegend(array("Outgoing","Incoming"));
 $graph->SetYTitle("Relative quantity");
 $graph->SetDataColors(array('green', 'orange'));
 $graph->SetPlotType("pie");

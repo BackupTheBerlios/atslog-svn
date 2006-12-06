@@ -138,10 +138,10 @@ if ($incoming=='2'){
     $graph->SetLegend(array("Outgoing"));
     $graph->SetDataColors(array('green'));
 }elseif ($incoming=='3'){
-    $graph->SetLegend(array("Incomming"));
+    $graph->SetLegend(array("Incoming"));
     $graph->SetDataColors(array('orange'));
 }else{
-    $graph->SetLegend(array("All","Outgoing","Incomming"));
+    $graph->SetLegend(array("All","Outgoing","Incoming"));
 }
 $graph->SetYTitle("Quantity of calls");
 $graph->SetPlotType("bars");
