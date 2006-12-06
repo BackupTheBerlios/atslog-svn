@@ -14,11 +14,11 @@
 	<style>
 		body {
 			text-decoration: none;
-			<? echo $COLORS['StyleBodyScrollbarBaseColor']."\n"; ?>
-			<? echo $COLORS['StyleBodyScrollbarArrowColor']."\n"; ?>
+			<?php echo $COLORS['StyleBodyScrollbarBaseColor']."\n"; ?>
+			<?php echo $COLORS['StyleBodyScrollbarArrowColor']."\n"; ?>
 
 		}
-<?
+<?php
 
 if ($toprint!="yes"){
 echo ("
@@ -49,20 +49,20 @@ echo("
 }
 ?>
 		input{
-			<? echo $COLORS['StyleInputBackground']."\n"; ?>
+			<?php echo $COLORS['StyleInputBackground']."\n"; ?>
 		}
 		select{
-			<? echo $COLORS['StyleSelectBackground']."\n"; ?>
+			<?php echo $COLORS['StyleSelectBackground']."\n"; ?>
 		}
 		textarea{
-			<? echo $COLORS['StyleTextareaBackground']."\n"; ?>
+			<?php echo $COLORS['StyleTextareaBackground']."\n"; ?>
 		}
 		input.submit{
-			<? echo $COLORS['StyleInputSubmitBackground']."\n"; ?>
-			<? echo $COLORS['StyleInputSubmitBorderRight']."\n"; ?>
-			<? echo $COLORS['StyleInputSubmitBorderTop']."\n"; ?>
-			<? echo $COLORS['StyleInputSubmitBorderLeft']."\n"; ?>
-			<? echo $COLORS['StyleInputSubmitBorderBottom']."\n"; ?>
+			<?php echo $COLORS['StyleInputSubmitBackground']."\n"; ?>
+			<?php echo $COLORS['StyleInputSubmitBorderRight']."\n"; ?>
+			<?php echo $COLORS['StyleInputSubmitBorderTop']."\n"; ?>
+			<?php echo $COLORS['StyleInputSubmitBorderLeft']."\n"; ?>
+			<?php echo $COLORS['StyleInputSubmitBorderBottom']."\n"; ?>
 			font-family : Verdana;
 		}
 		.content { 
@@ -70,7 +70,7 @@ echo("
 			margin-right:50px;
 		} 
 	</style>
-<?
+<?php
 // JavaScript Functions                
 // ------------------------------------
 if ($toprint!="yes"){                                       

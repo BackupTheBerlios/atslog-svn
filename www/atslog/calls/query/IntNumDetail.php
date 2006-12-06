@@ -1,4 +1,4 @@
-<?
+<?php
 		if(empty($sortBy))	$sortBy="1";
 		if($int != "")		$additionalReq.=" AND (calls.internally = '".$int."')";
 		if($num != "")		$additionalReq.=" AND (calls.number = '".$num."')";

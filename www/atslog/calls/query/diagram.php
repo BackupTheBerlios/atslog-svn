@@ -1,5 +1,5 @@
 <p>&nbsp;</p>
-<?
+<?php
 //print "I".IMG_GIF."I";
 //.IMG_JPG.IMG_JPEG.IMG_PNG.IMG_WBMP;
 $gif_enable=IMG_GIF;
@@ -27,7 +27,7 @@ if ($gif_enable==1 or $jpg_enable==1 or $jpeg_enable==1 or $png_enable==1 or $wb
 
 ?>
 <div align=center>
-<?
+<?php
     if(empty($diatype) or $diatype=='pie' or $diatype=='all'){
 	print "<br><img src=\"../diagram/diagram_pie.php".complitLink()."\" width=600 height=300 alt='".$GUI_LANG['RelativeQuantityOfCalls']."'>";
     }
@@ -40,7 +40,7 @@ if ($gif_enable==1 or $jpg_enable==1 or $jpeg_enable==1 or $png_enable==1 or $wb
 }else{
 ?>
 <div align=center>
-<?
+<?php
     echo $GUI_LANG['GDSupportIsDisabled'];
 }
 

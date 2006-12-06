@@ -6,9 +6,9 @@ var marked_row = new Array;
 function setPointer(theRow, theRowNum, theAction)
 {
     var theCells = null;
-    var theDefaultColor ='<? echo $COLORS['TrOnmouseOne']; ?>';
-    var thePointerColor='<? echo $COLORS['TrOnmouseTwo']; ?>';
-    var theMarkColor='<? echo $COLORS['TrOnmouseThree']; ?>';
+    var theDefaultColor ='<?php echo $COLORS['TrOnmouseOne']; ?>';
+    var thePointerColor='<?php echo $COLORS['TrOnmouseTwo']; ?>';
+    var theMarkColor='<?php echo $COLORS['TrOnmouseThree']; ?>';
 
     // 1. Pointer and mark feature are disabled or the browser can't get the
     //    row -> exits

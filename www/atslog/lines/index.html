@@ -105,13 +105,13 @@ $title=strtr($GUI_LANG['ParametersOfLines'],$GUI_LANG['UpperCase'],$GUI_LANG['Lo
 if(empty($export)) include("../include/set/header.html");
 ?>
 <table cellpadding=0 cellspacing=0 border=0 width="100%">
-    <tr><td colspan=2><?
+    <tr><td colspan=2><?php
 $user="";
 if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LANG['ChangeDefaultAdminPassword']."</b></font><br>&nbsp;";
 ?></td>
     </tr>
     <tr>
-<?
+<?php
     menucomplit("lines");
 ?>
 	<td width=50%>&nbsp;</td>
@@ -121,14 +121,14 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
     </tr>
     <tr>
 	<TD>
-<?
+<?php
     echo $GUI_LANG['Abonent'].": ".$authrow["login"]." (".$authrow["lastname"]." ".$authrow["firstname"]." ".$authrow["secondname"].")";
 ?>
 	</td>
     </tr>
     <tr>
 	<td>
-<?
+<?php
 	echo "<H1>".$GUI_LANG['Lines'].":</H1>";
 	switch ($_GET["msg"])
 	{

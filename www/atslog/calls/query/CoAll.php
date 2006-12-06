@@ -1,4 +1,4 @@
-<?
+<?php
 if(empty($sortBy)) $sortBy="1";
 
 // Формируем запрос к БД

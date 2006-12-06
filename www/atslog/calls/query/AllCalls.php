@@ -1,4 +1,4 @@
-<?
+<?php
 		if(empty($sortBy))	$sortBy="1";
 		if(!empty($search))	$additionalReq .= " AND (calls.number LIKE '%".$search."%')";
 

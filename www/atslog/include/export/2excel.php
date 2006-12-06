@@ -1,4 +1,4 @@
-<?
+<?php
 
 CLASS  MID_SQLPARAExel extends GeraExcel
     {

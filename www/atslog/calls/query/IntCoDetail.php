@@ -1,4 +1,4 @@
-<?
+<?php
 		if(empty($sortBy)) 	$sortBy="1";
 		if($co != "")		$additionalReq.=" AND (calls.co = '".$co."')";
 		if($num != "")		$additionalReq.=" AND (calls.number = '".$num."')";
