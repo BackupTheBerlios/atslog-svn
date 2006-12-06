@@ -93,16 +93,6 @@ parity=n
 #
 stopbits=1
 
-#
-
-Директория с исполняемыми файлами программы
-	Тема:
-Транслитерировать незнакомые слова:
-Проверить орфографию Show/Hide Virtual Keyboard
-Проверка орфографии выполняется системой ОРФО
-Загрузи себе новый PROMT Express 7.0!
-
-
 # Directory with executed files of the program
 bindir=/usr/local/bin
 
