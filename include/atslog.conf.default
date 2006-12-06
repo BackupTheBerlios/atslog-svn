@@ -149,12 +149,6 @@ atslogdb=atslogdb.pl
 #
 cleardb=atslogcleardb.pl
 
-# Текстовый лог-файл в который скрипт записывает звонки из АТС за текущий
-# месяц. По окончанию месяца файл будет сжат bzip2 и сохранён под
-# именем $callslogfile.1.bz2 В следующий месяц будет произведена его
-# ротация в соответствующем порядке.
-#
-
 # ASCII log file in which script writes down calls from the PBX
 # for current  month. On the end of month the file will be compressed bzip2 and
 # kept under the name $callslogfile.1.bz2 
