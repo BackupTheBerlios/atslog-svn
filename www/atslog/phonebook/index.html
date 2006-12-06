@@ -45,7 +45,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
     	    nopass();
 	}
 
-	if ($_POST["add"])
+	if (isset($_POST["add"]) && $_POST["add"])
 	{
 		if ($_POST["number"] == "")
 		{
@@ -71,7 +71,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 		header("Location: ?cacheflush=1");
 		die;
 	}
-	else if ($_POST["edit"])
+	else if (isset($_POST["edit"]) && $_POST["edit"])
 	{
 		if ($_POST["number"] == "")
 		{
@@ -109,7 +109,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 		header("Location: ?cacheflush=1");
 		die;
 	}
-	else if ($_GET["delete"])
+	else if (isset($_GET["delete"]) && $_GET["delete"])
 	{
 		$q5="delete from phonebook where number = '".$_GET["delete"]."'";
 		if($debug) echo $q5."<br>";
@@ -125,7 +125,7 @@ $title=strtr($GUI_LANG['PhoneBook'],$GUI_LANG['UpperCase'],$GUI_LANG['LowerCase'
 if(empty($export)) include("../include/set/header.html");
 
 // Export                                   
-if($export=="excel") {
+if(isset($export) && $export=="excel") {
     include("../include/export/2excel.php");
     $expor_excel = new MID_SQLPARAExel;
 }
@@ -161,14 +161,16 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 <?php
 	echo "<H1>".$GUI_LANG['PhoneBook'].":</H1>";
 }
-	switch ($_GET["msg"])
-	{
-		case 2:
+	if(isset($_GET["msg"])){
+		switch ($_GET["msg"])
+		{
+			case 2:
 			echo "<div><font color=red><b>".$GUI_LANG['EnterDescriptionOfTheNumber']."</b></font></div><br>";
 			break;
-		case 3:
+			case 3:
 			echo "<div><font color=red><b>".$GUI_LANG['EnterAPhoneNumber']."</b></font></div><br>";
 			break;
+		}
 	}
 	$q2="SELECT
 	login,number,description
@@ -179,7 +181,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 	if($debug) echo $q2."<br>";
 
 	$conn->setFetchMode(ADODB_FETCH_NUM);
-	if($cacheflush) $res = $conn->CacheFlush($q2);
+	if(isset($cacheflush) && $cacheflush) $res = $conn->CacheFlush($q2);
 	$res = $conn->CacheExecute($q2);              
 	if ($res && $res->RecordCount() > 0) { 
 	    while (!$res->EOF) {
@@ -226,12 +228,12 @@ if(empty($export)) {
 		}
 
 		if(empty($export)) echo "\n<TR ".$COLORS['BaseTrBgcolor'].">";
-		if ($_GET["edit"] == $row[1])
+		if (isset($_GET["edit"]) && $_GET["edit"] == $row[1])
 		{
 		    if(empty($export)) {
 			if($row[0]) $checkMe[0]=" CHECKED"; else $checkMe[1]=" CHECKED";
 			echo "<TD><IMG SRC=\"../include/img/rowselected.gif\" WidTH=19 HEIGHT=18></TD>\n";
-			echo "<TD><FORM METHOD=POST STYLE=\"margin:0\"><INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=1".$checkMe[0].">".$GUI_LANG['OnlyForMe']." <INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=0".$checkMe[1].">".$GUI_LANG['ForEverybody']."</TD>";
+			echo "<TD><FORM METHOD=POST STYLE=\"margin:0\"><INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=1".(isset($checkMe[0])?$checkMe[0]:'').">".$GUI_LANG['OnlyForMe']." <INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=0".(isset($checkMe[1])?$checkMe[1]:'').">".$GUI_LANG['ForEverybody']."</TD>";
 			echo "<TD><INPUT TYPE=\"text\" NAME=\"number\" VALUE=\"".htmlspecialchars($row[1])."\" SIZE=30 maxlength=100></TD>\n";
 			echo "<TD><INPUT TYPE=\"text\" NAME=\"description\" VALUE=\"".htmlspecialchars($row[2])."\" SIZE=30 maxlength=255></TD>\n";
 			echo "<TD><INPUT TYPE=\"hidden\" NAME=\"edit\" VALUE=\"".$row[1]."\"><INPUT TYPE=IMAGE WidTH=16 HEIGHT=16 SRC=\"../include/img/save.gif\" ALT=\"".$GUI_LANG['Save']."\" onclick=\"submit();\" style=\"cursor:hand;\"><IMG WidTH=16 HEIGHT=16 src=\"../include/img/undo.gif\" alt=\"".$GUI_LANG['Cancel']."\" onclick=\"window.location = '?';\" style=\"cursor:hand;\"></FORM></TD>\n";
@@ -263,7 +265,7 @@ if(empty($export)) {
 	    echo "<TR ".$COLORS['BaseTrBgcolor'].">";
 	    echo "<TD><IMG WidTH=19 HEIGHT=18 SRC=\"../include/img/rownew.gif\"><FORM METHOD=POST STYLE=\"margin:0\"></TD>";
 	    echo "<TD><INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=1 CHECKED>".$GUI_LANG['OnlyForMe']." <INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=0>".$GUI_LANG['ForEverybody']."</TD>"; 
-	    echo "<TD><INPUT TYPE=\"text\" NAME=\"number\" SIZE=30 maxlength=100 VALUE=\"$new\"></TD>";
+	    echo "<TD><INPUT TYPE=\"text\" NAME=\"number\" SIZE=30 maxlength=100 VALUE=\"\"></TD>";
 	    echo "<TD><INPUT TYPE=\"text\" NAME=\"description\" SIZE=30 maxlength=255></TD>";
 	    echo "<TD><INPUT TYPE=\"hidden\" NAME=\"add\" VALUE=\"1\"><INPUT TYPE=IMAGE WidTH=16 HEIGHT=16 SRC=\"../include/img/new.gif\" ALT=\"".$GUI_LANG['Add']."\" onclick=\"submit();\" style=\"cursor:hand;\"></FORM></TD></TR>\n";
 	    echo "</TABLE>

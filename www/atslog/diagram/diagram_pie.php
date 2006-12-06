@@ -28,7 +28,7 @@ include('../include/set/commonData.php');
     )
     GROUP BY way";
     if($debug) echo $q."<br>";                   
-    if($cacheflush) $res = $conn->CacheFlush($q);
+    if(isset($cacheflush) && $cacheflush) $res = $conn->CacheFlush($q);
     $rs = $conn->CacheExecute($q);
 
     //print_r($rs);

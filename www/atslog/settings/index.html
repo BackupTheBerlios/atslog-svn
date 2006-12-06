@@ -47,7 +47,7 @@ if (!empty($rvar_baseOrder)) $baseOrder=translateHtml($rvar_baseOrder);
 if(!empty($_POST['baseOrder'])) $baseOrder=$_POST['baseOrder'];
 if (!empty($rvar_cRows)) $cRows=translateHtml($rvar_cRows);
 if (!empty($rvar_rows)) $rows=translateHtml($rvar_rows);
-if($baseOrder!="ASC") $baseOrder="DESC";
+if(!isset($baseOrder) || $baseOrder!="ASC") $baseOrder="DESC";
 if(!empty($cRows))     $rows = $cRows;
 if(empty($rows)) $rows="100";
 if(!empty($setupRows)) $rows=$setupRows;
@@ -146,6 +146,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 		echo"</select></td></tr><tr><td>";
 ?>
 <?php
+	$CurrentOrder['ASC']=$CurrentOrder['DESC']=''; // init
     $CurrentOrder[$baseOrder]=" SELECTED";
 
     echo $GUI_LANG['SortingByDefault'];

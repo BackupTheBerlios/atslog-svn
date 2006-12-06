@@ -45,7 +45,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 
 	hasprivilege("usersadmin", true);
 
-	if ($_POST["add"])
+	if (isset($_POST["add"]) && $_POST["add"])
 	{
 		if ($_POST["login"] == "")
 		{
@@ -65,7 +65,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 		header("Location: ?cacheflush=1");
 		die;
 	}
-	else if ($_POST["edit"])
+	else if (isset($_POST["edit"]) && $_POST["edit"])
 	{
 		if(!$demoMode){
 		    $conn->Execute("delete from usersgroups where login = '".$_POST["edit"]."'");
@@ -86,7 +86,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 		header("Location: ?cacheflush=1");
 		die;
 	}
-	else if ($_POST["resetpwd"])
+	else if (isset($_POST["resetpwd"]) && $_POST["resetpwd"])
 	{
 		if ($_POST["passwd1"] != $_POST["passwd2"])
 		{
@@ -100,7 +100,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 		header("Location: ?cacheflush=1");
 		die;
 	}
-	else if ($_GET["delete"])
+	else if (isset($_GET["delete"]) && $_GET["delete"])
 	{
 		if(!$demoMode){
 	    	    $conn->Execute("delete from usersgroups where login = '".$_GET["delete"]."'");
@@ -131,7 +131,8 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
     <tr>
 	<TD>
 <?php
-    echo $GUI_LANG['Abonent'].": ".$authrow["Login"]." (".$authrow["lastname"]." ".$authrow["firstname"]." ".$authrow["secondname"].")";
+	global $authrow;
+    echo $GUI_LANG['Abonent'].": ".$authrow["login"]." (".$authrow["lastname"]." ".$authrow["firstname"]." ".$authrow["secondname"].")";
 ?>
 	</td>
     </tr>
@@ -139,14 +140,16 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 	<td>
 <?php
 	echo "<H1>".$GUI_LANG['Abonents'].":</H1>";
-	switch ($_GET["msg"])
-	{
-		case 2:
-			echo "<div><font color=red><b>".$GUI_LANG['PasswordsDoNotConsilient']."</b></font></div><br>";
-			break;
-		case 3:
-			echo "<div><font color=red><b>".$GUI_LANG['EnterLoginName']."</b></font></div><br>";
-			break;
+	if(isset($_GET["msg"])){
+		switch ($_GET["msg"])
+		{
+			case 2:
+				echo "<div><font color=red><b>".$GUI_LANG['PasswordsDoNotConsilient']."</b></font></div><br>";
+				break;
+				case 3:
+				echo "<div><font color=red><b>".$GUI_LANG['EnterLoginName']."</b></font></div><br>";
+				break;
+		}
 	}
 	$q2="select internally, login, lastname, firstname, secondname from users order by login";
 	if($debug) echo $q2."<br>";                   
@@ -160,19 +163,19 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 	if($debug) echo $q1."<br>";
 
 	$conn->setFetchMode(ADODB_FETCH_NUM);
-	if($cacheflush) $res1 = $conn->CacheFlush($q1);
+	if(isset($cacheflush) && $cacheflush) $res1 = $conn->CacheFlush($q1);
 	$res1 = $conn->CacheExecute($q1);
 	if ($res1 && $res1->RecordCount() > 0) { 
 	    while (!$res1->EOF) {
 		$mamba=$res1->fields;
-		$names=split(" ",$mamba[1]);             
-		$allIntern[]=array(0 => $mamba[0],1 => $mamba[0],5 => $names[0],6 => $names[1],7 => $names[2]);
+		$names=split(" ",$mamba[1]);
+			$allIntern[]=array(0 => $mamba[0],1 => $mamba[0],5 => (isset($names[0])?$names[0]:''),6 => (isset($names[1])?$names[1]:''),7 => (isset($names[2])?$names[2]:''));
 		$res1->MoveNext();
 	    }
 	}
 
 	$conn->setFetchMode(ADODB_FETCH_NUM);
-	if($cacheflush) $res = $conn->CacheFlush($q2);
+	if(isset($cacheflush) && $cacheflush) $res = $conn->CacheFlush($q2);
 	$res = $conn->CacheExecute($q2);
 	if ($res && $res->RecordCount() > 0) { 
 	    while (!$res->EOF) {
@@ -222,7 +225,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 		}
 
 		echo "\n<TR ".$COLORS['BaseTrBgcolor']."><TD>";
-		if ($_GET["edit"] == $row[1])
+		if (isset($_GET["edit"]) && $_GET["edit"] == $row[1])
 		{
 			echo "<IMG SRC=\"../include/img/rowselected.gif\" WidTH=19 HEIGHT=18></TD>\n";
 			echo "<TD><FORM METHOD=POST STYLE=\"margin:0\"><INPUT TYPE=\"text\" NAME=\"internally\" VALUE=\"".htmlspecialchars($row[0])."\" SIZE=5></TD>\n";
@@ -239,7 +242,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 			echo "<TD>".htmlspecialchars($row[0])."</TD>\n";
 
 			echo "<TD>".htmlspecialchars($row[1])."<br>";
-			if ($_GET["resetpwd"] == $row[1])
+			if (isset($_GET["resetpwd"]) && $_GET["resetpwd"] == $row[1])
 			{
 				echo "<FORM METHOD=POST STYLE=\"margin:0\"><INPUT TYPE=\"hidden\" NAME=\"resetpwd\" VALUE=\"".$_GET["resetpwd"]."\">".$GUI_LANG['Password'].":<INPUT TYPE=\"password\" NAME=\"passwd1\"><BR>".$GUI_LANG['OnceAgain'].":<INPUT TYPE=\"password\" NAME=\"passwd2\">&nbsp;<INPUT TYPE=IMAGE WidTH=16 HEIGHT=16 SRC=\"../include/img/key.gif\" ALT=\"".$GUI_LANG['Save']."\" onclick=\"submit();\" style=\"cursor:hand;\">&nbsp;<IMG WidTH=16 HEIGHT=16 src=\"../include/img/undo.gif\" alt=\"".$GUI_LANG['Cancel']."\" onclick=\"window.location = '?';\" style=\"cursor:hand;\"></FORM>";
 			}
@@ -255,7 +258,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 			echo "</TD>\n";
 			showprivileges($row[1], true);
 			echo "</TD>\n<TD><IMG WidTH=16 HEIGHT=16 HSPACE=2 VSPACE=2 SRC=\"../include/img/button_edit.png\" ALT=\"".$GUI_LANG['Edit']."\" onclick=\"window.location = '?edit=".$row[1]."';\" style=\"cursor:hand;\">";
-			if ($_GET["resetpwd"] != $row[1])
+			if (isset($_GET["resetpwd"]) && $_GET["resetpwd"] != $row[1])
 				echo "<IMG WidTH=16 HEIGHT=16 SRC=\"../include/img/key.gif\" ALT=\"".$GUI_LANG['ChangePassword']."\" onclick=\"window.location = '?resetpwd=".$row[1]."';\" style=\"cursor:hand;\">";
 			echo "<IMG WidTH=16 HEIGHT=16 HSPACE=2 VSPACE=2 SRC=\"../include/img/button_drop.png\" ALT=\"".$GUI_LANG['Delete']."\" onclick=\"if (window.confirm('".$GUI_LANG['RemoveTheAbonentWithLogin']." ".$row[1]."?')) window.location = '?delete=".$row[1]."';\" style=\"cursor:hand;\"></TD>";
 		}

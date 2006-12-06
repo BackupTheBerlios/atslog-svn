@@ -110,7 +110,7 @@ function MathVector($delta){
 
     global $CityLine,$TrunkLine,$MobLine,$NationalLine;
     $z=0; $y=0; $x=0; $w=0; $vect_summ=0;
-    if ($debug) $f_delta=$delta;
+    if (isset($debug) && $debug) $f_delta=$delta;
 
     $c=($delta > 0) ? $delta/8 : 0;
     if($c >= 1) {$delta-=8;}
@@ -128,7 +128,7 @@ function MathVector($delta){
     if($c >= 0) {$delta-=1;}
     if ($CityLine > 0 or $c >= 0) {$w=1;$vect_summ+=$w;}
 
-    if ($debug) echo "$f_delta $vect_summ<BR>";
+    if (isset($debug) && $debug) echo "$f_delta $vect_summ<BR>";
     return $vect_summ;;
 }
 
@@ -173,7 +173,7 @@ function VectorOfCall($vector){
     $result[14]=" AND (calls.number $REGEXP '".$LocalCalls."')";
     // 15 - Исключить все: город, межгород, сотовая и международку
     $result[15]=" AND 0 > 1";
-    return ($result[$vector]);
+    if(isset($result[$vector])) return($result[$vector]);
 }
 
 //  Language file
@@ -302,10 +302,11 @@ the credentials required.<P>
 function connect_to_db()
 {
 	global $authrow,$sqlhost,$sqlmasteruser,$sqlmaspasswd,$sqldatabase,$conn;
-
-	$q2="select internally, login, lastname, firstname, secondname from users where login ='".$_SERVER['PHP_AUTH_USER']."'";
-	$res=$conn->getRow($q2);
-	$authrow=$res;
+	if(isset($_SERVER['PHP_AUTH_USER'])){
+		$q2="select internally, login, lastname, firstname, secondname from users where login ='".$_SERVER['PHP_AUTH_USER']."'";
+		$res=$conn->getRow($q2);
+		$authrow=$res;
+	}
 }
 
 //
@@ -379,27 +380,28 @@ function hasprivilege($priv, $redirect = false, $username = false)
 function checkpass()
 {
 	global $conn,$PHP_AUTH_PW;
-
-	$q3="select 0 from users where login = '".$_SERVER['PHP_AUTH_USER']."' and password = MD5('".$PHP_AUTH_PW."')";
-	$res = $conn->Execute($q3);
-	$toReturn=FALSE;
-	if (isset($res->fields[0])){
-	    $qD="DELETE FROM unauth WHERE ip = '".$_SERVER['REMOTE_ADDR']."'";
-	    $conn->Execute($qD);
-	    $toReturn=TRUE;
-	}else{
+	if(isset($_SERVER["PHP_AUTH_USER"])){
+		$q3="select 0 from users where login = '".$_SERVER['PHP_AUTH_USER']."' and password = MD5('".$PHP_AUTH_PW."')";
+		$res = $conn->Execute($q3);
+		$toReturn=FALSE;
+		if (isset($res->fields[0])){
+			$qD="DELETE FROM unauth WHERE ip = '".$_SERVER['REMOTE_ADDR']."'";
+			$conn->Execute($qD);
+			$toReturn=TRUE;
+		}else{
     	    $qA="SELECT count(username) as falses FROM unauth WHERE logintime > DATE_SUB(NOW(),INTERVAL 5 MINUTE) AND ip = '".$_SERVER['REMOTE_ADDR']."'";
-	    $resA = $conn->Execute($qA);
+			$resA = $conn->Execute($qA);
     	    if ($resA->fields[0] > 5) {
-		nopass(TRUE);
-		die();
-	    };
-
-	    $qC="INSERT INTO unauth (username, pass, ip,x_forwardeded_for) VALUES ('".$_SERVER['PHP_AUTH_USER']."', '".$PHP_AUTH_PW."','".$_SERVER['REMOTE_ADDR']."', '".$_SERVER['HTTP_X_FORWARDED_FOR']."')";
-	    $conn->Execute($qC);
-	    //sleep(2);
+				nopass(TRUE);
+				die();
+			};
+			
+			$qC="INSERT INTO unauth (username, pass, ip,x_forwardeded_for) VALUES ('".$_SERVER['PHP_AUTH_USER']."', '".$PHP_AUTH_PW."','".$_SERVER['REMOTE_ADDR']."', '".(isset($_SERVER['HTTP_X_FORWARDED_FOR'])?$_SERVER['HTTP_X_FORWARDED_FOR']:'')."')";
+			$conn->Execute($qC);
+			//sleep(2);
+		}
+		return $toReturn;
 	}
-	return $toReturn;
 }
 
 function IsDefaultPass($user)
@@ -453,9 +455,9 @@ function setprivileges($login)
 {
     global $privileges,$conn,$demoMode;
     for ($i = 0; $i < count($privileges); $i+=2){
-	if ($_POST["priv".($i/2)]){
-	    if ($debug) echo "priv".($i/2)." = ".$_POST["priv".($i/2)]."<BR>";
-	    if(!$demoMode){
+	if (isset($_POST["priv".($i/2)]) && $_POST["priv".($i/2)]){
+	    if (isset($debug) && $debug) echo "priv".($i/2)." = ".$_POST["priv".($i/2)]."<BR>";
+	    if(!isset($demoMode) || !$demoMode){
 		$q4="insert into usersgroups (login, groups) values ('$login', '".$privileges[$i+1]."')";
 		$conn->Execute($q4);
 	    }
@@ -527,6 +529,7 @@ function AddTableHeader($fname,$thname,$toprint){
 			$now_title=$GUI_LANG['SortByIncrease'];
 		    }
 		}
+		if(!isset($now_img)) $now_img='';
 		echo (" <a href=\"".complitLink($local_order=$now_order,$local_sortBy="$fname",$local_search=$search)."\" title=\"".$now_title."\">$thname</a>".$now_img);
 	}else{
 		echo ($thname);
@@ -659,7 +662,11 @@ function complitLink(){
     $local_incoming,$local_CityLine,$local_TrunkLine,$local_MobLine,
     $local_NationalLine,$local_debug,$local_cacheflush,
     $local_num,$local_page,$local_search,$local_export,$local_diatype;
-
+	
+	if(empty($cacheflush))  $cacheflush='';
+	if(empty($NationalLine))  $NationalLine='';
+	$complitLine='';
+	
     $cL['day'] = (empty($local_day)) ? $day : $local_day;
     $cL['mon'] = (empty($local_mon)) ? $mon : $local_mon;
     $cL['year'] = (empty($local_year)) ? $year : $local_year;
@@ -891,7 +898,8 @@ function setPhoneDescription(){
 
     if(!empty($NamedPhone) && !$noAbonents) $intPhoneDescription="($NamedPhone)";
 
-    return $intPhoneDescription;
+    if(isset($intPhoneDescription)) return $intPhoneDescription;
+	else return;
 }
 
 

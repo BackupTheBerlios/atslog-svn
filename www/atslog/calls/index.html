@@ -66,7 +66,7 @@ $MobLineCheck[4] = " checked";
 $NationalLineCheck[8] = " checked";
 $CurrentDebug[$debug] = " SELECTED";
 
-if ($toprint!="yes"){
+if (!isset($toprint) || $toprint!="yes"){
     $thisMenu="calls";
     if(empty($export)) include("../include/set/menuTable.html");
 }
@@ -187,6 +187,7 @@ $duration = sprintf("%0.3f", $duration);
 if(empty($export)) {
 
     // Печатаем список страниц
+	if(!isset($pages)) $pages=0;
     if(empty($export)) pagesNavigator($pages,$page);
 
     include("../include/set/printfooter.html");

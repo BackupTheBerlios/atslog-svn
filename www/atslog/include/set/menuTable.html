@@ -12,23 +12,25 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 ?>
 	<td>
 <?php
+
+
 echo("
 	<form method=\"get\">
 	<div align=right>
 	".$GUI_LANG['Calls'].":
 	<select name=\"incoming\" style='width:150pt;'>
-	<option value=\"1\"${incomingCheck[1]}>".$GUI_LANG['IncomingAndOutgoing']."</option>
-	<option value=\"2\"${incomingCheck[2]}>".$GUI_LANG['OutgoingOnly']."</option>
-	<option value=\"3\"${incomingCheck[3]}>".$GUI_LANG['IncomingOnly']."</option>
+	<option value=\"1\"".(isset($incomingCheck[1])?$incomingCheck[1]:'').">".$GUI_LANG['IncomingAndOutgoing']."</option>
+	<option value=\"2\"".(isset($incomingCheck[2])?$incomingCheck[2]:'').">".$GUI_LANG['OutgoingOnly']."</option>
+	<option value=\"3\"".(isset($incomingCheck[3])?$incomingCheck[3]:'').">".$GUI_LANG['IncomingOnly']."</option>
 	</select><br>
 
 	".$GUI_LANG['TypeOfReport'].":
 	<select name=\"type\" style='width:150pt;'>
-	<option value=\"CoAll\"$CurrentIP[2]>".$GUI_LANG['ByExternalLines']."</option>
-	<option value=\"IntAll\"$CurrentIP[1]>".$GUI_LANG['ByInternalPhones']."</option>
-	<option value=\"diagram\"$CurrentIP[3]>".$GUI_LANG['ReportInTheSchedules']."</option>
-	<option value=\"NumAll\"$CurrentIP[4]>".$GUI_LANG['ByCallingNumber']."</option>
-	<option value=\"AllCalls\"$CurrentIP[5]>".$GUI_LANG['ByAll']."</option>
+	<option value=\"CoAll\"".(isset($CurrentIP[2])?$CurrentIP[2]:'').">".$GUI_LANG['ByExternalLines']."</option>
+	<option value=\"IntAll\"".(isset($CurrentIP[1])?$CurrentIP[1]:'').">".$GUI_LANG['ByInternalPhones']."</option>
+	<option value=\"diagram\"".(isset($CurrentIP[3])?$CurrentIP[3]:'').">".$GUI_LANG['ReportInTheSchedules']."</option>
+	<option value=\"NumAll\"".(isset($CurrentIP[4])?$CurrentIP[4]:'').">".$GUI_LANG['ByCallingNumber']."</option>
+	<option value=\"AllCalls\"".(isset($CurrentIP[5])?$CurrentIP[5]:'').">".$GUI_LANG['ByAll']."</option>
 	</select><br>
 
 	".$GUI_LANG['PeriodFrom'].": <input TYPE=Text size=2 name=day maxlength=3 tabindex=1 VALUE=$day>
@@ -66,12 +68,12 @@ echo ("
     <tr id=\"t739\" class=treeElem>
 	<td align=right width=100%>
 ");
-	echo("	".$GUI_LANG['ExcludeCityCalls']."<input type=checkbox name=CityLine value=1${CityLineCheck[$CityLine]}><br>
+	echo("	".$GUI_LANG['ExcludeCityCalls']."<input type=checkbox name=CityLine value=1".(isset($CityLineCheck[$CityLine])?$CityLineCheck[$CityLine]:'')."><br>
 	");
-	echo("	".$GUI_LANG['ExcludeTrunkCalls']."<input type=checkbox name=TrunkLine value=2${TrunkLineCheck[$TrunkLine]}><br>
+	echo("	".$GUI_LANG['ExcludeTrunkCalls']."<input type=checkbox name=TrunkLine value=2".(isset($TrunkLineCheck[$TrunkLine])?$TrunkLineCheck[$TrunkLine]:'')."><br>
 	");
-	echo("	".$GUI_LANG['ExcludeCellularCalls']." <input type=checkbox name=MobLine value=4${MobLineCheck[$MobLine]}><br>
-	".$GUI_LANG['ExcludeLongDistanceCalls']." <input type=checkbox name=NationalLine value=8 ${NationalLineCheck[$NationalLine]}><br>
+	echo("	".$GUI_LANG['ExcludeCellularCalls']." <input type=checkbox name=MobLine value=4".(isset($MobLineCheck[$MobLine])?$MobLineCheck[$MobLine]:'')."><br>
+	".$GUI_LANG['ExcludeLongDistanceCalls']." <input type=checkbox name=NationalLine value=8 ".(isset($NationalLineCheck[$NationalLine])?$NationalLineCheck[$NationalLine]:'')."><br>
 	");
 
 echo ("

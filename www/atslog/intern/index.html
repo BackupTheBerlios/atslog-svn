@@ -44,7 +44,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 
 	hasprivilege("parameters", true);
 
-	if ($_POST["add"])
+	if (isset($_POST["add"]) && $_POST["add"])
 	{
 		if ($_POST["internally"] == "")
 		{
@@ -63,7 +63,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 		header("Location: ?cacheflush=1");
 		die;
 	}
-	else if ($_POST["edit"])
+	else if (isset($_POST["edit"]) && $_POST["edit"])
 	{
 		if ($_POST["internally"] == "")
 		{
@@ -92,7 +92,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 		header("Location: ?cacheflush=1");
 		die;
 	}
-	else if ($_GET["delete"])
+	else if (isset($_GET["delete"]) && $_GET["delete"])
 	{
 		$q5="delete from intphones where intnumber = '".$_GET["delete"]."'";
 		if($debug) echo $q5."<br>";
@@ -135,14 +135,16 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 	<td>
 <?php
 	echo "<H1>".$GUI_LANG['Phones'].":</H1>";
-	switch ($_GET["msg"])
-	{
-		case 2:
-			echo "<div><font color=red><b>".$GUI_LANG['EnterTheDescriptionOfInternalPhone']."</b></font></div><br>";
-			break;
-		case 3:
-			echo "<div><font color=red><b>".$GUI_LANG['EnterAnInternalPhoneNumber']."</b></font></div><br>";
-			break;
+	if(isset($_GET["msg"])){
+		switch ($_GET["msg"])
+		{
+			case 2:
+				echo "<div><font color=red><b>".$GUI_LANG['EnterTheDescriptionOfInternalPhone']."</b></font></div><br>";
+				break;
+				case 3:
+				echo "<div><font color=red><b>".$GUI_LANG['EnterAnInternalPhoneNumber']."</b></font></div><br>";
+				break;
+		}
 	}
 	$q1="SELECT calls.internally,users.lastname, users.firstname, users.secondname
 	FROM calls
@@ -156,7 +158,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 	if($debug) echo $q2."<br>";
 
 	$conn->setFetchMode(ADODB_FETCH_NUM);
-	if($cacheflush) $res1 = $conn->CacheFlush($q1);
+	if(isset($cacheflush) && $cacheflush) $res1 = $conn->CacheFlush($q1);
 	$res1 = $conn->CacheExecute($q1);
 	if ($res1 && $res1->RecordCount() > 0) { 
 	    while (!$res1->EOF) {
@@ -167,7 +169,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 	}
 
 	$conn->setFetchMode(ADODB_FETCH_NUM);
-	if($cacheflush) $res = $conn->CacheFlush($q2);
+	if(isset($cacheflush) && $cacheflush) $res = $conn->CacheFlush($q2);
 	$res = $conn->CacheExecute($q2);
 	if ($res && $res->RecordCount() > 0) { 
 	    while (!$res->EOF) {
@@ -216,6 +218,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 		    $shmayster=FALSE;
 		}else{
 		    $preComment=array($row[2],$row[3],$row[4]);
+			if(!isset($postComment)) $postComment=array();
 		    array($postComment);
 		    while (list($key, $r) = each($preComment)){
 			if(!empty($r)){
@@ -228,7 +231,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 		    $shmayster=TRUE;
 		}
 
-		if ($_GET["edit"] == $row[0])
+		if (isset($_GET["edit"]) && $_GET["edit"] == $row[0])
 		{
 			echo "<IMG SRC=\"../include/img/rowselected.gif\" WidTH=19 HEIGHT=18></TD>\n";
 			echo "<TD><FORM METHOD=POST STYLE=\"margin:0\"><INPUT TYPE=\"text\" NAME=\"internally\" VALUE=\"".htmlspecialchars($row[0])."\" SIZE=5></TD>\n";

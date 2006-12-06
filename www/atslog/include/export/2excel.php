@@ -20,7 +20,7 @@ class  GeraExcel{
 
 // define parametros(init)
 function  GeraExcel(){
-
+if(!isset($nomeDoArquivoXls)) $nomeDoArquivoXls='';
 $this->armazena_dados   = ""; // Armazena dados para imprimir(temporario)
 $this->nomeDoArquivoXls = $nomeDoArquivoXls; // Nome do arquivo excel
 $this->ExcelStart();

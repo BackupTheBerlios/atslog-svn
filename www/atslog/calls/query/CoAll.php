@@ -294,6 +294,13 @@ if ($res && $res->RecordCount() > 0) {
     			echo ("</tr>\n");
 		    }
 
+			if(!isset($InAll)) {
+				$InAll=array();
+				for($i=0;$i<7;$i++) {
+					$InAll[$i]=0;
+				}
+			}
+			
 		    array($InAll);
 		    if(!empty($row[0])) $InAll[0] ++;
 		    if(!empty($row[2])) $InAll[2] += $row[2];

@@ -93,10 +93,10 @@ if(!empty($newStatus)){
 
 if(empty($type)) $type="IntAll"; elseif(!empty($search)) $type="AllCalls";
 if(empty($incoming)) $incoming="2";
-if($CityLine!="1") $CityLine=0;
-if($TrunkLine!="2") $TrunkLine=0;
-if($MobLine!="4") $MobLine=0;
-if($NationalLine!="8") $NationalLine=0;
+if(empty($CityLine) || $CityLine!="1") $CityLine=0;
+if(empty($TrunkLine) || $TrunkLine!="2") $TrunkLine=0;
+if(empty($MobLine)|| $MobLine!="4") $MobLine=0;
+if(empty($NationalLine) || $NationalLine!="8") $NationalLine=0;
 if(empty($sortBy)) $sortBy="1";
 if(!empty($cRows)) $rows = $cRows;
 if(empty($rows)) $rows="100";

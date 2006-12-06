@@ -73,7 +73,7 @@ echo("
 <?php
 // JavaScript Functions                
 // ------------------------------------
-if ($toprint!="yes"){                                       
+if (!isset($toprint) || $toprint!="yes"){                                       
     include("../include/set/functions.js");
 }
                                        

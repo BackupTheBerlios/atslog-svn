@@ -293,7 +293,11 @@ if ($res && $res->RecordCount() > 0) {
 		    if(empty($export)){
     			echo ("</tr>\n");
 		    }
-
+			if(!isset($InAll)) {
+				$InAll[0]=0;$InAll[1]=0;$InAll[2]=0;
+				$InAll[3]=0;$InAll[4]=0;$InAll[5]=0;
+				$InAll[6]=0;
+			}
 		    array($InAll);
 		    if(!empty($row[0])) $InAll[0] ++;
 		    if(!empty($row[2])) $InAll[2] += $row[2];

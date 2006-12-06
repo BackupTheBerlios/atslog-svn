@@ -15,7 +15,7 @@ include('../include/set/commonData.php');
 
     $DiagramArr=array();
     $allDay=array();
-    $allDays[]=array('0',$a,$a);
+    //$allDays[]=array('0',$a,$a);
     $DateArr=array();
     //$Months=array('Янв', 'Февр', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Ноя', 'Дек');
     $Months=array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Des');
@@ -28,7 +28,7 @@ include('../include/set/commonData.php');
     ".$vectorReq."
     )";
     if($debug) echo $q."<br>";                   
-    if($cacheflush) $res = $conn->CacheFlush($q);
+    if(isset($cacheflush) && $cacheflush) $res = $conn->CacheFlush($q);
     $rs = $conn->CacheExecute($q);
 
     //print_r($rs);

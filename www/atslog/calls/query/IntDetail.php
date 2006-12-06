@@ -103,6 +103,9 @@
 				    $expor_excel->MontaConteudo($linha+2, 2, $NumberIs.$PhonebookDescription);
 				    $expor_excel->MontaConteudo($linha+2, 3, sumTotal($Duration,0));
 				}
+				if(!isset($InAll)) {
+					$InAll[0]=0;$InAll[1]=0;$InAll[2]=0;$InAll[3]=0;
+				}
 				array($InAll);
 				if(!empty($timeOfCall)) $InAll[0] ++;
 				if(!empty($Duration)) $InAll[3] += $Duration;
