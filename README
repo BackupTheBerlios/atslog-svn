@@ -19,5 +19,5 @@ INSTALL - the script of installation.
 include/atslog.conf.default - the detailed description of components of package ATSlog and the initial configuration file.
 DEINSTALL - the script of deleting ATSlog.
 UPDATING - the script of upgrade of the previous versions of the program.
-USING - the description of commands of usage of server part ATSlog.
+USAGE - the description of commands of usage of server part ATSlog.
 CHANGES - evolution of the program.

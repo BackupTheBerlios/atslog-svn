@@ -199,7 +199,7 @@ copying(){
     install -m 644 ./tmp/README $sharedir/README
     install -m 644 ./tmp/DEINSTALL $sharedir/DEINSTALL
     install -m 644 ./tmp/UPDATING $sharedir/UPDATING
-    install -m 644 ./tmp/USING $sharedir/USING
+    install -m 644 ./tmp/USING $sharedir/USAGE
     install -m 644 ./tmp/CHANGES $sharedir/CHANGES
     cp -R ./tmp/textlogs $sharedir
     cp -R ./tmp/www/* $PREFIX/www
@@ -250,7 +250,7 @@ deinstall)
     rm $sharedir/DEINSTALL
     rm $sharedir/README
     rm $sharedir/UPDATING
-    rm $sharedir/USING
+    rm $sharedir/USAGE
     rm $sharedir/CHANGES
 
     rm -rf $sharedir/$langdir
