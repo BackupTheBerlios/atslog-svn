@@ -1,14 +1,14 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #
-# Параметры ATSlog
+# ATSlog settings
 #
-# Не допускается использование пробелов между названием
-# параметра и его значением (с обеих сторон от знака "=").
+# Use of blanks between the name of parameter and its value (from both parties
+# from a sign "=") is not allowed
 #
 
-# Номер сборки ATSlog.
-# Не изменяйте параметр.
+# ATSlog build number.
+# Dont change this value.
 #
 build=@buildnumber@
 
@@ -17,45 +17,53 @@ build=@buildnumber@
 # Серверные программы ATSlog от имени этого пользователя
 # инициализируют все обращения к SQL серверу для внесения изменений
 # в базы данных.
-# Например: 
+# The password for the user $sqlmasteruser
+# Server ATSlog programs on behalf of this user initialize all references to
+# SQL server for modifications in databases.
+# Example:
 # sqlmaspasswd=Edktxtybt
 #
 sqlmaspasswd=
 
-# Остальные параметры для соединения с SQL сервером
+# Other SQL server settings
 #
 sqlhost=localhost
 sqldatabase=atslog
 sqlmasteruser=atslog
 
-# Тип используемого SQL сервера.
-# Сейчас поддерживается MySQL и PostgreSQL.
-# Например:
+# SQL Server type
+# Currently MySQL and PostgreSQL are supported.
+# Example:
 # sqltype=MySQL
 # sqltype=PostgreSQL
 #
 sqltype=MySQL
 
-# НАСТРОЙКИ ПОРТА
+# COMMUNICATION PORT SETTINGS
 
-# Порт для соединения с АТС.
-# Можно использовать два вида соединения:
-# 1. Через последовательный порт. В этом случае программа
-#    будет обращаться к порту как к девайсу /dev/$port. В
-#    конфигурационном файле префикс "/dev/" опускается.
-#    Например:
+# Port for connection with PBX.
+# It is possible to use two kinds of connection:
+# 1. Through a serial port. In this case the program will use port as device
+# named /dev/$port.
+# In the configuration file the prefix "/dev/" falls.
+#    E.g:
+# BSD
 #    port=cuaa0
-# 2. Через TCP/IP порт. При этом демон откроет TCP сокет
-#    и будет ожидать соединения по указанному номеру порта.
-#    Обязательно нужно указать префикс tcp:номер_порта.
-#    Например:
+# Linux
+#    port=ttyS0
+# 2. Via TCP/IP port.
+#    The demon will open a TCP socket and will expect connection on
+#    specified number of port.
+#    It is necessary to specify a prefix tcp:port_number
+# Sample:
 #    port=tcp:1234
 #
 port=cuaa0
 
-# Скорость последовательного порта $port сервера
-# Скорость должна соответствовать настройкам скорости порта самой АТС.
-# Допустимые значения:
+# Speed of the server serial port $port
+# Speed should correspond to adjustments of speed of the
+# automatic telephone exchange port.
+# Valid values:
 # speed=2400
 # speed=4800
 # speed=9600
@@ -66,81 +74,88 @@ port=cuaa0
 #
 speed=9600
 
-# Число  битов  данных при передаче через последовательный порт.
-# Допустимые значения от 5 до 8.
-#
+# length of character on serial port
+# valid values from 5 to 8
 charsize=8
 
-# Проверка на четность при передаче через последовательный порт.
-# Допустимые значения:
+# parity of serial port
+# Valid values:
 # parity=e  (even parity)
 # parity=o  (odd parity)
 # parity=n  (no parity)
 #
 parity=n
 
-# Число  стоповых  битов при передаче через последовательный порт.
-# Допустимое значения:
+# number of stop bits on serial port;
+# Valid values:
 # stopbits=1
 # stopbits=2
 #
 stopbits=1
 
-# Директория с исполняемыми файлами программы
-# 
+#
+
+Директория с исполняемыми файлами программы
+	Тема:
+Транслитерировать незнакомые слова:
+Проверить орфографию Show/Hide Virtual Keyboard
+Проверка орфографии выполняется системой ОРФО
+Загрузи себе новый PROMT Express 7.0!
+
+
+# Directory with executed files of the program
 bindir=/usr/local/bin
 
-# Директория с файлами библиотек (Perl модулей) поддержки
-# различных моделей АТС.
-#
+# the Directory with files of libraries (Perl modules) supports
+# various PBX models
+
 libdir=/usr/local/libexec/atslog
 
-# Директория с текстовыми лог-файлами
+# Text-log files directory
 #
 logdir=/var/log/atslog
 
-# Директория с дополнительными файлами использующимися ATSlog.
+# Additional ATSlog files directory
 #
 sharedir=/usr/local/share/atslog
 
-# Поддиректория с файлами сообщений на различных языках.
-# Располагается в $sharedir
-#
-# Если у Вас появилось желание сделать новый перевод - добро
-# пожаловать в участники проекта! :)
-#
+# Language file directory. Located in $sharedir
+
+# If you had a desire to make new translation - kind
+# to welcome in participants of the project!:)
 langdir=lang
 
-# Программа считывающая данные из АТС
+# The program reading out data from PBX
 #
 atslogd=atslogd
 
-# Основной управляющий скрипт
+# The main operating script
 #
 masterscript=atslogmaster
 
-# Скрипт запуска программы при старте системы
+# Init script of the program (system start & stop)
 #
 initscript=/usr/local/etc/rc.d/atslogdinit.sh
 
-# Скрипт ежемесячного вызова ротации логов
+# Monthly log rotate script
 #
 monthlyscript=/usr/local/etc/periodic/monthly/atslogrotate
 
-# Скрипт ежедневного вызова сбора информации из
-# текстового лог-файла и записи её в базу SQL сервера.
-# Скрипт активируется только если параметр $fastwrite=no
-#
+# daily script called for gathering the information from text file and
+# making records in the SQL server table. 
+# This script is activated only if parameter $fastwrite=no
+
 dailyscript=/usr/local/etc/periodic/daily/atslogdaily
 
-# Скрипт, передающий информацию о звонках SQL серверу
+# The script transferring the information on calls to the SQL server
 #
 atslogdb=atslogdb.pl
 
-# Скрипт, позволяющий очистить от данных таблицы SQL сервера. Скрипт не
-# удаляет таблицы и базы данных, а только очищает от информации.
-# Пример использования:
-# [root@server /]$ atslogmaster cleardb
+# Script, allowing to clear data in the server SQL tables. 
+# The script will not delete tables and databases but only clears the 
+# information. 
+#
+# an example of use: # [root@server /]$ atslogmaster cleardb
 #
 cleardb=atslogcleardb.pl
 
@@ -149,56 +164,60 @@ cleardb=atslogcleardb.pl
 # именем $callslogfile.1.bz2 В следующий месяц будет произведена его
 # ротация в соответствующем порядке.
 #
+
+# ASCII log file in which script writes down calls from the PBX
+# for current  month. On the end of month the file will be compressed bzip2 and
+# kept under the name $callslogfile.1.bz2 
+# next month rotation in the corresponding order will be made it.
 callslogfile=calls.log
 
-# Текстовый лог-файл текущих звонков.
-# После того, как из этого файла данные будут записаны в базу SQL
-# сервера его содержимое переносится в $callslogfile
-#
+# Text log file of the current calls 
+# After data from this file will be written down in SQL 
+# its contents is transferred to the $callslogfile 
+
 curcallslogfile=currentcalls.log
 
-# Файл со строками, информация из которых не была перенесена из текстового
-# лог-файла в базу данных. Как правило, это строки содержащие
-# информацию не касающуюся звонков. Например, заголовки столбцов
-# пояснения при печати на принтер.
-# Файл хранится в папке, описанной параметром $logdir и
-# подчиняется правилам ротации. Для дополнительной информации
-# смотрите описание параметров $howmonth и $debug.
+# File with lines, the information from which has not been transferred from 
+# text log to a database. As a rule, it is lines containing the information 
+# not concerning calls. For example, headings of columns explanatories. 
+# This file is stored in a folder described in parameter $logdir and submits to
+# rules of rotation. For the additional information see the description 
+# of $howmonth and $debug parameters.
 #
 notwritelog=notwrite.log
 
-# Осуществлять ли запись лога $notwritelog или нет. Запись лога
-# используется, в основном, для отладки. Удобно отслеживать те данные,
-# которые не были обработаны модулем разбора строк.
-# Ранее параметр $debug назывался $nowrlog. Был заменён для
-# лучшего понимания значения.
+# Whether to write out record to the $notwritelog file or not. 
+# Record of this log is used, basically, for debugging. It is convenient to 
+# trace those data, which have not been processed by the module of analysis of
+# lines. Earlier the parameter $debug referred to $nowrlog. 
+# It has been renamed for the best understanding of value.
 #
-# Возможные варианты:
+# Valid values:
 # debug=yes
 # debug=no
 #
 debug=no
 
-# Лог работы всего пакета. В нём фиксируется останов, запуск, сообщения
-# об ошибках и пр. Файл хранится в папке, описанной параметром $logdir и
-# подчиняется правилам ротации.
-#
+# Main log file. 
+# In it this log file you can find records about startup, shutdown, errors and
+# other event. File is stored in a folder described in parameter $logdir and
+# submits to rules of rotation.
 startlogfile=atstart.log
 
-# PID файл.
-# На самом деле это не только PID, а и GPID всех запущенных демонов.
+# PID file.
+# Its not only the PID, but GPID of the running daemons.
 #
 pidfile=/var/run/atslogd.pid
 
-# Сколько месяцев хранить текстовые лог-файлы
-# указанные параметрами $callslogfile, $notwritelog и $startlogfile.
-# Минимум 1. Желательно 12.
-# Лог файлы хранятся в сжатом виде (компрессор bzip2)
+# How many months to store text log files specified with
+# $callslogfile, $notwritelog and $startlogfile.
+# Minimum - 1. Recommended - 12.
+# Log files are stored in compressed format  (using bzip2)
 #
 howmonth=12
 
-# Модель АТС.
-# На данный момент поддерживаются следующие:
+# PBX model.
+# PBX`s supported by current version of the ATSLog:
 # Panasonic KX-TA308RU
 #           KX-TA308
 #           KX-TA616RU
@@ -217,34 +236,33 @@ howmonth=12
 # GoldStar  GPS-6A
 # Alcatel   ALCATEL-4200
 #
-# При указании параметра $model нужно задать только
-# обозначение модели без названия производителя.
-# Нужно точно указать маркировку модели, т.к. адаптированные под Россию
-# АТС могут отличатся форматом даты; например для KX-TA616RU дата
-# записывается в формате  DD/MM/YY, а не так, как в родном - MM/DD/YY для
-# модели KX-TA616.
-# Пример:
+# At the $model parameter it is necessary to set only a designation of PBX model
+# without the name of the manufacturer. 
+# it is necessary to specify precisely marks of model since adapted models
+# will distinguish a format of date; for example for KX-TA616RU date 
+# are in DD/MM/YY format, instead of how in native - MM/DD/YY for KX-TA616
+# models.
+# Example:
 # model=KX-TA616RU
 #
 model=KX-TA616RU
 
-# Уровень для системного журнала syslogd
-# syslogd используется для сообщения о критических ошибках.
-# Для дополнительной информации читайте man logger(1), syslog.conf(5)
+# syslogd level
+# syslogd used for critical error messsages.
+# refer to man logger(1), syslog.conf(5) for the additional information
 #
 syslogfacility=user.err
 
-# Прямая запись с порта АТС в базу данных.
-# При значении "no" запись состоявшихся звонков производится сначала в
-# текстовый лог-файл ($curcallslogfile), а затем, один раз в сутки в БД SQL
-# сервера.
-# Присвоение этому параметру значения "yes" позволит синхронно записывать в БД
-# информацию о звонках непосредственно в момент их поступления из АТС.
-# Данные в текстовый лог-файл ($callslogfile) попадают в обеих случаях.
-# Параметр "yes" предполагает демонизацию и постоянное задействование Perl
-# скрипта, поэтому требует значительно бОльших ресурсов компьютера.
+# Direct recording from PBX to SQL server.
+# With "no" value calls are transfered to the text log file ($curcallslogfile),
+# and then, daily, to the SQL server.
+# Value "yes" on this parameter will tranfer call information directly to SQL
+# at the call time.
+# Data is stored in the text log file ($callslogfile) in any case.
+# "yes" setting will switch atslog to daemon mode and will use Perl permanently,
+# so it will use more hardware resources.
 #
-# Возможные варианты:
+# Possible values:
 # fastwrite=no
 # fastwrite=yes
 #
