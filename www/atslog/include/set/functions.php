@@ -230,7 +230,7 @@ function print_select_mon($selname)
 	$Month[$selname]=" SELECTED";
 	for($i=1;$i<=12;$i++){
 	    if($i < 10){ $m_num="0".$i;}else{$m_num="$i";}
-	    echo ("<option value=\"$m_num\"$Month[$m_num]>".$GUI_LANG['Month'.$m_num]."</option>\n");
+	    echo ("<option value=\"$m_num\"".(isset($Month[$m_num])?$Month[$m_num]:'').">".$GUI_LANG['Month'.$m_num]."</option>\n");
 	}
 };
 

@@ -20,7 +20,7 @@
 		}
 <?php
 
-if ($toprint!="yes"){
+if (!isset($toprint) || $toprint!="yes"){
 echo ("
 		A {
 			text-decoration : none;
