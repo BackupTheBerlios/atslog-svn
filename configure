@@ -479,7 +479,7 @@ fi
  -e "s/sqlmaspasswd=''/sqlmaspasswd='$sqlmaspasswd'/g" \
  -e "s/sqltype=''/sqltype='$sqltype'/g" \
  -e "s/model=''/model='$model'/g" \
- < ./www/atslog/include/set/conf.inc > ./tmp/www/atslog/include/set/conf.inc
+ < ./www/atslog/include/set/conf.inc.php > ./tmp/www/atslog/include/set/conf.inc.php
 
 case "$UPDATE" in
     [Yy][Ee][Ss])
