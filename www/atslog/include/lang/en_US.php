@@ -3,6 +3,8 @@
 // English language file
 
 $GUI_LANG = array (
+	'meta-description'			=> 'ATSlog. PBX calls analysis and accounting.',
+	'meta-keywords'			=> 'atslog,atslog.dp.ua,panalog.dp.ua,panalog,php,mysql,ats,атс,pbx,smdr,tariff,tarif,call,tarification,account,samsung,panasonic,hybrex,KX-TD816,KX-TA308,KX-TD1232,KX-TA616,SKP-816,GD-320,mini-ATS,PBX,scheme,pinout,manual,description.',
     'LANG'				=> 'English US',
     'Charset'				=> '',
     'Number'                    	=> 'Number',
