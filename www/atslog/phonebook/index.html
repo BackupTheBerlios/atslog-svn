@@ -58,7 +58,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 			die;
 		}
 		if(!$demoMode){
-		    if($onlyme){
+		    if(isset($onlyme) && $onlyme){
 			$onliLogin="'".$_SERVER['PHP_AUTH_USER']."'";
 		    }else{
 			$onliLogin="NULL";
@@ -265,7 +265,7 @@ if(empty($export)) {
 	    echo "<TR ".$COLORS['BaseTrBgcolor'].">";
 	    echo "<TD><IMG WidTH=19 HEIGHT=18 SRC=\"../include/img/rownew.gif\"><FORM METHOD=POST STYLE=\"margin:0\"></TD>";
 	    echo "<TD><INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=1 CHECKED>".$GUI_LANG['OnlyForMe']." <INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=0>".$GUI_LANG['ForEverybody']."</TD>"; 
-	    echo "<TD><INPUT TYPE=\"text\" NAME=\"number\" SIZE=30 maxlength=100 VALUE=\"\"></TD>";
+	    echo "<TD><INPUT TYPE=\"text\" NAME=\"number\" SIZE=30 maxlength=100 VALUE=\"".(isset($new)?$new:'')."\"></TD>";
 	    echo "<TD><INPUT TYPE=\"text\" NAME=\"description\" SIZE=30 maxlength=255></TD>";
 	    echo "<TD><INPUT TYPE=\"hidden\" NAME=\"add\" VALUE=\"1\"><INPUT TYPE=IMAGE WidTH=16 HEIGHT=16 SRC=\"../include/img/new.gif\" ALT=\"".$GUI_LANG['Add']."\" onclick=\"submit();\" style=\"cursor:hand;\"></FORM></TD></TR>\n";
 	    echo "</TABLE>
