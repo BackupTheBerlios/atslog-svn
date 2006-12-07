@@ -88,7 +88,7 @@ if (!empty($rvar_cacheflush)) $cacheflush=translateHtml($rvar_cacheflush);
 				
 		$res = $conn->Execute($q4);
 
-		if($onlyme){
+		if(isset($onlyme) && $onlyme){
 		    $onliLogin="'".$_SERVER['PHP_AUTH_USER']."'";
 		}else{
 		    $onliLogin="NULL";
