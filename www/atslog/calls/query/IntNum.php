@@ -119,6 +119,10 @@
 				    $expor_excel->MontaConteudo($linha+2, 1, $row[1].$PhonebookDescription);
 				    $expor_excel->MontaConteudo($linha+2, 2, sumTotal($Duration,0));
 				}
+				if(!isset($InAll)) {
+					$InAll=array();
+					for($i=0;$i<3;$i++)$InAll[$i]=0; 
+				}
 				array($InAll);
 				if(!empty($row[1])) $InAll[0] ++;
 				if(!empty($row[1])) $InAll[1] += $row[1];

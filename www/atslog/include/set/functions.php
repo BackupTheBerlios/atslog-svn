@@ -881,6 +881,7 @@ function SetNumberDescription(){
     global $PhonebookDescription,$CallNumber,$GUI_LANG;
     global $toprint,$CallWay,$NumberIs;
 
+	$NumberDescription='';
     if(!empty($PhonebookDescription)){
 	$NumberDescription = "<td><a href='../phonebook/?edit=".$CallNumber."' title='".$GUI_LANG['EditDescriptionOfTheNumber']." $NumberIs'>".$PhonebookDescription."</a></td>";
     }else{
@@ -936,7 +937,8 @@ function SetLineDescription() {
     global $NamedLine;
     
     if(!empty($NamedLine)) $coLineDescription="($NamedLine)";
-    return $coLineDescription;
+    if(isset($coLineDescription)) return $coLineDescription;
+	else return '';
 }
 
 // Будем выводить комментарий к номеру в зависимости от
