@@ -232,7 +232,7 @@ if(empty($export)) {
 		{
 		    if(empty($export)) {
 			if($row[0]) $checkMe[0]=" CHECKED"; else $checkMe[1]=" CHECKED";
-			echo "<TD><IMG SRC=\"../include/img/rowselected.gif\" WidTH=19 HEIGHT=18></TD>\n";
+			echo "<TD><IMG alt=\"\" SRC=\"../include/img/rowselected.gif\" WidTH=19 HEIGHT=18></TD>\n";
 			echo "<TD><FORM METHOD=POST STYLE=\"margin:0\"><INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=1".(isset($checkMe[0])?$checkMe[0]:'').">".$GUI_LANG['OnlyForMe']." <INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=0".(isset($checkMe[1])?$checkMe[1]:'').">".$GUI_LANG['ForEverybody']."</TD>";
 			echo "<TD><INPUT TYPE=\"text\" NAME=\"number\" VALUE=\"".htmlspecialchars($row[1])."\" SIZE=30 maxlength=100></TD>\n";
 			echo "<TD><INPUT TYPE=\"text\" NAME=\"description\" VALUE=\"".htmlspecialchars($row[2])."\" SIZE=30 maxlength=255></TD>\n";
@@ -242,7 +242,7 @@ if(empty($export)) {
 		else
 		{
 		    if(empty($export)) {
-			echo "<TD><IMG WidTH=19 HEIGHT=18 SRC=\"../include/img/row.gif\"></TD>";
+			echo "<TD><IMG WidTH=19 HEIGHT=18 SRC=\"../include/img/row.gif\" alt=\"\"></TD>";
 			if($row[0]) $viewMe=$GUI_LANG['OnlyForMe']; else $viewMe=$GUI_LANG['ForEverybody'];
 			echo "<TD>$viewMe</TD>";
 			echo "<TD>$FontColor".htmlspecialchars($row[1])."$FontColorEnd</TD>\n";
@@ -263,7 +263,7 @@ if(empty($export)) {
 	}
 	if(empty($export)) {
 	    echo "<TR ".$COLORS['BaseTrBgcolor'].">";
-	    echo "<TD><IMG WidTH=19 HEIGHT=18 SRC=\"../include/img/rownew.gif\"><FORM METHOD=POST STYLE=\"margin:0\"></TD>";
+	    echo "<TD><IMG WidTH=19 HEIGHT=18 SRC=\"../include/img/rownew.gif\" alt=\"\"><FORM METHOD=POST STYLE=\"margin:0\"></TD>";
 	    echo "<TD><INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=1 CHECKED>".$GUI_LANG['OnlyForMe']." <INPUT TYPE=RADIO NAME=\"onlyme\" VALUE=0>".$GUI_LANG['ForEverybody']."</TD>"; 
 	    echo "<TD><INPUT TYPE=\"text\" NAME=\"number\" SIZE=30 maxlength=100 VALUE=\"".(isset($new)?$new:'')."\"></TD>";
 	    echo "<TD><INPUT TYPE=\"text\" NAME=\"description\" SIZE=30 maxlength=255></TD>";

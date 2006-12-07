@@ -15,7 +15,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 
 
 echo("
-	<form method=\"get\">
+	<form method=\"get\" action=\"".$_SERVER["PHP_SELF"]."\">
 	<div align=right>
 	".$GUI_LANG['Calls'].":
 	<select name=\"incoming\" style='width:150pt;'>

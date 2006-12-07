@@ -6,11 +6,11 @@ if($toprint!="yes"){
 </tr>
 <tr>
 	<td>
-		<table cellpadding=2 cellspasing=2 ".$COLORS['FooterTableBgcolor']." align=center border=0 width=100%>
+		<table cellpadding=2 cellspacing=2 ".$COLORS['FooterTableBgcolor']." align=center border=0 width=100%>
 			<tr><td colspan=4>&nbsp;</td></tr>
 			<tr><td colspan=4><hr></td></tr>
 			<tr align=center>
-				<td align=center><a href=\"".complitLink($local_toprint="yes",$local_order=$order,$local_sortBy=$sortBy,$local_page=$page,$local_search=$search,$local_diatype=$diatype)."\" title=\"версия для печати\"><img src=\"../include/img/icon.print.gif\" width=37 height=37 border=0 vspace=2 hspace=4><br>".$GUI_LANG['ToPrint']."</a></td>
+				<td align=center><a href=\"".complitLink($local_toprint="yes",$local_order=$order,$local_sortBy=$sortBy,$local_page=$page,$local_search=$search,$local_diatype=$diatype)."\" title=\"".$GUI_LANG['ToPrint']."\"><img src=\"../include/img/icon.print.gif\" width=37 height=37 border=0 vspace=2 hspace=4 alt=\"".$GUI_LANG['ToPrint']."\"><br>".$GUI_LANG['ToPrint']."</a></td>
 				<td>".$GUI_LANG['MoldingTimeOfPage'].": $duration ".$GUI_LANG['Seconds']."</td>
 				<td align=right><a href=\"http://www.atslog.dp.ua/?ver=@version@&amp;build=@buildnumber@&amp;lang=".$GUI_LANG['LANG']."&amp;charset=".$GUI_LANG['Charset']."&amp;sqltype=".$sqltype."\">ATSlog ver @version@</a></td>
 			</tr>

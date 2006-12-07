@@ -233,14 +233,14 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 
 		if (isset($_GET["edit"]) && $_GET["edit"] == $row[0])
 		{
-			echo "<IMG SRC=\"../include/img/rowselected.gif\" WidTH=19 HEIGHT=18></TD>\n";
+			echo "<IMG alt=\"\" SRC=\"../include/img/rowselected.gif\" WidTH=19 HEIGHT=18></TD>\n";
 			echo "<TD><FORM METHOD=POST STYLE=\"margin:0\"><INPUT TYPE=\"text\" NAME=\"internally\" VALUE=\"".htmlspecialchars($row[0])."\" SIZE=5></TD>\n";
 			echo "<TD><INPUT TYPE=\"text\" NAME=\"name\" VALUE=\"".htmlspecialchars($comment)."\" SIZE=30></TD>\n";
 			echo "<TD><INPUT TYPE=\"hidden\" NAME=\"edit\" VALUE=\"".$row[0]."\"><INPUT TYPE=IMAGE WidTH=16 HEIGHT=16 SRC=\"../include/img/save.gif\" ALT=\"".$GUI_LANG['Save']."\" onclick=\"submit();\" style=\"cursor:hand;\"><IMG WidTH=16 HEIGHT=16 src=\"../include/img/undo.gif\" alt=\"".$GUI_LANG['Cancel']."\" onclick=\"window.location = '?';\" style=\"cursor:hand;\"></FORM></TD>\n";
 		}
 		else
 		{
-			echo "<IMG WidTH=19 HEIGHT=18 SRC=\"../include/img/row.gif\"></TD>";
+			echo "<IMG alt=\"\" WidTH=19 HEIGHT=18 SRC=\"../include/img/row.gif\"></TD>";
 			echo "<TD>".htmlspecialchars($row[0])."</TD>\n";
 
 			if($shmayster){
@@ -254,7 +254,7 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 		echo "\n</TR>";
 	    }
 	}
-	echo "<TR ".$COLORS['BaseTrBgcolor']."><TD><IMG WidTH=19 HEIGHT=18 SRC=\"../include/img/rownew.gif\"><FORM METHOD=POST STYLE=\"margin:0\"></TD>";
+	echo "<TR ".$COLORS['BaseTrBgcolor']."><TD><IMG alt=\"\" WidTH=19 HEIGHT=18 SRC=\"../include/img/rownew.gif\"><FORM METHOD=POST STYLE=\"margin:0\"></TD>";
 	echo "<TD><INPUT TYPE=\"text\" NAME=\"internally\" SIZE=5></TD>";
 	echo "<TD><INPUT TYPE=\"text\" NAME=\"name\" SIZE=30></TD>";
 	echo "<TD><INPUT TYPE=\"hidden\" NAME=\"add\" VALUE=\"1\"><INPUT TYPE=IMAGE WidTH=16 HEIGHT=16 SRC=\"../include/img/new.gif\" ALT=\"".$GUI_LANG['Add']."\" onclick=\"submit();\" style=\"cursor:hand;\"></FORM></TD></TR>\n";

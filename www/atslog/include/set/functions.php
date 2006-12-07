@@ -514,11 +514,11 @@ function AddTableHeader($fname,$thname,$toprint){
 			if ($order=="DESC"){
 			    $now_order="ASC";
 			    $now_title=$GUI_LANG['SortByIncrease'];
-			    $now_img="&nbsp;&nbsp;<img src=\"../include/img/arrowAsc.gif\" width=7 height=7 border=0>";
+			    $now_img="&nbsp;&nbsp;<img alt=\"".$GUI_LANG['SortByIncrease']."\" src=\"../include/img/arrowAsc.gif\" width=7 height=7 border=0>";
 			}else{
 			    $now_order="DESC";
 			    $now_title=$GUI_LANG['SortByDecrease'];
-			    $now_img="&nbsp;&nbsp;<img src=\"../include/img/arrowDesc.gif\" width=7 height=7 border=0>";
+			    $now_img="&nbsp;&nbsp;<img alt=\"".$GUI_LANG['SortByDecrease']."\" src=\"../include/img/arrowDesc.gif\" width=7 height=7 border=0>";
 			}
 		}else{
 		    if ($order=="DESC"){
@@ -749,12 +749,12 @@ function pagesNavigator($pages,$page){
 
 if ($pages>1 && !$toprint){
 	if ($page>0){
-		print("<td><a href=\"".complitLink($local_page="0",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['FirstPage']." (1)\"><img border=0 width=11 height=10 src=../include/img/colors/".$skin_name."/arrows/pages_left.gif></a>&nbsp;</td>");
+		print("<td><a href=\"".complitLink($local_page="0",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['FirstPage']." (1)\"><img border=0 width=11 height=10 src=\"../include/img/colors/".$skin_name."/arrows/pages_left.gif\" alt=\"".$GUI_LANG['FirstPage']."\"></a>&nbsp;</td>");
 	}
 
 	if ($page>1){
 		$prevGoPage = $page-1;
-		print("<td><a href=\"".complitLink($local_page="$prevGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousPage']." ($page)\"><img border=0 width=12 height=10 src=../include/img/colors/".$skin_name."/arrows/next_left.gif></a>&nbsp;</td>");
+		print("<td><a href=\"".complitLink($local_page="$prevGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['PreviousPage']." ($page)\"><img border=0 width=12 height=10 src=\"../include/img/colors/".$skin_name."/arrows/next_left.gif\" alt=\"".$GUI_LANG['PreviousPage']."\"></a>&nbsp;</td>");
 	}
 
 	print("
@@ -763,12 +763,12 @@ if ($pages>1 && !$toprint){
 
 	if ($page<($pages-2)){
 		$nextGoPage = $page+1;
-		print("<td>&nbsp;<a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextPage']." (".($nextGoPage+1).")\"><img border=0 width=12 height=10 src=../include/img/colors/".$skin_name."/arrows/next_right.gif></a></td>");
+		print("<td>&nbsp;<a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextPage']." (".($nextGoPage+1).")\"><img border=0 width=12 height=10 src=\"../include/img/colors/".$skin_name."/arrows/next_right.gif\" alt=\"".$GUI_LANG['NextPage']."\"></a></td>");
 	}
 
 	if ($page<($pages-1)){
 		$nextGoPage = $pages-1;
-		print("<td>&nbsp;<a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['LastPage']." ($pages)\"><img border=0 width=11 height=10 src=../include/img/colors/".$skin_name."/arrows/pages_right.gif></td>");
+		print("<td>&nbsp;<a href=\"".complitLink($local_page="$nextGoPage",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['LastPage']." ($pages)\"><img border=0 width=11 height=10 src=\"../include/img/colors/".$skin_name."/arrows/pages_right.gif\" alt=\"".$GUI_LANG['LastPage']."\"></td>");
 	}
 
 ?>
