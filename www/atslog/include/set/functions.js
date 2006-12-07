@@ -150,7 +150,7 @@ else if (ie) document.all[elemId].style.display = "none";
 if (dom || ie) {
 document.writeln('<style type="text/css">');
 document.writeln('.treeElem \{ display: none; \}');
-document.writeln('</style>');
+document.writeln("<\/style>");
 }
 
 // -->

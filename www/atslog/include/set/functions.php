@@ -742,12 +742,12 @@ function pagesNavigator($pages,$page){
     global $local_page,$local_search,$GUI_LANG,
     $toprint,$local_order,$order,$local_sortBy,$sortBy,$search,$skin_name;
 ?>
-<table cellpadding=1 cellspacing=0 border=0 align=center>
-	<tr>
+
 <?php
 // Печатаем навигатор по страницам
 
 if ($pages>1 && !$toprint){
+	echo '<table cellpadding=1 cellspacing=0 border=0 align=center><tr>';
 	if ($page>0){
 		print("<td><a href=\"".complitLink($local_page="0",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['FirstPage']." (1)\"><img border=0 width=11 height=10 src=\"../include/img/colors/".$skin_name."/arrows/pages_left.gif\" alt=\"".$GUI_LANG['FirstPage']."\"></a>&nbsp;</td>");
 	}
@@ -808,13 +808,13 @@ if ($pages>1 && !$toprint){
 		print("<a href=\"".complitLink($local_page="$nextList",$local_order=$order,$local_sortBy=$sortBy,$local_search=$search)."\" title=\"".$GUI_LANG['NextListOfPages']."\">... <img border=0 width=10 height=10 src=../include/img/colors/".$skin_name."/arrows/end_right.gif></a>");
 	}
     }
+	echo '</td></tr></table>';
 }
 
 //echo("</td></tr><tr><td>pages = $pages, page = $page, startLine = $startLine, lastLine = $lastLine, startList = $startList, stopList = $stopList");
 
 ?>
-</td></tr>
-</table>
+
 
 <?php
 }
