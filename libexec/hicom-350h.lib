@@ -3,7 +3,7 @@
 #
 # Разбираем строки текстового-лог файла для АТС Siemens Hicom 350H
 
-parsecurcalls();
+# parsecurcalls();
 
 sub parsecurcalls() {
     while ($str=<>)

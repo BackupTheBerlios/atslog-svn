@@ -6,7 +6,7 @@
 #
 # Разбираем строки текстового-лог файла для АТС GoldStar GPS-6A
 
-&parsecurcalls;
+# &parsecurcalls;
 
 sub parsecurcalls() {
     while ($str=<STDIN>)
