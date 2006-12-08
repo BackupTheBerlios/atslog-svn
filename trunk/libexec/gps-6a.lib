@@ -1,0 +1,118 @@
+#!/usr/bin/perl
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+# GPS-6A text logfile processing Copyright by
+# Nickolas A. Shadrin nickolas[at]corpnet.ru
+#
+# Разбираем строки текстового-лог файла для АТС GoldStar GPS-6A
+
+# &parsecurcalls;
+
+sub parsecurcalls() {
+    while ($str=<STDIN>)
+    {
+	$stringNumber++;
+	if ($str =~ /^\s*[0-9]+\s+([[0-9]+|\S]*)\s+([[0-9]+|\S]*)\s+([[0-9\:]+|\S]*)\s+([[0-9\/]+|\S]*)\s+([[0-9\:]+|\S]*)\s+([.|\S]*)\s*/){
+	    unitecurcalls();
+	}else{
+	    print("string #: $stringNumber\n");
+	    if ($vars{nowrlog} =~ /yes/i){
+	        if ($str !~ /^$/){
+	    	    print $str;
+	        };                        
+	    };                            
+        };                                
+    };
+};                                    
+
+sub unitecurcalls() {
+
+	    $cell[6] = $6; # Number
+	    $cell[5] = $5; # Start time
+	    $cell[4] = $4; # Date
+	    $cell[3] = $3; # Duration
+	    $cell[2] = $2; # CO ?
+	    $cell[1] = $1; # Internal number
+	    
+	    $cell[4] =~ /(\d{2})\/(\d{2})\/(\d{2})/;
+		$partCell[3][0]= $3 + 2000; # Year
+		$partCell[3][1]= $1; # Month
+		$partCell[3][2]= $2; # Day
+	    
+	    $cell[5] =~ /(\d{2})\:(\d{2})/;
+		$partCell[4][0]= $1;
+		$partCell[4][1]= $2;
+		$partCell[4][2]= "00";
+
+	    # Patch the problem of our ATS
+	    #
+	    # В случае присутствия предыдущей строки заменим неверные данные
+	    # текущей строки верными из предыдущей.
+	    # Если предыдущей строки нет, то заменим на данные локального
+	    # времени.
+	    if ( "$partCell[3][1]-$partCell[3][2]" =~ /00-00/ ){
+		$pRazmer = @prevDt;
+		
+		if ($pRazmer != 0){
+		    $partCell[3][1] = $prevDt[3][1];
+		    $partCell[3][2] = $prevDt[3][2];
+		    $partCell[4][0] = $prevDt[4][0];
+		    $partCell[4][1] = $prevDt[4][1];
+		}else{
+		    ($SECOND, $MINUTE, $HOUR, $DAY, $MONTH) = (localtime())[0, 1, 2, 3, 4];
+		    $MONTH = $MONTH + 1;
+		    $partCell[3][1] = $MONTH;
+		    $partCell[3][2] = $DAY;
+		    $partCell[4][0] = $HOUR;
+		    $partCell[4][1] = $MINUTE;
+		    $partCell[4][2] = $SECOND;
+		}
+	    }else{
+		$prevDt[3][1]=$partCell[3][1];
+		$prevDt[3][2]=$partCell[3][2];
+		$prevDt[4][0]=$partCell[4][0];
+		$prevDt[4][1]=$partCell[4][1];
+		$prevDt[4][2]=$partCell[4][2];
+
+	    };
+		
+	    $cell[3] =~ /(\d{2})\:(\d{2})/;
+		$partCell[5][0]= $1;
+		$partCell[5][1]= $2;
+		
+	    if ($cell[6] =~ /TRANSFER/ or $cell[6] =~ /INCOMING/){
+		$Way='in';
+		$Number=0; # Not Specified
+	    }else{
+		$Way='out';
+		$Outnumber = $cell[6];
+		$Outnumber =~ s/\D+//g;
+		$Number=substr($Outnumber,0,100);
+	    }
+
+	    if($cell[6] =~ /TRANSFER/){
+		$Forwarded=1;
+	    }else{
+		$Forwarded=0;
+	    }
+	    
+	    $Internally=$cell[1];
+	    
+	    $CO=$cell[2];
+
+	    $Duration=(($partCell[5][0]*60)+$partCell[5][1]);
+
+    	    $TimeOfCall="'${partCell[3][0]}-${partCell[3][1]}-${partCell[3][2]} ${partCell[4][0]}:${partCell[4][1]}:${partCell[4][2]}'";
+
+    	    if ($TimeOfCall ne ""){
+    # Проверим, имеестя ли хоть одна запись звонков подлежащая
+    # записи в db.
+		$callsCount++;
+	    }
+	    print("$stringNumber $TimeOfCall $Forwarded $Internally $CO $Way $Number $Duration\n");
+	    $ins_query = "INSERT INTO `$vars{sqlcallstable}` (`TimeOfCall`, `Forwarded`,`Internally`,`CO`, `Way` , `Number`, `Duration`) VALUES  (".$TimeOfCall.", '$Forwarded', '$Internally', '$CO', '$Way', '$Number', '$Duration');";
+	    $dbh->Query($ins_query);
+
+};
+
+1;
