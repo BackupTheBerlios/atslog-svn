@@ -3,7 +3,7 @@
 # For Siemens Hicom 250
 # Copyleft 2005.12.21 Im'jano Famil'jano <mojaschik@yandex.ru>
 
-parsecurcalls();
+#parsecurcalls();
 
 sub parsecurcalls()
 {
