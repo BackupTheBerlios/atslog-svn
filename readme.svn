@@ -1,0 +1,7 @@
+Description of the SVN tree:
+
+trunk    - current development version, latest trunk (r/w, active development)
+branches - branches of the atslog public versions, (r/o, no commits)
+           (e.g. atslog-2.0.2rc1, atslog-2.2.0, etc.)
+tags     - pre-branch tree for the releases, (r/w, bugfixes, minor changes)
+           (e.g. atslog-2.0, atslog-2.1, etc.)
