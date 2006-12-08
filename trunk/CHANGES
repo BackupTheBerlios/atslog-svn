@@ -31,6 +31,12 @@
 # (hiddenman) We souldn't daemonize without options
 # (hiddenman) Fixed tcp/rtcp parsing (thanks Oleg Karpov for reporting)
 
+2006-Jun-12: New atslog-2.0-pre2 stable snapshot released
+
+! (hiddenman) Siemens HICOM-250 supoort
+! (hiddenman) New daemon features (connect to remote PBX, etc)
+# (hiddenman) Many bugfixes and improvements
+
 Old release information:
 
 ver 0.6 (24 feb 2004)
