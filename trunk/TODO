@@ -1,9 +1,12 @@
 Nearest plans:
 * daemon - make fast_write mode more reliable (we need to control atslogdb.pl 
-  state)
+  state), we need to be sure that data was transferred to sql, etc...
 * make stable 2.0.0 release (uhh)
 * add accounting code (AKA business code) support to the upcoming 2.1
 * FreeBSD port in the freebsd ports tree
+* Replace http-header based auth with form-based one. This will allow to 
+  run atslog-www with php-cgi and to implement "logout" function.
+* Checking of the php-pcre, mysql and (optional) gd extension.
 
 May be, someday
 * accounting
