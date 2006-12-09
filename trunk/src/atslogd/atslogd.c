@@ -934,6 +934,10 @@ rtcp:
 					my_syslog( "connect() failed: %s",my_strerror() );
 					hCom=INVALID_HANDLE_VALUE;
 					h2close=hCom;
+					if(is_rtcp) {
+						sleep( next_open_timeout );
+						goto rtcp;
+					}
 					return INVALID_HANDLE_VALUE;
 				}
 			else
