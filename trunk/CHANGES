@@ -6,8 +6,14 @@
 
 
 === ATSLOG 2.0-DEV ===
+# (samm) now atslogd set CLOCAL flag on serial device before opening 
+         in blocking mode. This is fix for hanging on Linux with /dev/ttySx
+         devices. Also now atslogd restore tty settings on exit.
+# (samm) fixed rtcp mode. Now if PBX was disconnected for some reason (e.g.
+         remote PBX reboot, or network failure) atslogd will try to connect
+         untill success(with reconnection timeout).
 # (samm) "parcecullcalls()" sub removed from the librarys body,  because 
-          we already have this sub in the atslogdb.pl
+         we already have this sub in the atslogdb.pl
 # (samm) Corrected names of the text logs (russian letters was used!)
 # (samm) html fixes catched by validator.w3.org (typos, errors, etc.)
 # (samm) fixed many problems with unset variables and other errors reported 
