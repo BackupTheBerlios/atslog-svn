@@ -285,32 +285,6 @@ static void put_cdr_to_q( char *s )
 	cdrs_last=ss;
 }
 
-static void flush_cdr_q( void )
-{
-	int i;
-	struct String *ss;
-	for( ss=cdrs,i=0; ss!=NULL; ss=ss->next,i++ ) {
-		my_fputs( ss->s,cur_logfile );
-		my_fputs( "\n",cur_logfile );
-	}
-	if( i ) {
-		my_fflush( cur_logfile );
-		my_syslog( "%d CDR records were stored before getting date",i );
-	}
-}
-
-static void free_cdr_q( void )
-{
-	struct String *ss,*ss_next;
-	for( ss=cdrs; ss!=NULL; ) {
-		ss_next=ss->next;
-		free( ss->s );
-		free( ss );
-		ss=ss_next;
-	}
-	cdrs=cdrs_last=NULL;
-}
-
 char *my_strerror(void)
 {
 	static char ret_err[MAXERRORLEN+1];
@@ -561,8 +535,8 @@ int main( int argc, char *argv[] )
 	
 	struct sockaddr_in sa_lserver,sa_rclient;
 	socklen_t sa_rclient_len;
-	struct hostent *he_rserver;
-	struct hostent *he_lserver;
+	struct hostent *he_rserver=NULL;
+	struct hostent *he_lserver=NULL;
 	
 	char do_daemonize=0;
 	sigset_t ss;
