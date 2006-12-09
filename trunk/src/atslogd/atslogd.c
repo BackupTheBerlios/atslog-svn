@@ -64,6 +64,9 @@ int filenamelen=0;
 int childcount=0;
 // default maximum clients for TCP port
 int maxtcpclients=1;
+// startup tty settings
+struct termios oldtio;
+int is_tcp=0,is_rtcp=0;
 
 #define LT_RAW		0
 #define LT_DEFINITY	1
@@ -117,6 +120,13 @@ extern char *optarg;
 extern int optind;
 
 #endif
+
+void close_tty( HANDLE hCom)
+{
+	// restore tty settings and close serial port
+	tcsetattr( hCom, TCSANOW, &oldtio);
+	close (hCom);
+}
 
 static int daemonize( void )
 {
@@ -217,7 +227,10 @@ static void sighandler(int sig)
 	pid_t pid;
 	if( h2close!=INVALID_HANDLE_VALUE ) {
 		my_syslog( "Closing CDR stream" );
-		close( h2close );
+		if ((is_tcp) || (is_rtcp)) {
+			close( h2close );
+		}
+		else close_tty(h2close);
 	}
 	pid=waitpid(-1,NULL,WNOHANG);
 	my_syslog( "Exiting on signal %d",sig );
@@ -304,16 +317,37 @@ char *my_strerror(void)
 }
 
 
-
 HANDLE open_tty( char *tty_name )
 {
 	HANDLE hCom;
+	struct termios newtio;
+	
+	// we need to open tty in non blocking mode to set CLOCAL value,
+	// and then reopen it in normal mode to prevent waiting for CARRIER
+	// line on opening /dev/ttySx devices
 
+	hCom = open( tty_name, O_RDWR | O_NONBLOCK);
+	if (hCom == INVALID_HANDLE_VALUE) {
+		my_syslog( "open_tty on '%s' failed: %s",tty_name,my_strerror() );
+	}
+
+	tcgetattr(hCom, &oldtio);
+        bzero( &newtio, sizeof( newtio));
+        newtio.c_cflag = B9600 | CS8 | CLOCAL | CREAD | CSTOPB;
+        newtio.c_iflag = IGNPAR;
+        newtio.c_oflag = 0;
+        newtio.c_lflag = 0;
+        tcflush( hCom, TCIFLUSH);
+        tcsetattr( hCom, TCSANOW, &newtio);
+        close(hCom);
+
+	// reopen in blocking mode
 	hCom = open( tty_name,O_RDWR );
 
 	if (hCom == INVALID_HANDLE_VALUE) {
 		my_syslog( "open_tty on '%s' failed: %s",tty_name,my_strerror() );
 	}
+
 	return hCom;
 }
 
@@ -524,7 +558,6 @@ int main( int argc, char *argv[] )
 	char parity=0;
 	int next_open_timeout=5;
 	char buf[MAXSTRINGLEN+1];
-	int is_tcp=0,is_rtcp=0;
 	unsigned short tcpPort=0,rtcpPort=0;
 	char *hostname=NULL,*rhostname=NULL;
 	char *token=NULL,*saveptr=NULL,*port=NULL;
@@ -947,7 +980,7 @@ rtcp:
 			else
 			{
 				h2close=INVALID_HANDLE_VALUE;
-				close( hCom );
+				close_tty( hCom );
 				sleep( next_open_timeout );
 				hCom = open_io( argv[0],speed,data_bits,parity,stop_bits );
 				if( hCom==INVALID_HANDLE_VALUE ) {
