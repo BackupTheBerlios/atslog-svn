@@ -5,6 +5,8 @@ $atslogbuild="48";
 $exist_atslogcurrent=FALSE;
 include_once $_SERVER['DOCUMENT_ROOT']."/poll/poll_cookie.php";
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=windows-1251">
@@ -16,11 +18,12 @@ include_once $_SERVER['DOCUMENT_ROOT']."/poll/poll_cookie.php";
 	<META NAME="ROBOTS" CONTENT="ALL">
 
 <title>ATSlog - <? echo ($title) ?>. </title>
-	<style>
+	<style type="text/css">
 		body {
 			text-decoration : none;
 			scrollbar-base-color : #F2F2F2;
 			scrollbar-arrow-color : #E73030;
+			margin: 20xp;
 		}
 <?
 if ($toprint!="yes"){
@@ -78,13 +81,13 @@ echo("
 		}
 	</style>
 </head>
-<body bgcolor="#FFFFFF" text="#000000" link="#E73030" vlink="#893700" alink="#FF6600" leftmargin=20 bottommargin=20 marginheight=20 marginwidth=20 rightmargin=20 topmargin=20>
+<body bgcolor="#FFFFFF" text="#000000" link="#E73030" vlink="#893700" alink="#FF6600">
 <?
 if ($toprint!="yes"){
 echo ("
 <table cellspacing=\"15\" cellpadding=\"0\" border=\"0\">
 <tr>
-    <td align=left><a href=\"http://www.atslog.dp.ua/\" title=\"Анализ и учет звонков различных моделей мини-АТС\"><img src=\"/img/atslog.logo.gif\" width=223 height=84 border=0 alt=\"Анализ и учет звонков различных моделей мини-АТС\"></td>
+    <td align=left><a href=\"http://www.atslog.dp.ua/\" title=\"Анализ и учет звонков различных моделей мини-АТС\"><img src=\"/img/atslog.logo.gif\" width=223 height=84 border=0 alt=\"Анализ и учет звонков различных моделей мини-АТС\"></a></td>
     <td valign=\"top\">
 		<table cellspacing=\"5\" cellpadding=\"5\" border=\"0\">
 		<tr valign=\"top\">
