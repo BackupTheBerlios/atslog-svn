@@ -1,0 +1,40 @@
+<?
+/*
+$data=fopen("/hosting/impersonate/collection/result.txt","a"); 
+flock($data, 1);            
+
+fwrite ($data,$version."\n");
+fwrite ($data,"info@atslog.dp.ua\n");
+fwrite ($data,$subject."\n");
+fwrite ($data,$to."\n");
+fwrite ($data,$ref."\n");
+fwrite ($data,$c_pre."\n");
+fwrite ($data,$c_sel."\n");
+fwrite ($data,$c_suf."\n");
+fwrite ($data,$c_pos."\n");
+fwrite ($data,$charset."\n");
+fwrite ($data,$Address."\n");
+fwrite ($data,$Context."\n");
+
+flock($data, 3);            
+fclose ($data);             
+*/
+
+include("attach.php");
+$mail=new html_mime_mail();
+$mail->add_html("<html><body><h2>Пpивет!</h2>".
+		"Ref: $ref<br>
+		$c_pre	<font color=red size=+1>$c_sel</font> $c_suf<br>
+		Charset: $charset<br>
+		Address: $Address<br>".
+		"</h2></body></html>");
+if($charset="windows-1251"){
+    $mail->build_message('win');
+}else{
+    $mail->build_message();
+}
+$mail->send('localhost',               
+            'info@atslog.dp.ua',
+            'hostmaster@arrakis.dp.ua',
+            $subject);
+?>

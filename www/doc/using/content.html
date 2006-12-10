@@ -1,0 +1,52 @@
+<div align="center"><font size=+2>ИСПОЛЬЗОВАНИЕ ATSlog</font></div><br>
+<p>
+<table cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
+<tr>
+	<td nowrap valign=top><i>/usr/local/etc/atslog.conf</i>&nbsp;</td><td valign=top>&#151;</td><td>&nbsp;</td><td>конфигурационный файл.</td>
+</tr>
+<tr>
+	<td nowrap valign=top><i>atslogmaster</i>&nbsp;</td><td valign=top>&#151;</td><td>&nbsp;</td><td>запуск без параметров покажет статус демона сбора информации и выдаст краткую справку по использованию atslogmaster.</td>
+</tr>
+<tr>
+	<td nowrap valign=top><i>atslogmaster start</i>&nbsp;</td><td valign=top>&#151;</td><td>&nbsp;</td><td>запуск ATSlog.</td>
+</tr>
+<tr>
+	<td nowrap valign=top><i>atslogmaster stop</i>&nbsp;</td><td valign=top>&#151;</td><td>&nbsp;</td><td>останов.</td>
+</tr>
+<tr>
+	<td nowrap valign=top><i>atslogmaster restart</i>&nbsp;</td><td valign=top>&#151;</td><td>&nbsp;</td><td>перезагрузка.</td>
+</tr>
+<tr>
+	<td nowrap valign=top><i>atslogmaster writedb</i>&nbsp;</td><td valign=top>&#151;</td><td>&nbsp;</td><td>запись последних звонков в базу SQL сервера.</td>
+</tr>
+<tr>
+	<td nowrap valign=top><i>atslogmaster rotate</i>&nbsp;</td><td valign=top>&#151;</td><td>&nbsp;</td><td>ротация текстовых лог-файлов.</td>
+</tr>
+<tr>
+	<td nowrap valign=top><i>atslogmaster cleardb</i>&nbsp;</td><td valign=top>&#151;</td><td>&nbsp;</td><td>очистка таблиц SQL сервера.</td>
+</tr>
+<tr>
+	<td nowrap valign=top><i>atslogmaster alltodb</i>&nbsp;</td><td valign=top>&#151;</td><td>&nbsp;</td><td>запись <u>всех</u> (в т.ч. из архивов) звонков в  
+базу SQL сервера. Данные о текущих звонках  
+из файла <i>/var/log/atslog/currentcalls.log</i> не
+добавляются из-за возможного дублирования   
+информации. Если есть необходимость записать
+также и текущие звонки, то воспользуйтесь
+функцией writedb
+</td>
+</tr>
+</table>
+</p>
+<HR ALIGN="center">
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top"><a href="/doc/updating/" title="обновление с предыдущих версий программы" ACCESSKEY="P">Предыдущий</a></TD>
+	<TD WIDTH="34%" ALIGN="center" VALIGN="top"><A HREF="/doc/" ACCESSKEY="H">Разделы</A></TD>
+	<TD WIDTH="33%" ALIGN="right" VALIGN="top"><a href="/doc/deleting/" title="удаление ATSlog" ACCESSKEY="N">Следующий</a></TD>
+</TR>
+<TR>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top">обновление предыдущих версий</TD>
+	<TD WIDTH="34%" ALIGN="center" VALIGN="top">&nbsp;</TD>
+	<TD WIDTH="33%" ALIGN="right" VALIGN="top">удаление программы</TD>
+</TR>
+</TABLE>

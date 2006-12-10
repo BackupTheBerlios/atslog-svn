@@ -1,0 +1,28 @@
+<?php
+    $ipname=gethostbyaddr($_SERVER['REMOTE_ADDR']);
+    $ipaddr=$_SERVER['REMOTE_ADDR'];
+
+    mysql_connect("db.berlios.de", "atslog", "123456789");
+    mysql_select_db("atslog");
+
+
+    if(isset($_GET[ver]) && isset($_GET[build])){
+	mysql_query("insert into version (Date,IP,IPName,Version,Build,Lang,SQLtype) values (NOW(), '".$_SERVER['REMOTE_ADDR']."','".$ipname."','".$_GET[ver]."', '".$_GET[build]."', '".$_GET[lang]."', '".$_GET[sqltype]."')");
+    }
+
+
+
+    include("set/geoipcity.inc");
+
+    $gi = geoip_open("set/GeoIP.dat",GEOIP_STANDARD);
+
+    mysql_query("insert into geoip (Date,ipaddr,ipname,country_name,country_code,lang) values (NOW(), '".$ipaddr."','".$ipname."','".geoip_country_name_by_addr($gi,$ipaddr)."', '".geoip_country_code_by_addr($gi,$ipaddr)."','ru')");
+	  
+    geoip_close($gi);
+
+    if(ereg("ru",$_SERVER['HTTP_ACCEPT_LANGUAGE']) or $_GET[lng] == "ru"){
+	Header("Location: /news/");
+    }else{
+	Header("Location: /en/about/");
+    }
+?>

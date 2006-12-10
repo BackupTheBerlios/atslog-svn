@@ -1,0 +1,128 @@
+<div align="center"><font size=+2>ЧаВО. Часто задаваемые ВОпросы. FAQ.</font></div>
+<ol>
+	<li>ATSlog работает, но в текстовый лог-файл сыпется непонятный мусор вместо строк с описанием звонков. В чём причина?
+		<dl>
+			<ul>
+				<li>Объяснение причин:
+					<ol>
+						<ul>
+							<li>Скорость порта АТС и скорость порта на компьютере не согласованы.
+						</ul>
+					</ol>
+				</li>
+				<li>Решение задачи:
+						<ol>
+							<ul>
+								<li>Измените параметр $speed в конфигурационном файле.<i>/usr/local/etc/atslog.conf</i> Смотрите также остальные параметры настройки порта, а именно <i>$charsize, $parity, $stopbits</i>. Параметры порта можно уточнить в документации к АТС</li>
+							</ul>
+						</ol>
+
+				</li>
+			</ul>
+		</dl>
+	</li>
+	<li>При записи информации из текстового лог-файла в БД SQL сервера программа выдаёт следующее сообщение:
+<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
+<tr>
+	<td><pre><i>
+Внимание! Не было передано SQL серверу ни одной записи из сканируемого
+лог-файла. Возможно, это вызвано ошибкой.
+</i>
+</pre></td></tr></table>
+
+		<dl>
+			<ul>
+				<li>Объяснение причин:
+					<ol>
+						<ul>
+							<li>Не верно указана модель АТС в параметре $model конфигурационного файла.
+							<li>Так же возможен случай, когда текстовый лог-файл не содержит строк с данными для АТС.
+						</ul>
+					</ol>
+				</li>
+			</ul>
+		</dl>
+	</li>
+	<li>Как можно импортировать данные в ATSlog из сохранённого ранее текстового лог-файла?
+		<dl>
+			<ul>
+				<li>Решение задачи:
+						<ol>
+							<ul>
+								<li>Копировать данные в файл <i>/var/log/atslog/calls.log</i> (это файл по умолчанию; более точно смотрите параметр <i>$callslogfile</i> конфигурационного файла <i>/usr/local/etc/atslog.conf</i>)</li>
+								<li>Используйте функцию записи всех звонков в базу SQL сервера:
+<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
+<tr>
+	<td><pre><i>
+atslogmaster alltodb
+</i>
+</pre></td></tr></table>
+
+								 </li>
+							</ul>
+						</ol>
+
+				</li>
+			</ul>
+		</dl>
+
+	<li>ATSlog запускается, но ничего не происходит, и данные с мини-АТС не записываются. В списке процессов присутствует два демона atslogd. В чём причина?
+		<dl>
+			<ul>
+				<li>Объяснение причины: Нет связи демона с АТС.</li>
+				<li>Решение проблемы: проверьте параметр <i>$port</i> конфигурационного файла <i>/usr/local/etc/atslog.conf</i> или убедитесь в правильности соединения кабеля от мини-АТС к компьютеру. Отсутствие связи также может быть вызвано неправильной распайкой кабеля.<br>
+				</li>
+			</ul>
+		</dl>
+
+	<li>При инсталляции программы с использованием MySQL сервера на другой машине, отличной от 'localhost' ATSlog выдаёт следующее сообщение:<br>
+<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
+<tr>
+	<td><pre><i>
+ERROR 1130: Host 'atslog.server.com' is not allowed to connect to this MySQL server.
+</i>
+</pre></td></tr></table>
+или такое:
+<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
+<tr>
+	<td><pre><i>
+ERROR 1045: Access denied for user: 'root@atslog.server.com' (Using password: YES)
+</i>
+</pre></td></tr></table>
+
+В результате ATSlog не устанавливается/обновляется. В чём причина?</li>
+
+		<dl>
+			<ul>
+				<li>Объяснение: для работы ATSlog необходимо внести данные в MySQL с привилегиями суперпользователя. По умолчанию вход с правами root возможен только с машины 'localhost'.</li>
+				<li>Решение проблемы: временно расширить права суперпользователя для доступа с хоста 'atslog.server.com'. Для этого:<br>
+<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
+<tr>
+	<td><pre><i>
+GRANT ALL PRIVILEGES ON * . * TO "root"@"atslog.server.com" IDENTIFIED
+BY 'некриптованый_пароль_для_root' WITH GRANT OPTION;
+</i>
+</pre></td></tr></table>
+				После этого можно возобновить инсталляцию.<br>
+				После инсталляции не забудьте восстановить привилегии пользователя root обратно:<br>
+<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
+<tr>
+	<td><pre><i>
+DELETE FROM mysql.user WHERE User = "root" AND Host = "atslog.server.com";
+DELETE FROM mysql.db WHERE User = "root" AND Host = "atslog.server.com";
+DELETE FROM mysql.tables_priv WHERE User = "root" AND Host = "atslog.server.com";
+DELETE FROM mysql.columns_priv WHERE User = "root" AND Host = "atslog.server.com";
+
+FLUSH PRIVILEGES;
+</i>
+</pre></td></tr></table>
+				</li>
+			</ul>
+		</dl>
+</ol>
+
+<br>                                                  
+Если вы заметили орфографическую или стилистическую   
+ошибку на этой странице, просто выделите мышью текст с
+ошибкой и нажмите Ctrl+Enter. Выделенный текст будет  
+немедленно отослан вебмастеру.

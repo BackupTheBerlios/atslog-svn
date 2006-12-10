@@ -1,0 +1,173 @@
+<div align="center"><font size=+2>ТЕХНИЧЕСКОЕ ЗАДАНИЕ</font>
+<h3><a name="about4"></a>по созданию шаблона программы записи данных мини-АТС в БД</h3>
+</div>
+
+<div class=Section1>
+
+<p class=MsoNormal><span style='font-family:Arial'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt'><span
+style='font-family:Arial'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:Arial'>Основные задачи:</span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>1.1.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>Программа должна быть написана на
+</span><span lang=EN-US style='font-family:Arial'>ANSI</span><span lang=EN-US
+style='font-family:Arial'> </span><span style='font-family:Arial'>Си, или на </span><span
+lang=EN-US style='font-family:Arial'>ANSI</span><span lang=EN-US
+style='font-family:Arial'>  </span><span lang=EN-US style='font-family:Arial'>C</span><span
+style='font-family:Arial'>++</span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>1.2.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>Строки из потока </span><span
+lang=EN-US style='font-family:Arial'>STDIN</span><span style='font-family:Arial'>
+должны быть разобраны (пункт 1.3) на части и записаны (пункт 1.8) в
+соответствующие <a href='db.mysql.sql'>поля таблицы</a> (пункт 1.9) БД.</span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>1.3.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>Естественно, разбор содержимого конкретной
+строки лучше всего производить с использованием регулярных выражений. Уже есть <a href='example.pl'>написанная
+на Perl программа</a> (пункт 1.5)</span><span style='font-family:
+Arial'>, использующая  очень удобные  для разбора строки регулярные выражения.
+Имеет смысл их задействовать с помощью библиотеки </span><span
+lang=EN-US style='font-family:Arial'>PCRE</span><span lang=EN-US
+style='font-family:Arial'> </span><span style='font-family:Arial'>(</span><span
+lang=EN-US style='font-family:Arial'>Perl</span><span lang=EN-US
+style='font-family:Arial'> </span><span lang=EN-US style='font-family:Arial'>Compatible</span><span
+lang=EN-US style='font-family:Arial'> </span><span lang=EN-US style='font-family:
+Arial'>Regular</span><span lang=EN-US style='font-family:Arial'> </span><span
+lang=EN-US style='font-family:Arial'>Expressions</span><span style='font-family:
+Arial'>, что значит </span><span lang=EN-US style='font-family:Arial'>Perl</span><span
+style='font-family:Arial'>-совместимые регулярные выражения; информация на </span><span
+lang=EN-US style='font-family:Arial'><a href="http://www.pcre.org/" target="blank">www<span
+lang=RU>.</span>pcre<span lang=RU>.</span>org</a></span><span style='font-family:Arial'>) Это
+позволит использовать уже созданное, вместо того, чтобы переписывать всё
+заново.</span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>1.4.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>Те строки, которые не
+соответствуют регулярному выражению должны печататься в стандартный </span><span
+lang=EN-US style='font-family:Arial'>STDOUT</span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>1.5.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>Пример использования регулярных
+выражений из действующей </span><span lang=EN-US style='font-family:Arial'>Perl</span><span
+lang=EN-US style='font-family:Arial'> </span><span style='font-family:Arial'>программы
+представлены <a href='example.pl'>в файле example.pl</a></span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>1.6.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>В связи с тем, что программа предполагает
+работу с несколькими типами АТС вид отдаваемых строк будет отличаться. Соответственно,
+будут  несколько наборов регулярных выражений. Предлагаю вынести разбор строки
+в отдельные функции, а эти функции в отдельные файлы (для каждого типа строк
+должен быть свой модуль с функциями разбора)</span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>1.7.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>Программа должна считывать параметры
+из <a href='atslog.conf'>конфигурационного файла atslog.conf</a></span><span
+style='font-family:Arial'> для того, чтобы узнать, какой тип использовать для
+разбора строк.</span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>1.8.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>Запись в БД происходит с помощью </span><span
+lang=EN-US style='font-family:Arial'>SQL</span><span style='font-family:Arial'>,
+через драйвер абстрактного доступа </span><span lang=EN-US style='font-family:
+Arial'>ODBC</span><span style='font-family:Arial'>, обеспечивая, тем самым,
+совместимость с различными видами баз данных. Сейчас это </span><span
+lang=EN-US style='font-family:Arial'>MySQL и PostgreSQL</span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>1.9.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>Структура таблицы БД хранится в
+файле </span><span lang=EN-US style='font-family:Arial'><a href='db.mysql.sql'>db.mysql.sql</a> и/или <a href='db.pg.sql'>db.pg.sql</a></span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt'><span
+style='font-family:Arial'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:Arial'>Правила использования конечного
+продукта.</span></p>
+
+<p class=MsoNormal style='margin-left:39.6pt;text-indent:-21.6pt'><span
+style='font-family:Arial'>2.1.<span style='font:7.0pt "Times New Roman"'>&nbsp;
+</span></span><span style='font-family:Arial'>Запуск из-под </span><span lang=EN-US
+style='font-family:Arial'>DOS:</span><span lang=EN-US style='font-family:Arial'>
+</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span lang=EN-US
+style='font-size:18.0pt;font-family:Arial'>type calls.log | my_c_program.exe</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span lang=EN-US
+style='font-size:18.0pt;font-family:Arial'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>Где
+&quot;my_c_program.exe&quot; программа, в </span><span lang=EN-US style='font-family:Arial'>STDIN</span><span
+lang=EN-US style='font-family:Arial'> </span><span style='font-family:Arial'>которой
+построчно передаётся содержимое файла </span><span lang=EN-US style='font-family:
+Arial'>calls</span><span style='font-family:Arial'>.</span><span lang=EN-US
+style='font-family:Arial'>log</span><span style='font-family:Arial'>. После
+этого задача программы &quot;my_c_program.exe&quot; состоит в том, чтобы разобрать каждую
+поступающую строку на составляющие и записать в соответствующие столбцы таблицы
+БД. В демонстрационном примере команда </span><span lang=EN-US
+style='font-family:Arial'>type</span><span lang=EN-US style='font-family:Arial'>
+</span><span style='font-family:Arial'>является встроенной </span><span
+lang=EN-US style='font-family:Arial'>DOS</span><span lang=EN-US
+style='font-family:Arial'> </span><span style='font-family:Arial'>командой,
+которая выводит содержимое файлов на экран. В данном случае она выводит
+содержимое в </span><span lang=EN-US style='font-family:Arial'>STDIN</span><span
+lang=EN-US style='font-family:Arial'> </span><span style='font-family:Arial'>нашей
+программы.</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>2.3
+Запуск из-под *</span><span lang=EN-US style='font-family:Arial'>NIX:</span><span
+lang=EN-US style='font-family:Arial'> </span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span lang=EN-US
+style='font-size:18.0pt;font-family:Arial'>cat calls.log | my_c_program</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span lang=EN-US
+style='font-family:Arial'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>Где
+&quot;my_c_program&quot; программа, в </span><span lang=EN-US style='font-family:Arial'>STDIN</span><span
+lang=EN-US style='font-family:Arial'> </span><span style='font-family:Arial'>которой
+построчно передаётся содержимое файла </span><span lang=EN-US style='font-family:
+Arial'>calls</span><span style='font-family:Arial'>.</span><span lang=EN-US
+style='font-family:Arial'>log</span><span style='font-family:Arial'>. После
+этого задача программы &quot;my_c_program&quot; состоит в том, чтобы разобрать каждую
+поступающую строку на составляющие и записать в соответствующие столбцы таблицы
+БД. В демонстрационном примере команда </span><span lang=EN-US
+style='font-family:Arial'>cat</span><span lang=EN-US style='font-family:Arial'>
+</span><span style='font-family:Arial'>является стандартной утилитой, которая
+выводит содержимое файлов на экран. В данном случае она выводит содержимое в </span><span
+lang=EN-US style='font-family:Arial'>STDIN</span><span lang=EN-US
+style='font-family:Arial'> </span><span style='font-family:Arial'>нашей
+программы.</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>2.2
+Файл </span><span lang=EN-US style='font-family:Arial'>calls</span><span
+style='font-family:Arial'>.</span><span lang=EN-US style='font-family:Arial'>log</span><span
+lang=EN-US style='font-family:Arial'> </span><span style='font-family:Arial'><a href="calls.zip">прилагается
+в архиве с названием </span><span lang=EN-US style='font-family:Arial'>calls</span><span
+style='font-family:Arial'>.</span><span lang=EN-US style='font-family:Arial'>zip</span></a></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:18.0pt'><span style='font-family:Arial'>&nbsp;</span></p>
+<p>2.3 Полученная программа будет использоваться исключительно на *NIX платформах. Нет необходимости писать её и под DOS. Указанный выше пример использования под DOS нужен только для тех программистов, у которых нет под рукой *NIX'a.</p>
+
+</div>
