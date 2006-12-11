@@ -257,8 +257,8 @@ if(IsDefaultPass($_SERVER['PHP_AUTH_USER'])) echo "<font color=red><b>".$GUI_LAN
 			    }
 			echo "</TD>\n";
 			showprivileges($row[1], true);
-			echo "</TD>\n<TD><IMG WidTH=16 HEIGHT=16 HSPACE=2 VSPACE=2 SRC=\"../include/img/button_edit.png\" ALT=\"".$GUI_LANG['Edit']."\" onclick=\"window.location = '?edit=".$row[1]."';\" style=\"cursor:hand;\">";
-			if (isset($_GET["resetpwd"]) && $_GET["resetpwd"] != $row[1])
+			echo "</TD>\n<TD nowrap><IMG WidTH=16 HEIGHT=16 HSPACE=2 VSPACE=2 SRC=\"../include/img/button_edit.png\" ALT=\"".$GUI_LANG['Edit']."\" onclick=\"window.location = '?edit=".$row[1]."';\" style=\"cursor:hand;\">";
+			if (!isset($_GET["resetpwd"]) || $_GET["resetpwd"] != $row[1])
 				echo "<IMG WidTH=16 HEIGHT=16 SRC=\"../include/img/key.gif\" ALT=\"".$GUI_LANG['ChangePassword']."\" onclick=\"window.location = '?resetpwd=".$row[1]."';\" style=\"cursor:hand;\">";
 			echo "<IMG WidTH=16 HEIGHT=16 HSPACE=2 VSPACE=2 SRC=\"../include/img/button_drop.png\" ALT=\"".$GUI_LANG['Delete']."\" onclick=\"if (window.confirm('".$GUI_LANG['RemoveTheAbonentWithLogin']." ".$row[1]."?')) window.location = '?delete=".$row[1]."';\" style=\"cursor:hand;\"></TD>";
 		}
