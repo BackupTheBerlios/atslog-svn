@@ -9,8 +9,8 @@ include_once $_SERVER['DOCUMENT_ROOT']."/poll/poll_cookie.php";
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=windows-1251">
 	<META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="ru-ru">
-	<META NAME="Description" CONTENT="ATSlog. Анализ и учет звонков мини-АТС.">
-	<META NAME="Keywords" CONTENT="atslog,atslog.dp.ua,panalog.dp.ua,panalog,php,mysql,ats,атс,pbx,smdr,tariff,тариф,call,звонков,тарификация,account,samsung,panasonic,KX-TA308,KX-TA308,RU,KX-TA616,KX-TD816,KX-TD1232,SKP-816,mini-ATS,мини-АТС,схема,распайка,руководство,описание">
+	<META NAME="Description" CONTENT="ATSlog. PBX accounting.">
+	<META NAME="Keywords" CONTENT="atslog,atslog.dp.ua,panalog.dp.ua,panalog,php,mysql,ats,pbx,smdr,tariff,call,account,samsung,panasonic,KX-TA308,KX-TA308,RU,KX-TA616,KX-TD816,KX-TD1232,SKP-816,mini-ATS,pinout,manual">
 	<META name="AUTHOR-CORPORATE" content="Denis CyxoB www.yamiyam.dp.ua">
 	<link rel="SHORTCUT ICON" href="/img/favicon.ico">
 	<META NAME="ROBOTS" CONTENT="ALL">
@@ -84,23 +84,23 @@ if ($toprint!="yes"){
 echo ("
 <table cellspacing=\"15\" cellpadding=\"0\" border=\"0\">
 <tr>
-    <td align=left><a href=\"http://www.atslog.dp.ua/en/\" title=\"Анализ и учет звонков различных моделей мини-АТС\"><img src=\"/img/atslog.logo.gif\" width=223 height=84 border=0 alt=\"Анализ и учет звонков различных моделей мини-АТС\"></td>
+    <td align=left><a href=\"http://www.atslog.dp.ua/en/\" title=\"ATSLog PBX accounting project\"><img src=\"/img/atslog.logo.gif\" width=223 height=84 border=0 alt=\"ATSLog PBX accounting project\"></td>
     <td valign=\"top\">
 		<table cellspacing=\"5\" cellpadding=\"5\" border=\"0\">
 		<tr valign=\"top\">
-			<td nowrap><a href=\"/en/about/\" title=\"возможности, модель работы, планы развития\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;about the program</a></td>
-			<td nowrap><a href=\"/en/news/\" title=\"последние изменения в ATSlog\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;news</a></td>
-			<td nowrap><a href=\"/en/autors/\" title=\"autors of the program, благодарности участникам проекта\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;about author</a></td>
-			<td nowrap><a href=\"/en/search/\" title=\"поиск по сайту\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;search</a></td>
+			<td nowrap><a href=\"/en/about/\" title=\"What Is ATSlog?\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;about</a></td>
+			<td nowrap><a href=\"/en/news/\" title=\"ATSlog News\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;news</a></td>
+			<td nowrap><a href=\"/en/autors/\" title=\"Autors of the project\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;about author</a></td>
+			<td nowrap><a href=\"/en/search/\" title=\"Site search\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;site search</a></td>
 		</tr>
 		<tr valign=\"top\">
-			<td nowrap><a href=\"/en/get/\" title=\"все версии программы\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;download</a></td>
-			<td nowrap><a href=\"/en/faq/\" title=\"Часто задаваемые Вопросы и Ответы\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;faq</a></td>
-			<td nowrap><a href=\"/en/links/\" title=\"cсылки на тематические ресурсы\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;links</a></td>
-			<td nowrap><a href=\"/en/forum/\" title=\"форумы на около-АТСные темы\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;forum</a></td>
+			<td nowrap><a href=\"/en/get/\" title=\"All program versions\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;download</a></td>
+			<td nowrap><a href=\"/en/faq/\" title=\"Frequently Asked Questions\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;FAQ</a></td>
+			<td nowrap><a href=\"/en/links/\" title=\"Links to the related resources\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;links</a></td>
+			<td nowrap><a href=\"/en/forum/\" title=\"Forum\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;forum</a></td>
 		</tr>
 		<tr valign=\"top\">
-		    <td><a href=\"/en/screenshots/\" title=\"реальный пример использования\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;demo</a></td>
+		    <td><a href=\"/en/screenshots/\" title=\"Screenshots of ATSlog, demo web site\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\" alt=\"\">&nbsp;Screenshots & demo</a></td>
 			<td nowrap>
 ");
 
@@ -110,7 +110,7 @@ if ($menu=="doc")
 			<table cellspacing=0 cellpadding=0 border=0>
 				<tr>
 					<td nowrap valign=bottom><img src=\"/img/menu.arrowhead.right.gif\" width=6 height=10 hspace=0 vspace=0 border=0  alt=\"\"></td>
-					<td nowrap>&nbsp;<a href=\"/en/doc/\" title=\"документация по установке и настройке\">документация</a></td>
+					<td nowrap>&nbsp;<a href=\"/en/doc/\" title=\"ATSLog setup and usage documentation\">документация</a></td>
 				</tr>
 				<tr>
 					<td nowrap><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0></td>
@@ -165,15 +165,5 @@ include("content.html");
 ?>
 </div>
 
-<iframe id="orphus" src="/orphus/form.html" width="1" height="1" frameborder="0" scrolling="no"></iframe>
-
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
 </body>
 </html>
