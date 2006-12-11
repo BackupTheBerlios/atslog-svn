@@ -1,0 +1,60 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# Copyright (C) 2003-2006 Denis CyxoB www.yamiyam.dp.ua
+
+# - Bug fixed
++ - Feature added
+
+
+=== ATSLOG 2.0-DEV ===
+# (samm) now atslogd set CLOCAL flag on serial device before opening 
+         in blocking mode. This is fix for hanging on Linux with /dev/ttySx
+         devices. Also now atslogd restore tty settings on exit.
+# (samm) fixed rtcp mode. Now if PBX was disconnected for some reason (e.g.
+         remote PBX reboot, or network failure) atslogd will try to connect
+         untill success(with reconnection timeout).
+# (samm) "parcecullcalls()" sub removed from the librarys body,  because 
+         we already have this sub in the atslogdb.pl
+# (samm) Corrected names of the text logs (russian letters was used!)
+# (samm) html fixes catched by validator.w3.org (typos, errors, etc.)
+# (samm) fixed many problems with unset variables and other errors reported 
+         by PHP engine. I hope this will allow to run atslog-www without many
+         errors in the log file.
+# (samm) adoddb updates to latest version to fix minor problems with php
+# (samm) delete UTF8 locale untill fixing unicode related bugs (tr() calls,
+         etc.)
+# (samm) Quick and dirty english translation of the INSTALL and configuration
+         files
+# (samm) replace <? with <?php in php scripts
+# (samm) SECURITY: replace conf.inc with conf.inc.php
+# (samm) Replase DELETE FROM calls with TRUNCATE TABLE calls. Truncate has the
+         same effect as an unqualified DELETE but since it does not actually
+          scan the table it is faster. This is most effective on large tables.
++ (samm) Added support for the Alcatel 4200E PBX
+# (samm) Fix for the mysql>5.0.3 - decimal size was changed
+# (samm) phplot updated to 5.0RC3 (fix problem with PHP5)
++ (samm) Add auto_reconnect for the MySQL connection. This will fix a problem
+         with idle timeout.
+# (hiddenman) We souldn't daemonize without options
+# (hiddenman) Fixed tcp/rtcp parsing (thanks Oleg Karpov for reporting)
+
+2006-Jun-12: New atslog-2.0-pre2 stable snapshot released
+
+! (hiddenman) Siemens HICOM-250 supoort
+! (hiddenman) New daemon features (connect to remote PBX, etc)
+# (hiddenman) Many bugfixes and improvements
+
+Old release information:
+
+ver 0.6 (24 feb 2004)
+
+ver 0.5 
+
+ver 0.4 (17 feb 2003)
+	First pre-release
+ver 0.3 (15 Apr 2003)
+	Alpha version
+ver 0.2 (10 Apr 2003) 
+	
+ver 0.1 (2003-02-05 17:11:00) 
+	Birthday of the ATSLog software (draft name - PanaLog)
+ 
