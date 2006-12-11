@@ -3,8 +3,8 @@
 // Russian 1251 language file
 
 $GUI_LANG = array (
-	'meta-description'			=> 'ATSlog. Анализ и учет звонков мини-АТС.',
-	'meta-keywords'			=> 'atslog,atslog.dp.ua,panalog.dp.ua,panalog,php,mysql,ats,атс,pbx,smdr,tariff,тариф,call,звонков,тарификация,account,samsung,panasonic,hybrex,KX-TD816,KX-TA308,KX-TD1232,KX-TA616,SKP-816,GD-320,mini-ATS,мини-АТС,схема,распайка,руководство,описание.',
+    'meta-description'			=> 'ATSlog. Анализ и учет звонков мини-АТС.',
+    'meta-keywords'			=> 'atslog,atslog.dp.ua,panalog.dp.ua,panalog,php,mysql,ats,атс,pbx,smdr,tariff,тариф,call,звонков,тарификация,account,samsung,panasonic,hybrex,KX-TD816,KX-TA308,KX-TD1232,KX-TA616,SKP-816,GD-320,mini-ATS,мини-АТС,схема,распайка,руководство,описание.',
     'LANG'	                	=> 'Russian',
     'Charset'	                	=> 'koi8-r',
     'Number'                   		=> 'Номер',
@@ -154,7 +154,9 @@ $GUI_LANG = array (
     'DeleteDescriptionOfThePhoneNumber'	=> 'Удалить описание телефонного номера',
     'AddDescriptionOfTheNumber'		=> 'Добавить описание номера',
     'EditDescriptionOfTheNumber'	=> 'Изменить описание номера',
-    'GDSupportIsDisabled'		=> 'Библиотека GD не подключена. Смотрите <a href="http://www.php.net/manual/ru/ref.image.php" target="_blank">документацию на PHP!</a>',
+    'GDSupportIsDisabled'		=> 'Библиотека GD не подключена. Смотрите <a href="http://www.php.net/manual/ru/ref.image.php" target="_blank">документацию PHP!</a>',
+    'MYSQLSupportIsDisabled'		=> 'Библиотека PHP MYSQL не подключена. Смотрите  See <a href="http://www.php.net/manual/en/ref.image.php" target="_blank">документацию PHP!</a>',
+    'PCRESupportIsDisabled'		=> 'Библиотека PHP PCRE не подключена. Смотрите  <a href="http://www.php.net/manual/en/ref.image.php" target="_blank">документацию PHP!</a>',
     'AllSchedules'			=> 'Все графики',
     'RelativeQuantityOfCalls'		=> 'Относительное количество звонков',
     'DurationOfCalls'			=> 'Длительность звонков',

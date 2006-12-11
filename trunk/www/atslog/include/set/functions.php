@@ -73,16 +73,24 @@ if($sqltype == 'PostgreSQL'){
 
 // ----------------------------------------------------------------------------
 
-if (!function_exists("preg_match")){
-    echo $GUI_LANG['PCRESupportIsDisabled'];
-	die;
-}
-
+	
  /*
 
    Соединяемся c SQL посредством ADODB
 
  */
+
+//  Checking PHP internals
+// ---------------------------------------------------------------------------- 
+
+if (!function_exists("preg_match")){
+	global $GUI_LANG;
+	$lang='en_US'; // we dont know user languge at this moment
+	LanguageSetup($lang);
+    echo $GUI_LANG['PCRESupportIsDisabled'];
+	exit(); 
+}
+
 import_request_variables("gPc","rvar_");
 if(!empty($rvar_debug)) $debug=translateHtml($rvar_debug); else $debug=0;
 include('../include/adodb/adodb.inc.php'); // load code common to ADOdb
@@ -196,6 +204,7 @@ function LanguageSetup($lang){
 	}                                                                               
     }
 }
+
 
 //  Color scheme
 // ---------------------------------------------------------------------------- 
@@ -639,6 +648,9 @@ function totalTableFooter($field,$returnType){
 	return($results);
 
 }
+
+//  Checking PHP internals
+// ---------------------------------------------------------------------------- 
 
 
 function translateHtml($content)

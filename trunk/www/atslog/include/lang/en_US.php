@@ -3,8 +3,8 @@
 // English language file
 
 $GUI_LANG = array (
-	'meta-description'			=> 'ATSlog. PBX calls analysis and accounting.',
-	'meta-keywords'			=> 'atslog,atslog.dp.ua,panalog.dp.ua,panalog,php,mysql,ats,атс,pbx,smdr,tariff,tarif,call,tarification,account,samsung,panasonic,hybrex,KX-TD816,KX-TA308,KX-TD1232,KX-TA616,SKP-816,GD-320,mini-ATS,PBX,scheme,pinout,manual,description.',
+    'meta-description'			=> 'ATSlog. PBX calls analysis and accounting.',
+    'meta-keywords'			=> 'atslog,atslog.dp.ua,panalog.dp.ua,panalog,php,mysql,ats,атс,pbx,smdr,tariff,tarif,call,tarification,account,samsung,panasonic,hybrex,KX-TD816,KX-TA308,KX-TD1232,KX-TA616,SKP-816,GD-320,mini-ATS,PBX,scheme,pinout,manual,description.',
     'LANG'				=> 'English US',
     'Charset'				=> '',
     'Number'                    	=> 'Number',
@@ -154,9 +154,9 @@ $GUI_LANG = array (
     'DeleteDescriptionOfThePhoneNumber'	=> 'Delete description of the phone number',
     'AddDescriptionOfTheNumber'		=> 'Add description of the number',
     'EditDescriptionOfTheNumber'	=> 'Edit description of the number',
-    'GDSupportIsDisabled'		=> 'GD support is disabled. See <a href="http://www.php.net/manual/en/ref.image.php" target="_blank">PHP documentation!</a>',
-	'MYSQLSupportIsDisabled'		=> 'MYSQL support is disabled. See <a href="http://www.php.net/manual/en/ref.image.php" target="_blank">PHP documentation!</a>',
-	'PCRESupportIsDisabled'		=> 'PCRE support is disabled. See <a href="http://www.php.net/manual/en/ref.image.php" target="_blank">PHP documentation!</a>',	
+    'GDSupportIsDisabled'		=> 'PHP GD support is not installed. See <a href="http://www.php.net/manual/en/ref.image.php" target="_blank">PHP documentation!</a>',
+    'MYSQLSupportIsDisabled'		=> 'PHP MYSQL support is not installed. See <a href="http://www.php.net/manual/en/ref.image.php" target="_blank">PHP documentation!</a>',
+    'PCRESupportIsDisabled'		=> 'PHP PCRE support is not installed. See <a href="http://www.php.net/manual/en/ref.image.php" target="_blank">PHP documentation!</a>',	
     'AllSchedules'			=> 'All schedules',
     'RelativeQuantityOfCalls'		=> 'Relative quantity of calls',
     'DurationOfCalls'			=> 'Duration of calls',
