@@ -9,23 +9,27 @@
 include("../conf.inc.php");
 
 require $poll_path."/include/config.inc.php";
+
+/* 
 require $poll_path."/include/$POLLDB[class]";
 require $poll_path."/include/class_poll.php";
 require $poll_path."/include/class_pollcomment.php";
 $CLASS["db"] = new polldb_sql;
 $CLASS["db"]->connect(); 
-
+ 
 $php_poll = new poll();
-
+*/
 /* poll */ 
+/*
 $php_poll->set_template_set("plain");
 $php_poll->set_max_bar_length(100);
 $php_poll->set_max_bar_height(10);
 echo $php_poll->poll_process(7);
 
 $php_comm = new pollcomment();
-
+*/
 /* poll comments */
+/*
 $php_comm->set_template("poll_comment");
 $php_comm->set_comments_per_page(5);
 $php_comm->set_date_format("d/m/Y H:i");
@@ -33,7 +37,7 @@ $php_comm->data_order_by("time","desc");
 echo $php_comm->view_poll_comments(7);
 echo $php_comm->get_comment_pages(7); 
 
-
+ */
 ?>
     </td>
 </tr>
