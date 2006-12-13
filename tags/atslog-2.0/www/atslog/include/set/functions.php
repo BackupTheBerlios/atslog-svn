@@ -165,7 +165,7 @@ function VectorOfCall($vector){
     // 4  - Исключить сотовую связь
     $result[4]=" AND (calls.number $NOT_REGEXP '".$MobileCallsR."')";
     // 5  - Исключить сотовую связь и городские
-    $result[5]=" AND ((calls.number $REGEXP '".$LongDistanceCalls."') OR (calls.number $REGEXP '".$InternationalCalls."'))";
+    $result[5]=" AND (calls.number $NOT_REGEXP '".$LocalCalls."') AND (calls.number $NOT_REGEXP '".$MobileCallsR."')";
     // 6  - Исключить межгород и сотовую связь
     $result[6]=" AND ((calls.number $REGEXP '".$LocalCalls."' OR calls.number $REGEXP '".$InternationalCalls."'))";
     // 7  - Исключить городские, межгород и сотовую
