@@ -614,7 +614,7 @@ esac
  echo checking for config file path in manuals:
  sed \
  -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
- < ./USING > ./tmp/USAGE
+ < ./USAGE > ./tmp/USAGE
  sed \
  -e "s%/usr/local/etc/atslog.conf%$ETC_PREFX/atslog.conf%g" \
  < ./man/en/atslogd.8 > ./tmp/man/en/atslogd.8
