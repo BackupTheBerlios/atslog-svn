@@ -1,49 +1,6 @@
-<div align="center"><font size=+2>СКРИНШОТЫ. ТЕСТОВЫЙ ВАРИАНТ СТАТИСТИКИ.</font></div>
-<p>
-<table align=right width="220" cellspacing=3 cellpadding=3 border=0>
-<tr>
-    <td>
-<?
+<div align="center"><font size="+2">СКРИНШОТЫ. ТЕСТОВЫЙ ВАРИАНТ СТАТИСТИКИ.</font></div>
 
-/* path */ 
-include("../conf.inc.php");
-
-require $poll_path."/include/config.inc.php";
-
-/* 
-require $poll_path."/include/$POLLDB[class]";
-require $poll_path."/include/class_poll.php";
-require $poll_path."/include/class_pollcomment.php";
-$CLASS["db"] = new polldb_sql;
-$CLASS["db"]->connect(); 
- 
-$php_poll = new poll();
-*/
-/* poll */ 
-/*
-$php_poll->set_template_set("plain");
-$php_poll->set_max_bar_length(100);
-$php_poll->set_max_bar_height(10);
-echo $php_poll->poll_process(7);
-
-$php_comm = new pollcomment();
-*/
-/* poll comments */
-/*
-$php_comm->set_template("poll_comment");
-$php_comm->set_comments_per_page(5);
-$php_comm->set_date_format("d/m/Y H:i");
-$php_comm->data_order_by("time","desc");
-echo $php_comm->view_poll_comments(7);
-echo $php_comm->get_comment_pages(7); 
-
- */
-?>
-    </td>
-</tr>
-</table>
-</p>
-<p>Вы можете ознакомиться с реальным использованием программы ATSlog. Для этого перейдите по ссылке с соответствующего скриншота. Для входа используйте имя пользователя <i>atslog</i>, пароль <i>atslog</i></p>
+<p>Вы можете ознакомиться с реальным использованием программы ATSlog. Для этого перейдите по ссылке с соответствующего скриншота. Для входа используйте имя пользователя <tt>atslog</tt>, пароль <tt>atslog</tt></p>
 <p style="text-align:center">
 <a target="_blank" href="http://atslog.dp.ua/atslog/calls/index.php?incoming=1&amp;type=IntAll&amp;day=01&amp;mon=12&amp;year=2006&amp;day2=31&amp;mon2=12&amp;year2=2006&amp;search=&amp;newStatus=TRUE">Отчёт по внутренним телефонам</a><br>
 <img style="border:1px solid #000" src="/img/screenshots/by_internal.png"  width="650" height="691"><br><br>
@@ -53,8 +10,3 @@ echo $php_comm->get_comment_pages(7);
 <img style="border:1px solid #000" src="/img/screenshots/by_all.png"  width="650" height="691"><br>
 </p>
 
-<br>                                                  
-Если вы заметили орфографическую или стилистическую   
-ошибку на этой странице, просто выделите мышью текст с
-ошибкой и нажмите Ctrl+Enter. Выделенный текст будет  
-немедленно отослан вебмастеру.
