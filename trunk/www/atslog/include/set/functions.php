@@ -40,7 +40,7 @@ $InternationalCalls='^810.+';
 $MobileCallsPrefix="^8";
 $MobileCallsSuffix=".+";
 if(!isset($MobileCodes)) { // default codes for the ukrainian mobile operators
-    $MobileCodes=array("050", "095", "066", "067","068", "097", "096","039","063");
+    $MobileCodes=array("050", "095", "066", "099", "067", "098", "068", "097", "096","039","063", "093", "094", "092");
 }
 $MobileCallsR=CreateMobileR($MobileCodeCodes);
 // Long distance codes of mobile operators.
@@ -55,19 +55,21 @@ function CreateMobileR($MobileCodeCodes){
     return $query;
 }
 /*
- 050, 095, 066, 067,068, 097, 096,039,063
+ 050, 095, 066, 099, 067, 098, 068, 097, 096, 039, 063, 093
 
 UMC Ukraine - 050, 095
-JEANS Ukraine - 066
+JEANS Ukraine - 066 099
 
-Kyivstar Ukraine - 067,
+Kyivstar Ukraine - 067,098
 
 DJUICE Ukraine -  097, 096
 
 Beeline UA, Wellcome, Moby - 068
 GolgenTelecom Ukaraine - 039
 
-Life:) Ukraine - 063
+Life:) Ukraine - 063,093
+Intertelecom Ukraine - 094
+Telesystems of Ukraine - 092
 
 Ã“— Russia - 910, 916, 917
 ¡ËÀ‡ÈÌ Russia - 903, 905
