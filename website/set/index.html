@@ -23,10 +23,8 @@ include_once $_SERVER['DOCUMENT_ROOT']."/poll/poll_cookie.php";
 		body {
 			text-decoration : none;
 			margin: 20px;
+			
 		}
-<?
-if ($toprint!="yes"){
-echo ("
 		A {
 			text-decoration : none;
 		}
@@ -43,16 +41,6 @@ echo ("
 			color:#FF6600;
 			text-decoration : none;
 		}
-");
-}else{
-echo("
-		A {
-			text-decoration : none;
-			color:#000000;
-		}
-");
-}
-?>
 		input{
 			background :#F2F2F2;
 		}
@@ -73,6 +61,8 @@ echo("
 		.content { 
 			margin-left:50px;
 			margin-right:50px;
+			font-family: Verdana;
+			Font-size: 13px;
 		} 
 		P {
 			text-align : justify;
