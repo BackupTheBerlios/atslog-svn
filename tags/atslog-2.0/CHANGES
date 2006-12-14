@@ -6,6 +6,8 @@
 
 
 === ATSLOG 2.0-DEV ===
++ (samm) Added possibility to redefine mobile operator codes in the 
+         configuration file.
 # (samm) Fixed filter query bug. On query with 'exclude city calls' AND
          'exclude cellular calls' result was incorrect. Filter fixed.
 # (samm) now atslogd set CLOCAL flag on serial device before opening 

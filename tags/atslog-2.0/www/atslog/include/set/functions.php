@@ -32,27 +32,51 @@ if (empty($PHP_AUTH_PW)) {
 // Дополнения к SQL запросу в которых описываются типы звонков
 // ----------------------------------------------------------------------------
 //
+
 $LocalCalls='^[^8]';
 $LongDistanceCalls='^8.+';
 $InternationalCalls='^810.+';
-// Long distance codes of mobile operators.
-// Международные коды мобильных операторов.
-$MobileCallsR='^8050.+|^8066.+|^8067.+|^8068.+|^8097.+|^8039.+|^8910.+|^8916.+|^8917.+|^8903.+|^8905.+|^8926.+|^8901.+';
-/*
 
-UMC Ukraine - 050
-JEANS Ukraine - 066
-Kyivstar Ukraine - 067
-DJUICE Ukraine - 068, 097
+$MobileCallsPrefix="^8";
+$MobileCallsSuffix=".+";
+if(!isset($MobileCodes)) { // default codes for the ukrainian mobile operators
+    $MobileCodes=array("050", "095", "066", "099", "067", "098", "068", "097", "096","039","063", "093", "094", "092");
+}
+$MobileCallsR=CreateMobileR($MobileCodeCodes);
+// Long distance codes of mobile operators.
+
+function CreateMobileR($MobileCodeCodes){
+    global $MobileCallsPrefix,$MobileCallsSuffix;
+
+    foreach ($MobileCodeCodes as $key=>$v){
+	$MobileCodeCodes[$key]=$MobileCallsPrefix.$v.$MobileCallsSuffix;
+    }
+    $query=implode("|",$v);
+    return $query;
+}
+/*
+ 050, 095, 066, 099, 067, 098, 068, 097, 096, 039, 063, 093
+
+UMC Ukraine - 050, 095
+JEANS Ukraine - 066 099
+
+Kyivstar Ukraine - 067,098
+
+DJUICE Ukraine -  097, 096
+
+Beeline UA, Wellcome, Moby - 068
 GolgenTelecom Ukaraine - 039
-Life:) Ukraine - 063
+
+Life:) Ukraine - 063,093
+Intertelecom Ukraine - 094
+Telesystems of Ukraine - 092
+
 МТС Russia - 910, 916, 917
 БиЛайн Russia - 903, 905
 Мегафон Russia - 926
 МСС Russia - 901
 
 */
-
 
 
 // ----------------------------------------------------------------------------
