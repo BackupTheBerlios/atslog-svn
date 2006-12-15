@@ -1,6 +1,6 @@
 NAME
 
-ATSlog предоставляет удобный интерфейс с доступом через web-браузер для просмотра и анализа звонков различных моделей АТС
+ATSlog gives the convenient interface for viewing and analysing bells of various models PBX.
 
 SYNOPSIS
 
@@ -8,23 +8,23 @@ atslogmaster [start] [stop] [restart] [writedb] [rotate] [cleardb] [alltodb]
 
 DESCRIPTION
 
-atslogmaster - управляет серверной частью ATSlog
+atslogmaster - control ATSlog daemon
 
 OPTIONS
 
-start			запуск ATSlog. 
-stop			останов. 
-restart			перезапуск. 
+start			start ATSlog.
+stop			stop.
+restart			restart.
 reload			synonym of "restart"
-writedb			запись последних звонков в базу SQL сервера. 
-rotate			ротация текстовых лог-файлов.
-cleardb			очистка таблиц SQL сервера с информацией о звонках.
-alltodb			запись всех (в т.ч. из архивов) звонков в базу SQL сервера. Данные о текущих звонках из файла			 /var/log/atslog/currentcalls.log не добавляются из-за возможного дублирования  информации. Если есть необходимость записи текущих звонков, то воспользуйтесь функцией writedb
+writedb			write latest calls to the SQL database. 
+rotate			log file rotation.
+cleardb			clear calls information from SQL database.
+alltodb			Record of all (archived) calls to the SQL database. Data about current calls from a file/var/log/atslog/currentcalls.log are not added because of possible duplication of the information. Ifyou need to transfer current calls - use writedb command
 			    
 
 EXAMPLES
 
-atslogmaster start - запуск демона для сбора данных.
+atslogmaster start - start daemon to collect PBX data
 
 SEE ALSO
 
