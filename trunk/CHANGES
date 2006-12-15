@@ -6,6 +6,10 @@
 
 
 === ATSLOG 2.0-DEV ===
+
+2006-DEC-15: New atslog-2.0-pre3 stable snapshot released
+
++ (hiddenman) Added new ukrainian mobile operator codes
 + (samm) Added possibility to redefine mobile operator codes in the 
          configuration file.
 # (samm) Fixed filter query bug. On query with 'exclude city calls' AND
