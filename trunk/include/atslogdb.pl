@@ -10,7 +10,7 @@ use POSIX qw(locale_h); # Для правильной обработки языковых настроек.
 
 $config_file="/usr/local/etc/atslog.conf";
 
-open(IN,$config_file) || die print("Can't open config file $config_file.");
+open(IN,$config_file) || die print("Can't open config file $config_file.\n");
 while(<IN>) {
     next if /^#/;
     chomp;
@@ -27,7 +27,7 @@ if ( ! -f $langfile){
     $langfile=$langfileprefix."en_US";
 }
 
-open(LN,$langfile) || die print("Can't open language file $langfile.");
+open(LN,$langfile) || die print("Can't open language file $langfile.\n");
 while(<LN>) {
     next if /^#/;
     chomp;
@@ -92,37 +92,23 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
     if($vars{sqltype}  =~ /MySQL/i){
         $dbh->{mysql_auto_reconnect} = 1;
     }
-    if ($vars{model} =~ /SKP-816/i){
-        require "$vars{libdir}/skp-816.lib";
-    }elsif($vars{model} =~ /KX-TA308RU/i or $vars{model} =~ /KX-TA308/i or $vars{model} =~ /KX-TA616RU/i){
-        require "$vars{libdir}/kx-ta616-308-ru.lib";
-    }elsif ($vars{model} =~ /KX-TD1232/i){
-	require "$vars{libdir}/kx-td1232.lib";
-    }elsif ($vars{model} =~ /ALCATEL-4200/i){
-	require "$vars{libdir}/alcatel-4200.lib";
-    }elsif ($vars{model} =~ /KX-TD816RU/i){
-	require "$vars{libdir}/kx-td816ru.lib";
-    }elsif($vars{model} =~ /GD-320/i){
-        require "$vars{libdir}/gd-320.lib";
-    }elsif($vars{model} =~ /HICOM-350H/i){
-        require "$vars{libdir}/hicom-350h.lib";
-    }elsif($vars{model} =~ /HICOM-250/i){
-            require "$vars{libdir}/hicom-250.lib";
-     }elsif($vars{model} =~ /GDK-100/i or $vars{model} =~ /GDK-162/i){
-        require "$vars{libdir}/gdk-100.lib";
-    }elsif($vars{model} =~ /NX-820/i){
-        require "$vars{libdir}/nx-820.lib";
-    }elsif($vars{model} =~ /GHX-46/i){
-        require "$vars{libdir}/ghx-46.lib";
-     }elsif ($vars{model} =~ /GPS-6A/i){
-	require "$vars{libdir}/gps-6a.lib";
-     }elsif($vars{model} =~ /LDK-100/i or $vars{model} =~ /LDK-300/i){
-        require "$vars{libdir}/ldk-300.lib";
+    
+    
+    if($vars{model} =~ /KX-TA308RU/i or $vars{model} =~ /KX-TA308/i or $vars{model} =~ /KX-TA616RU/i){
+	$vars{model}="kx-ta616-308-ru";
+    }
+
+    $libname="$vars{libdir}/".lc($vars{model}).".lib";
+
+    if ( (-e $libname) && (-r $libname) ) 
+    {
+	require $libname;
     }else{
         $ERRORMESSAGE="$vars{msg31}";
         echoerrors();
 	exit $toexit;
     }
+    
     parsecurcalls();
 
     if($callsCount == 0){                                                           
