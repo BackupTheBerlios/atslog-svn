@@ -63,10 +63,14 @@ include_once $_SERVER['DOCUMENT_ROOT']."/poll/poll_cookie.php";
 			margin-right:50px;
 			font-family: Verdana;
 			Font-size: 13px;
+			
 		} 
 		P {
 			text-align : justify;
 			text-indent:15pt;
+		}
+		.ruler{
+	 	    width:100%;background-color:#8F8F8F;height:3px;
 		}
 	</style>
 </head>
@@ -74,7 +78,7 @@ include_once $_SERVER['DOCUMENT_ROOT']."/poll/poll_cookie.php";
 <?
 if ($toprint!="yes"){
 echo ("
-<table cellspacing=\"15\" cellpadding=\"0\" border=\"0\">
+<table align=\"center\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
 <tr>
     <td align=left><a href=\"http://www.atslog.dp.ua/\" title=\"Анализ и учет звонков различных моделей мини-АТС\"><img src=\"/img/atslog.logo.gif\" width=223 height=84 border=0 alt=\"Анализ и учет звонков различных моделей мини-АТС\"></a></td>
     <td valign=\"top\">
@@ -146,18 +150,19 @@ echo ("
 </tr>
 </table>
 
-
 ");
 }
 
 ?>
 <div class="content">
+<div class="ruler"></div>
 <?
+
 include("content.html");
 ?>
-</div>
 
-<hr>
+
+<div class="ruler"></div>
   <p style="text-align:center;">
     <a href="http://validator.w3.org/check?uri=referer"><img
         src="http://www.w3.org/Icons/valid-html401"
@@ -166,5 +171,6 @@ include("content.html");
        src="http://jigsaw.w3.org/css-validator/images/vcss" 
        alt="Valid CSS!"></a>
   </p>
+</div><!-- content -->
 </body>
 </html>
