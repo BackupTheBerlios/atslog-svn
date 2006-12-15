@@ -3,14 +3,12 @@
 #
 # Library for the Panasonic KX-TD500. 
 #
-# This PBX have 4 different log formats!
+# This PBX have 4 different log formats (A,B,C,D)!
 # This library try to found known format by checking valid regexp
 #
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2006
 #
 
-#$vars{nowrlog}="yes";
-parsecurcalls();
  
 sub parsecurcalls() {
 	while ($str=<>)
@@ -113,10 +111,10 @@ sub unitecurcallsTypeAB() {
 		$callsCount++;
 	}
 	
-	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
-#	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
-#	$sth = $dbh->prepare($ins_query);
-#	$sth->execute;	
+#	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;	
 }
 
 sub unitecurcallsTypeD() {
@@ -197,10 +195,10 @@ sub unitecurcallsTypeD() {
 		$callsCount++;
 	}
 	
-	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
-#	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
-#	$sth = $dbh->prepare($ins_query);
-#	$sth->execute;	
+#	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;	
 }
 
 sub unitecurcallsTypeC() {
@@ -279,9 +277,9 @@ sub unitecurcallsTypeC() {
 		$callsCount++;
 	}
 	
-	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
-#	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
-#	$sth = $dbh->prepare($ins_query);
-#	$sth->execute;
+#	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;
 }
 
