@@ -7,6 +7,10 @@
 
 === ATSLOG 2.0-DEV ===
 
++ (samm) Now library names are not hardcoded into atslogdb.pl
+         This allow user to add new library easer.
++ (samm) Added support for the Panasonic KX-TD500 PBX (untested) 
+
 2006-DEC-15: New atslog-2.0-pre3 stable snapshot released
 
 + (hiddenman) Added new ukrainian mobile operator codes
