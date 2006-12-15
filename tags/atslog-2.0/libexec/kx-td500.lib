@@ -1,0 +1,287 @@
+# ATSlog version 1.4 build 48 www.atslog.dp.ua
+# Copyright (C) 2003 Denis Suhov www.yamiyam.dp.ua
+#
+# Library for the Panasonic KX-TD500. 
+#
+# This PBX have 4 different log formats!
+# This library try to found known format by checking valid regexp
+#
+# (c) Alex Samorukov, samm@os2.kiev.ua, 2006
+#
+
+#$vars{nowrlog}="yes";
+parsecurcalls();
+ 
+sub parsecurcalls() {
+	while ($str=<>)
+	{
+		$stringNumber++;
+		# type C regexp
+		if ($str =~ /(\d{2}\/\d{2}\/\d{2}) (.{2}:\d{2}) (.{3}) (.{4})   (.{6}) (.{14}) (.{8}) (.{5}) (.{14}) (.{2})(\r)?$/){
+			unitecurcallsTypeC();
+		}
+		# type A and B regexp. We dont need "Ring" value
+		elsif ($str =~ /(\d{2}\/\d{2}\/\d{2}) (.{2}:\d{2}) (.{3}) (.{4})   (.{6}) (.{19}) (.{4}) (.{8}) (.{10}) (.{2})(\r)?$/){
+			unitecurcallsTypeAB();
+		}
+		# Type D
+		elsif ($str =~ /(\d{2}\/\d{2}\/\d{2}) (.{2}:\d{2}) (.{3}) (.{4})   (.{6}) (.{4}) (.{44}) (.{5}) (.{8}) (.{5})    (.{10}) (.{2})(\r)?$/){
+			unitecurcallsTypeD();
+		}else{
+			if ($vars{nowrlog} =~ /yes/i){
+				if ($str !~ /^$/){
+					print $str;
+				};
+			};
+		};
+	};
+};
+
+sub unitecurcallsTypeAB() {
+	$date=$1;
+	$time=$2;
+	$type=$3;
+	$ext_number=$4;
+	$line=$5;
+	$dialed_number=$6;
+	$rings=$7; # not present in type B
+	$call_duration=$8;
+	$business_code=$9;
+	$mode=$10;
+	#print("type AB $1\n");
+	# mandatory fields
+	#$TimeOfCall
+	#$Forwarded
+	#$Internally
+	#$CO
+	#$Way
+	#$Number
+	#$Duration
+	
+	# bonus
+	# $Code
+	
+	$co=substr($line,1);
+
+	
+	if ($dialed_number=~/(\d+)/) 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+
+	
+	if($dialed_number =~ /<INCOMING>/){
+		$way='1';
+	}else{
+		$way='2';
+	};
+	
+	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
+		$Month=$2;
+		$Day=$1;
+		$Year=$3+2000;
+		$timeofcall = "$Year-$Month-$Day $time:00";
+	}
+
+	
+	$internally=substr($ext_number,1);
+	if ($call_duration=~(/(\d{2}):(\d{2}):(\d{2})/)) {
+		$duration = (($1*60*60)+($2*60)+$3);
+	}
+
+	# I am not sure about this
+	if($mode=~/TR/){
+		$forwarded=1;
+	}
+	else {
+		$forwarded =0;
+	}
+	
+	$forwarder=0;
+	
+	if($business_code=~/(\d+)/){
+		$code=$1;
+	}
+	else {
+		$code=0;
+	}
+	if ($timeofcall ne ""){
+		# We need to check that we had records for database
+		$callsCount++;
+	}
+	
+	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
+#	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+#	$sth = $dbh->prepare($ins_query);
+#	$sth->execute;	
+}
+
+sub unitecurcallsTypeD() {
+	$date=$1;
+	$time=$2;
+	$type=$3;
+	$ext_number=$4;
+	$line=$5;
+	# what is this?
+	$DirectoryNumber=$6;
+	$dialed_number=$7;
+	$rings=$8; 
+	$call_duration=$9;
+	$cost=$10;
+	$business_code=$11;
+	$mode=$12;
+
+	# mandatory fields
+	#$TimeOfCall
+	#$Forwarded
+	#$Internally
+	#$CO
+	#$Way
+	#$Number
+	#$Duration
+	
+	# bonus
+	# $Code
+	
+	$co=substr($line,1);
+
+	
+	if ($dialed_number=~/(\d+)/) 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+
+	
+	if($dialed_number =~ /<INCOMING>/){
+		$way='1';
+	}else{
+		$way='2';
+	};
+	
+	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
+		$Month=$2;
+		$Day=$1;
+		$Year=$3+2000;
+		$timeofcall = "$Year-$Month-$Day $time:00";
+	}
+
+	
+	$internally=substr($ext_number,1);
+	if ($call_duration=~(/(\d{2}):(\d{2}):(\d{2})/)) {
+		$duration = (($1*60*60)+($2*60)+$3);
+	}
+
+	# I am not sure about this
+	if($mode=~/TR/){
+		$forwarded=1;
+	}
+	else {
+		$forwarded =0;
+	}
+	$forwarder=0;
+	
+	if($business_code=~/(\d+)/){
+		$code=$1;
+	}
+	else {
+		$code=0;
+	}
+	if ($timeofcall ne ""){
+		# We need to check that we had records for database
+		$callsCount++;
+	}
+	
+	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
+#	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+#	$sth = $dbh->prepare($ins_query);
+#	$sth->execute;	
+}
+
+sub unitecurcallsTypeC() {
+
+	$date=$1;
+	$time=$2;
+	$type=$3;
+	$ext_number=$4;
+	$line=$5;
+	$dialed_number=$6;
+	$call_duration=$7;
+	$cost=$8;
+	$business_code=$9;
+	$mode=$10;
+	
+	# mandatory fields
+	#$TimeOfCall
+	#$Forwarded
+	#$Internally
+	#$CO
+	#$Way
+	#$Number
+	#$Duration
+	
+	# bonus
+	# $Code
+	
+	$co=substr($line,1);
+
+	
+	if ($dialed_number=~/(\d+)/) 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+
+	
+	if($dialed_number =~ /<INCOMING>/){
+		$way='1';
+	}else{
+		$way='2';
+	};
+	
+	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
+		$Month=$2;
+		$Day=$1;
+		$Year=$3+2000;
+		$timeofcall = "$Year-$Month-$Day $time:00";
+	}
+
+	
+	$internally=substr($ext_number,1);
+	if ($call_duration=~(/(\d{2}):(\d{2}):(\d{2})/)) {
+		$duration = (($1*60*60)+($2*60)+$3);
+	}
+
+	# I am not sure about this
+	if($mode=~/TR/){
+		$forwarded=1;
+	}
+	else {
+		$forwarded =0;
+	}
+	$forwarder=0;
+	
+	if($business_code=~/(\d+)/){
+		$code=$1;
+	}
+	else {
+		$code=0;
+	}
+	if ($timeofcall ne ""){
+		# We need to check that we had records for database
+		$callsCount++;
+	}
+	
+	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
+#	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+#	$sth = $dbh->prepare($ins_query);
+#	$sth->execute;
+}
+
