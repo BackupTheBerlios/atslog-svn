@@ -1,51 +1,9 @@
-<div align="center"><font size=+2б\>ДОКУМЕНТАЦИЯ</font></div>
+<div class="header">Документация</div>
 
-<table align=right width="220" cellspacing=3 cellpadding=3 border=0>
-<tr>
-    <td>
-<?
-/* path */ 
-include("../conf.inc.php");
-
-require $poll_path."/include/config.inc.php";
-require $poll_path."/include/$POLLDB[class]";
-require $poll_path."/include/class_poll.php";
-require $poll_path."/include/class_pollcomment.php";
-$CLASS["db"] = new polldb_sql;
-$CLASS["db"]->connect(); 
-
-$php_poll = new poll();
-
-/* poll */ 
-$php_poll->set_template_set("plain");
-$php_poll->set_max_bar_length(100);
-$php_poll->set_max_bar_height(10);
-echo $php_poll->poll_process(5);
-
-$php_comm = new pollcomment();
-
-/* poll comments */
-$php_comm->set_template("poll_comment");
-$php_comm->set_comments_per_page(5);
-$php_comm->set_date_format("d/m/Y H:i");
-$php_comm->data_order_by("time","desc");
-echo $php_comm->view_poll_comments(5);
-echo $php_comm->get_comment_pages(5); 
-
-
-?>
-    </td>
-</tr>
-</table>
 
 <a href="/doc/installing/" title="Монтирование АТС и подключение к компьютеру">Монтирование и подключение</a><br>
 <a href="/doc/solder-up/" title="Схемы распайки кабеля для подключения АТС к компьютеру">Схемы распайки кабеля</a><br>
 <a href="/doc/setup/" title="установка и настройка программы ATSlog">Установка и настройка программы</a><br>
 <a href="/doc/updating/" title="обновление с предыдущих версий программы">Обновление предыдущих версий</a><br>
 <a href="/doc/using/" title="использование ATSlog">Использование ATSlog</a><br>
-<a href="/doc/deleting/" title="удаление ATSlog">Удаление программы</a><br>
-<br>
-Если вы заметили орфографическую или стилистическую   
-ошибку на этой странице, просто выделите мышью текст с
-ошибкой и нажмите Ctrl+Enter. Выделенный текст будет  
-немедленно отослан вебмастеру.
+<a href="/doc/deleting/" title="удаление ATSlog">Удаление программы</a><br><br>
