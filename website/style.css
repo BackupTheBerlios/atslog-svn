@@ -1,0 +1,54 @@
+.input { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 9pt}
+body {
+	text-decoration : none;
+	margin: 20px;
+	
+}
+DIV.header{text-align:center;font-size:15px;font-weight:bold;}
+A {
+	text-decoration : none;
+}
+A:hover{
+	color:#FF6600;
+	text-decoration : underline;
+}
+A.menu {
+	color:#E73030;
+	font-family : Verdana;
+	text-decoration : none;
+}
+A.menu:hover{
+	color:#FF6600;
+	text-decoration : none;
+}
+input{
+	background :#F2F2F2;
+}
+select{
+	background :#F2F2F2;
+}
+textarea{
+	background :#F2F2F2;
+}
+input.submit{
+	background :#E3E3E3;
+	BORDER-RIGHT: #B5B5B5 2px solid;
+	BORDER-TOP: #FBFBFB 2px solid;
+	BORDER-LEFT: #FBFBFB 2px solid;
+	BORDER-BOTTOM: #B5B5B5 2px solid;
+	font-family : Verdana;
+}
+.content { 
+	margin-left:50px;
+	margin-right:50px;
+	font-family: Verdana;
+	Font-size: 13px;
+	
+} 
+P {
+	text-align : justify;
+	text-indent:15pt;
+}
+.ruler{
+	width:100%;background-color:#8F8F8F;height:3px;
+}
