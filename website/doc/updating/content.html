@@ -1,109 +1,79 @@
-<div align="center"><font size=+2>ОБНОВЛЕНИЕ</font></div>
-<p>ОБНОВЛЕНИЕ с panalog-0.4 до atslog-<? echo $atslogver; ?>, а так же любой из версий ATSlog.</p>
+<div class="header">Обновление</div>
+<p>Обновление с panalog-0.4 до atslog-<? echo $atslogver; ?>, а так же любой из версий ATSlog.</p>
 
 <ol>
-<li><p>Остановить демона сбора логов:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>$ /usr/local/etc/rc.d/panaloginit.sh stop</i>
-</pre></td></tr></table>
-Или для всех версий ATSlog:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>$ atslogmaster stop</i>
-</pre></td></tr></table>
-</p>
+<li>Останавливаем демона сбора логов:<p>
+Для panalog:
+<pre>
+# /usr/local/etc/rc.d/panaloginit.sh stop
+</pre>
+<p>Или для всех версий ATSlog:
+<pre>
+# atslogmaster stop
+</pre>
 
-  <li><p>Скачайте и распакуйте <i><a href="<? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?>" title="архив ATSlog версии <? echo($atslogver); ?>">atslog-<? echo($atslogver); ?>.tar.gz</a></i>:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre><i>$ fetch <? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?></i>
-<i>$ tar vzxfmp atslog-<? echo($atslogver); ?>.tar.gz</i>
-</pre></td></tr></table>
-</p>
+  <li><p>Скачайте и распакуйте <i><a href="/get/" title="архив ATSlog версии <? echo($atslogver); ?>">atslog-<? echo($atslogver); ?>.tar.gz</a></i>:
+<pre>$ fetch <? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?>
 
-   
-  <li><p>Постройте новую систему с учетом обновлений. Будет автоматически 
+$ tar vzxfmp atslog-<? echo($atslogver); ?>.tar.gz
+</pre>
+
+<li>Постройте новую систему с учетом обновлений. Будет автоматически 
    произведён поиск файлов с предыдущими настройками.
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>cd atslog-<? echo $atslogver; ?></i>
-<i>make all</i>
-</pre></td></tr></table>
-	</p>
+<pre>
+$ cd atslog-<? echo $atslogver; ?>
 
-  <li><p>Можно внеси изменения по желанию пользователя в новый
-   конфигурационный файл
-   <i>./atslog.conf</i> , который будет собран с учетом данных из старых конфигурационных файлов,
-   имеющихся в системе. Обратите особое внимание на такие параметры как:
-   <i>$port, $speed, $fastwrite, $model</i>
-	</p>
+# make all
+</pre>
+<li>Можно внеси изменения по желанию пользователя в новый
+конфигурационный файл <tt>./atslog.conf</tt> , который будет собран с учетом
+данных из старых конфигурационных файлов, имеющихся в системе. Обратите особое 
+внимание на такие параметры как:  <tt>$port, $speed, $fastwrite, $model</tt>
 
-  <li><p>Деинсталлировать старую версию PanaLog:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>/usr/local/share/panalog/install.sh deinstall</i>
-</pre></td></tr></table>
-   При деинсталляции текстовые лог-файлы (из /var/log/panalog) НЕ удаляются!</p>
+  <li><p>Деинсталлировать старую версию.
+  <p>Для PanaLog:
+<pre>
+# /usr/local/share/panalog/install.sh deinstall
+</pre>
+При деинсталляции текстовые лог-файлы (из /var/log/panalog) НЕ удаляются!</p>
 
-   <p>Деинсталлировать старую версию ATSlog:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>cd /usr/local/share/atslog</i>
-<i>make deinstall</i>
-</pre></td></tr></table>
-   При деинсталляции текстовые лог-файлы (из /var/log/atslog) НЕ удаляются!
-	</p>
-
-  <li><p>Вернуться в директорию с установочными файлами и инсталлировать новую
-   версию, учитывая предыдущие настройки:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>make install</i>
-</pre></td></tr></table>
-	</p>
-
-  <li><p>При обновлении с PanaLog до ATSlog данные за текущий день из файла <i>calls.log</i>, которые <u><b>ещё не были внесены</b></u>
+   <p>Для ATSlog:
+<pre>
+# cd /usr/local/share/atslog
+# make deinstall
+</pre>
+При деинсталляции текстовые лог-файлы (из /var/log/atslog) НЕ удаляются!<br><br>
+<li>Вернуться в директорию с установочными файлами и инсталлировать новую
+версию, учитывая предыдущие настройки:
+<pre>
+# make install
+</pre>
+<li>При обновлении с PanaLog до ATSlog данные за текущий день из файла <i>calls.log</i>, которые <u><b>ещё не были внесены</b></u>
    в базы SQL сервера, перенесите (не скопируйте, а именно перенесите) в файл
    currentcalls.log. Этот файл находится в директории с остальными текстовыми
-   лог-файлами и служит для хранения текущих сеансов звонков.
-	</p>
-
-  <li><p>Обязательно в базы SQL сервера нужно заново внести данные из текстовых
+   лог-файлами и служит для хранения текущих сеансов звонков.<tr><tr>
+<li>Обязательно в базы SQL сервера нужно заново внести данные из текстовых
    лог-файлов. Это связано с изменением формата SQL таблиц.
    Сделать это можно следующим образом:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>atslogmaster cleardb # Очищаем таблицы от старой информации.</i>
-<i>atslogmaster alltodb # Запишем информацию о звонках из текстовых лог-файлов.</i>
-</pre></td></tr></table>
-	</p>
+<pre>
+# atslogmaster cleardb # Очищаем таблицы от старой информации.
+# atslogmaster alltodb # Запишем информацию о звонках из текстовых лог-файлов.
+</pre>
 
-  <li><p>Запустить демона сбора логов.
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>atslogmaster start</i>
-</pre></td></tr></table>
-	</p>
+  <li>Запустить демона сбора логов.
+<pre>
+# atslogmaster start
+</pre>
 </ol>
-<HR ALIGN="center">
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TABLE width="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
 <TR>
 	<TD WIDTH="33%" ALIGN="left" VALIGN="top"><a href="/doc/setup/" title="установка и настройка программы ATSlog" ACCESSKEY="P">Предыдущий</a></TD>
 	<TD WIDTH="34%" ALIGN="center" VALIGN="top"><A HREF="/doc/" ACCESSKEY="H">Разделы</A></TD>
 	<TD WIDTH="33%" ALIGN="right" VALIGN="top"><a href="/doc/using/" title="использование ATSlog" ACCESSKEY="N">Следующий</a></TD>
 </TR>
 <TR>
-	<TD WIDTH="33%" ALIGN="left" VALIGN="top">установка и настройка программы</TD>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top">Установка и настройка программы</TD>
 	<TD WIDTH="34%" ALIGN="center" VALIGN="top">&nbsp;</TD>
-	<TD WIDTH="33%" ALIGN="right" VALIGN="top">использование ATSlog</TD>
+	<TD WIDTH="33%" ALIGN="right" VALIGN="top">Использование ATSlog</TD>
 </TR>
 </TABLE>

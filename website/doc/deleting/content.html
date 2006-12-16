@@ -1,44 +1,43 @@
-<div align="center"><font size=+2>УДАЛЕНИЕ ПРОГРАММЫ</font></div>
-Деинсталляция ATSlog. Пошаговая инструкция.                                    
-
+<div class="header">Удаление программы</div>
+<p>Деинсталляция ATSlog. Пошаговая инструкция.                                    
 <ol>
-<li>Остановите ATSlog:<br>
-   <i>atslogmaster stop</i>
-<br>
-<br>
+<li>Остановите ATSlog:
+<pre>
+# atslogmaster stop
+</pre>
+
 </li>
                                                                                
-<li>Перейдите в каталог, описанный параметром $sharedir конфигурационного файла  
+<li>Перейдите в каталог, описанный параметром <tt>$sharedir</tt> конфигурационного файла  
    (по умолчанию это директория /usr/local/share/atslog) и выполните команду:<br>
-   <i>make deinstall</i>
+<pre>
+# make deinstall
+</pre>
+При деинсталляции скрипт проверит наличие файлов с рабочей информацией для того, 
+чтобы ничего лишнего не удалить.                                            
 <br>
 <br>
-   При деинсталляции скрипт проверит наличие файлов с рабочей информацией для того, 
-   чтобы ничего лишнего не удалить.                                            
+Текстовые лог-файлы не удаляются ( всё содержимое каталога                   
+описанного параметром <tt>$logdir</tt> в конфигурационном файле; по умолчанию
+это директория /var/log/atslog ). Не удаляются директории, если они содержат 
+любые файлы, не принадлежащие программе ATSlog.
 <br>
 <br>
-   Текстовые лог-файлы не удаляются ( всё содержимое каталога                   
-   описанного параметром $logdir в конфигурационном файле; по умолчанию
-   это директория /var/log/atslog ). Не удаляются директории, если они содержат 
-   любые файлы, не принадлежащие программе ATSlog.
+Данные, содержащиеся в таблицах SQL сервера, не удаляются.
 <br>
 <br>
-	Данные, содержащиеся в таблицах SQL сервера, не удаляются.
-<br>
-<br>
-   Обратите внимание, что при деинсталляции программы PID-файл ( /var/run/atslog.pid ) не удаляется.
+Обратите внимание, что при деинсталляции программы PID-файл ( /var/run/atslog.pid ) не удаляется.
 <br>
 <br>
 </li>
-<HR ALIGN="center">
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" width="100%">
 <TR>
 	<TD WIDTH="33%" ALIGN="left" VALIGN="top"><a href="/doc/using/" title="использование ATSlog" ACCESSKEY="P">Предыдущий</a></TD>
 	<TD WIDTH="34%" ALIGN="center" VALIGN="top"><A HREF="/doc/" ACCESSKEY="H">Разделы</A></TD>
 	<TD WIDTH="33%" ALIGN="right" VALIGN="top">&nbsp;</TD>
 </TR>
 <TR>
-	<TD WIDTH="33%" ALIGN="left" VALIGN="top">обновление предыдущих версий</TD>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top">Обновление предыдущих версий</TD>
 	<TD WIDTH="34%" ALIGN="center" VALIGN="top">&nbsp;</TD>
 	<TD WIDTH="33%" ALIGN="right" VALIGN="top">&nbsp;</TD>
 </TR>
