@@ -39,7 +39,7 @@ install: all include/atslog.conf
 	@${CP} -r www/ ${WWW_ROOT}/atslog
 	@${ECHO} "Installing atslog libraries to the ${LIBEXEC_DIR}/atslog directory"
 	@${MKDIR} -p ${LIBEXEC_DIR}/atslog
-	@${CP} -r libexec/ ${LIBEXEC_DIR}/atslog/
+	@${CP}  libexec/* ${LIBEXEC_DIR}/atslog/
 	@${ECHO} "Installing atslog binaries to the ${BIN_DIR} directory"
 	@${MKDIR} -p ${BIN_DIR}
 	@${CP} atslogd/atslogd include/atslogcleardb.pl include/atslogdaily include/atslogdb.pl include/atslogmaster include/atslogrotate ${BIN_DIR}
