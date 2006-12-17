@@ -6,21 +6,21 @@ AC_PREREQ(2.59)
 AC_INIT(atslog, 2.0.3, samm@os2.kiev.ua)
 
 
-AC_CONFIG_SRCDIR([src/atslogd/atslogd.h])
+AC_CONFIG_SRCDIR([atslogd/atslogd.h])
 #AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_MAKE_SET
-#AC_PROG_AWK
-#AC_PROG_RM
-
+AC_PATH_PROGS(RM,rm,rm)
+AC_PATH_PROGS(CP,cp,cp)
+AC_PATH_PROGS(MKDIR,mkdir,mkdir)
+AC_PATH_PROGS(ECHO,echo,echo)
 
 AC_PROG_PERL_VERSION(5.6.0,,AC_MSG_ERROR(atslog require perl>=5.6.0))
 AC_PROG_PERL_MODULES(Sys::Syslog,,AC_MSG_ERROR(atslog requires SYS:Syslog))
 AC_PROG_PERL_MODULES(DBI,,AC_MSG_ERROR(atslog requires DBI))
 AC_PROG_PERL_MODULES(POSIX,,AC_MSG_ERROR(atslog requires POSIX))
-# AM_MISSING_PROG(YYY, yyy)
 
 
 AC_ARG_VAR(ATSLOG_DB_HOST,[Hostname where ATSlog database located])
@@ -40,13 +40,18 @@ if test "$ATSLOG_DB_USER" == ""; then
     AC_SUBST(ATSLOG_DB_USER,[atslog])
 fi
 
-AC_ARG_WITH(webdir,
-    [  --with-webdir=<path>       prefix of web directory],
-    [WEB_PREFIX=$with_webdir],
-    AC_MSG_ERROR([You must call configure with the --with-webdir option.
-    This tells configure where to install PHP and web files and scripts.
-    e.g. --with-webdir=/var/www/html/atslog or --with-mysql=/usr/local/www/atslog])
-)
+
+dnl
+dnl WWW root directory
+dnl
+AC_ARG_WITH(wwwroot, AC_HELP_STRING([--with-wwwroot=DIR], [Set the WWW root directory]),
+	  WWW_ROOT="$withval", WWW_ROOT="$localstatedir/www")
+
+AC_SUBST(WWW_ROOT)
+
+#if test "$WWW_ROOT" == ""; then
+#    AC_SUBST(WWW_ROOT,[$(prefix)/www])
+#fi
 			  
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lwrap':
