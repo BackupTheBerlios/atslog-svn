@@ -11,9 +11,6 @@
 # Dont change this values.
 #
 build=@buildnumber@
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-localstatedir=@localstatedir@
 
 #
 # The password for the user $sqlmasteruser

@@ -73,6 +73,12 @@ AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([bzero gethostbyname inet_ntoa memset socket strcasecmp strchr strerror strncasecmp strspn])
 
-AC_CONFIG_FILES([Makefile])
-AC_OUTPUT
+AC_CONFIG_FILES(
+[Makefile 
+include/atslogcleardb.pl include/atslogdaily 
+include/atslogdb.pl  include/atslogmaster include/atslogrotate
+]
+)
 
+AC_OUTPUT
+AC_CONFIG_COMMANDS_POST[chmod +x include/atslogcleardb.pl include/atslogdaily include/atslogdb.pl  include/atslogmaster include/atslogrotate]
