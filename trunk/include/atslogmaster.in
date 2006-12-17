@@ -162,7 +162,7 @@ stoploging(){
 	if [ -f $pidfile ];then
 	    rm -f $pidfile
 	fi
-	kill -- -$KILLATSLOGDpid 1>/dev/null 2>/dev/null
+	kill $KILLATSLOGDpid 1>/dev/null 2>/dev/null
 	RETURNKILL=$?
 	if [ $RETURNKILL -eq 0 ]
 	then
