@@ -7,10 +7,13 @@
 # from a sign "=") is not allowed
 #
 
-# ATSlog build number.
-# Dont change this value.
+# ATSlog variables.
+# Dont change this values.
 #
 build=@buildnumber@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+localstatedir=@localstatedir@
 
 #
 # The password for the user $sqlmasteruser
@@ -90,20 +93,20 @@ parity=n
 stopbits=1
 
 # Directory with executed files of the program
-bindir=/usr/local/bin
+bindir=@bindir@
 
 # the Directory with files of libraries (Perl modules) supports
 # various PBX models
 
-libdir=/usr/local/libexec/atslog
+libdir=@libexecdir@/atslog
 
 # Text-log files directory
 #
-logdir=/var/log/atslog
+logdir=@localstatedir@/log
 
 # Additional ATSlog files directory
 #
-sharedir=/usr/local/share/atslog
+sharedir=@datadir@/atslog
 
 # Language file directory. Located in $sharedir
 
@@ -121,17 +124,17 @@ masterscript=atslogmaster
 
 # Init script of the program (system start & stop)
 #
-initscript=/usr/local/etc/rc.d/atslogdinit.sh
+initscript=@sysconfdir@/rc.d/atslogdinit.sh
 
 # Monthly log rotate script
 #
-monthlyscript=/usr/local/etc/periodic/monthly/atslogrotate
+monthlyscript=@bindir@/atslogrotate
 
 # daily script called for gathering the information from text file and
 # making records in the SQL server table. 
 # This script is activated only if parameter $fastwrite=no
 
-dailyscript=/usr/local/etc/periodic/daily/atslogdaily
+dailyscript=@bindir@/atslogdaily
 
 # The script transferring the information on calls to the SQL server
 #
@@ -187,7 +190,7 @@ startlogfile=atstart.log
 # PID file.
 # Its not only the PID, but GPID of the running daemons.
 #
-pidfile=/var/run/atslogd.pid
+pidfile=@localstatedir@/run/atslogd.pid
 
 # How many months to store text log files specified with
 # $callslogfile, $notwritelog and $startlogfile.
