@@ -1,123 +1,78 @@
-<div align="center"><font size=+2>ЧаВО. Часто задаваемые ВОпросы. FAQ.</font></div>
-<ol>
-	<li>ATSlog работает, но в текстовый лог-файл сыпется непонятный мусор вместо строк с описанием звонков. В чём причина?
-		<dl>
-			<ul>
-				<li>Объяснение причин:
-					<ol>
-						<ul>
-							<li>Скорость порта АТС и скорость порта на компьютере не согласованы.
-						</ul>
-					</ol>
-				</li>
-				<li>Решение задачи:
-						<ol>
-							<ul>
-								<li>Измените параметр $speed в конфигурационном файле.<i>/usr/local/etc/atslog.conf</i> Смотрите также остальные параметры настройки порта, а именно <i>$charsize, $parity, $stopbits</i>. Параметры порта можно уточнить в документации к АТС</li>
-							</ul>
-						</ol>
-
-				</li>
-			</ul>
-		</dl>
-	</li>
-	<li>При записи информации из текстового лог-файла в БД SQL сервера программа выдаёт следующее сообщение:
-<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre><i>
-Внимание! Не было передано SQL серверу ни одной записи из сканируемого
-лог-файла. Возможно, это вызвано ошибкой.
-</i>
-</pre></td></tr></table>
-
-		<dl>
-			<ul>
-				<li>Объяснение причин:
-					<ol>
-						<ul>
-							<li>Не верно указана модель АТС в параметре $model конфигурационного файла.
-							<li>Так же возможен случай, когда текстовый лог-файл не содержит строк с данными для АТС.
-						</ul>
-					</ol>
-				</li>
-			</ul>
-		</dl>
-	</li>
-	<li>Как можно импортировать данные в ATSlog из сохранённого ранее текстового лог-файла?
-		<dl>
-			<ul>
-				<li>Решение задачи:
-						<ol>
-							<ul>
-								<li>Копировать данные в файл <i>/var/log/atslog/calls.log</i> (это файл по умолчанию; более точно смотрите параметр <i>$callslogfile</i> конфигурационного файла <i>/usr/local/etc/atslog.conf</i>)</li>
-								<li>Используйте функцию записи всех звонков в базу SQL сервера:
-<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre><i>
-atslogmaster alltodb
-</i>
-</pre></td></tr></table>
-
-								 </li>
-							</ul>
-						</ol>
-
-				</li>
-			</ul>
-		</dl>
-
-	<li>ATSlog запускается, но ничего не происходит, и данные с мини-АТС не записываются. В списке процессов присутствует два демона atslogd. В чём причина?
-		<dl>
-			<ul>
-				<li>Объяснение причины: Нет связи демона с АТС.</li>
-				<li>Решение проблемы: проверьте параметр <i>$port</i> конфигурационного файла <i>/usr/local/etc/atslog.conf</i> или убедитесь в правильности соединения кабеля от мини-АТС к компьютеру. Отсутствие связи также может быть вызвано неправильной распайкой кабеля.<br>
-				</li>
-			</ul>
-		</dl>
-
-	<li>При инсталляции программы с использованием MySQL сервера на другой машине, отличной от 'localhost' ATSlog выдаёт следующее сообщение:<br>
-<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre><i>
+<div class="header">Frequently Asked Questions FAQ.</div>
+<ul>
+<li><b>ATSlog works, but the text log file if being filled with some garbage instead of lines with call descriptions. What is the reason?</b></li>
+<i>Possible reason:</i><br>
+<ul>
+<li>The PBX port and computer port rates mismatch.</li>
+</ul>
+<i>Solution:</i><br>
+<ul>
+<li>
+Change the parameter <tt>$speed</tt> in the config file <tt>/usr/local/etc/atslog.conf</tt>
+Look up also for other port settings: <tt>$charsize, $parity, $stopbits</tt>.
+Port parameters can be taken from the documentation to the PBX.
+</li>
+</ul>
+<br>
+<li><b>When writing from the text log file into server SQL database the program issues the following warning:</b>
+<br><tt>Warning! No entries from the log file were parsed to the SQL server. This might has been caused by an error.</tt></li>
+<i>Possible reasons:</i>
+<ul>
+<li>Wrong PBX model in the $model parameter of the config file.
+<li>It is also possible that the log file contains no lines with the PBX data.</li>
+</ul>
+</li>
+<br>
+<li><b>How can I import data from the previously generated text log file into ATSlog?</b></li>
+<i>Solution:</i>
+<ul>
+<li>Copy the data into the file <tt>/var/log/atslog/calls.log</tt> (the default file; particularly check the value of the parameter <tt>$callslogfile</tt> of the config file <tt>/usr/local/etc/atslog.conf</tt>)</li>
+<li>Use the function of writing all calls into the server SQL database: 
+<pre>
+# atslogmaster alltodb
+</pre>
+</li>
+</ul>
+<li><b>ATSlog starts, but nothing happens, the data from PBX are not being writen. In the process list two atslogd daemons are present.</b></li>
+<i>Possible reason:</i>
+<ul>
+<li>There is no connection between the daemon and the PBX.</li>
+</ul>
+<i>Solution:</i>
+<ul>
+<li>Check the parameter <tt>$port</tt> of the config file  <tt>/usr/local/etc/atslog.conf</tt> and check the plugging of the cable from PBX to the PC. Lack of connection can also be caused by a wrong cable pin-out.</li>
+</ul><br>
+<li><b>Upon installation with the use of the MySQL server on another PC other than localhost, the ATSlog issues the following message:</b>
+<pre>
 ERROR 1130: Host 'atslog.server.com' is not allowed to connect to this MySQL server.
-</i>
-</pre></td></tr></table>
-или такое:
-<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre><i>
+</pre>
+<b>Or:</b>
+<pre>
 ERROR 1045: Access denied for user: 'root@atslog.server.com' (Using password: YES)
-</i>
-</pre></td></tr></table>
+</pre>
+<b>As a result, ATSlog fails to install/update.</b></li>
 
-В результате ATSlog не устанавливается/обновляется. В чём причина?</li>
 
-		<dl>
-			<ul>
-				<li>Объяснение: для работы ATSlog необходимо внести данные в MySQL с привилегиями суперпользователя. По умолчанию вход с правами root возможен только с машины 'localhost'.</li>
-				<li>Решение проблемы: временно расширить права суперпользователя для доступа с хоста 'atslog.server.com'. Для этого:<br>
-<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre><i>
+<br><i>Possible reason:</i>
+<ul>
+<li>For ATSlog operation it is necessary to insert the data into MySQL under the superuser permissions. By default the root access is possible only from the localhost. </li>
+</ul>
+<i>Solution:</i>
+<ul>
+<li>Temporarily enlarge the superuser rights for accessing from the host 'atslog.server.com'. The command is:
+<pre>
 GRANT ALL PRIVILEGES ON * . * TO "root"@"atslog.server.com" IDENTIFIED
-BY 'некриптованый_пароль_для_root' WITH GRANT OPTION;
-</i>
-</pre></td></tr></table>
-				После этого можно возобновить инсталляцию.<br>
-				После инсталляции не забудьте восстановить привилегии пользователя root обратно:<br>
-<table cellspacing=2 cellpadding=2 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre><i>
+BY 'noncrypted_root_password' WITH GRANT OPTION;
+</pre>
+Thereafter the installation can be resumed<br>
+After installing dont forget to restore back the permissions of the root: <br>
+<pre>
 DELETE FROM mysql.user WHERE User = "root" AND Host = "atslog.server.com";
 DELETE FROM mysql.db WHERE User = "root" AND Host = "atslog.server.com";
 DELETE FROM mysql.tables_priv WHERE User = "root" AND Host = "atslog.server.com";
 DELETE FROM mysql.columns_priv WHERE User = "root" AND Host = "atslog.server.com";
 
 FLUSH PRIVILEGES;
-</i>
-</pre></td></tr></table>
-				</li>
-			</ul>
-		</dl>
-</ol>
-
+</pre></li>
+</ul>
+</ul>
