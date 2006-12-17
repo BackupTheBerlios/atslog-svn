@@ -10,7 +10,7 @@ if ($ARGV[0] ne "yes"){
 use DBI;
 use POSIX qw(locale_h); # Для правильной обработки языковых настроек.
 
-$config_file="/usr/local/etc/atslog.conf";
+$config_file="@sysconfdir@/atslog.conf";
 
 open(IN,$config_file) || die print("Can't open config file $config_file.");
 while(<IN>) {

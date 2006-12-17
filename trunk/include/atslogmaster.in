@@ -7,8 +7,8 @@ NOWDATE=`LANG=en_US;date`
 BASENAME=`basename $0`
 
 # Readin config file                              
-if [ -r /usr/local/etc/atslog.conf ]; then
-    . /usr/local/etc/atslog.conf
+if [ -r @sysconfdir@/atslog.conf ]; then
+    . @sysconfdir@/atslog.conf
 
 # Переменную $LANG - берём из настройки локали.
     if [ -f $sharedir/$langdir/$LANG ]; then

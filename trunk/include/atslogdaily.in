@@ -8,8 +8,8 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
 
 # Readin config file                              
-if [ -r /usr/local/etc/atslog.conf ]; then
-    . /usr/local/etc/atslog.conf
+if [ -r @sysconfdir@/atslog.conf ]; then
+    . @sysconfdir@/atslog.conf
 # Переменная $LANG - берётся из настройки локали.
     if [ -f $sharedir/$langdir/$LANG ]; then
 	. $sharedir/$langdir/$LANG
