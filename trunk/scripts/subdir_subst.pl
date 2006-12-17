@@ -69,8 +69,8 @@ sub wanted {
                && ($File::Find::dir =~ /\b(RCS|CVS|.svn|text-base)$/) );
 
     return unless /$WILDCARD/o;
-    return unless (-f && -T _);
-
+#    return unless (-f && -T _);
+    return unless (-f);
     $fname = $_;
     if ($opt_v && ($PrevDir ne $File::Find::dir)) {
         print("Directory: $File::Find::dir\n");
