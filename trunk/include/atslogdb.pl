@@ -3,9 +3,9 @@
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #
 
-use Sys::Syslog qw(:DEFAULT setlogsock);# Сообщения об ошибках запишем в syslog
-use DBI;# Класс для работы с БД
-use POSIX qw(locale_h); # Для правильной обработки языковых настроек.
+use Sys::Syslog qw(:DEFAULT setlogsock);# logging error messages to syslog
+use DBI;# DataBase common class
+use POSIX qw(locale_h); # For language settings
 
 
 $config_file="/usr/local/etc/atslog.conf";
@@ -75,8 +75,8 @@ sub AmPmTo24(){
     return $return24;
 }
 
-# Поехали!
-setlogsock('unix');#Тип сокета для syslogd
+# Let`s go!
+setlogsock('unix'); # syslogd socket type
 openlog("atslogdb", 'pid, ndelay, cons', "$sFas1");#Откроем сокет на syslogd
 if($vars{sqltype}  =~ /PostgreSQL/i){
     $sqltype=Pg;
@@ -93,7 +93,7 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
         $dbh->{mysql_auto_reconnect} = 1;
     }
     
-    
+    # this library support 3 different models
     if($vars{model} =~ /KX-TA308RU/i or $vars{model} =~ /KX-TA308/i or $vars{model} =~ /KX-TA616RU/i){
 	$vars{model}="kx-ta616-308-ru";
     }
