@@ -1,19 +1,19 @@
 # Makefile
 
-prefix     = /usr/local
-exec_prefix= ${prefix}
+prefix     = @prefix@
+exec_prefix= @exec_prefix@
 
-CC=gcc
-WWW_ROOT=${prefix}/var/www
-BIN_DIR=$(exec_prefix)/bin
-ETC_DIR=${prefix}/etc
-LIBEXEC_DIR=${exec_prefix}/libexec
-MAN_DIR=${prefix}/man
-DATA_DIR=${prefix}/share
-RM=/bin/rm
-CP=/bin/cp
-MKDIR=/bin/mkdir
-ECHO=/bin/echo
+CC=@CC@
+WWW_ROOT=@WWW_ROOT@
+BIN_DIR=@bindir@
+ETC_DIR=@sysconfdir@
+LIBEXEC_DIR=@libexecdir@
+MAN_DIR=@mandir@
+DATA_DIR=@datadir@
+RM=@RM@
+CP=@CP@
+MKDIR=@MKDIR@
+ECHO=@ECHO@
 
 all: atslog-daemon
 
