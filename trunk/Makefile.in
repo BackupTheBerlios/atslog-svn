@@ -47,6 +47,7 @@ install: all include/atslog.conf
 	@${MKDIR} -p ${DATA_DIR}/atslog/lang
 	@${CP} -r include/lang/* ${DATA_DIR}/atslog/lang
 	@${MKDIR} -p ${LOG_DIR}/atslog ${PIDFILE_DIR}
+	@${ECHO} Install completed. You need to edit ${ETC_DIR}/atslog.conf configuration file
 
 deinstall:
 	@${RM} -rf ${WWW_ROOT}/atslog
@@ -55,3 +56,4 @@ deinstall:
 	@if cmp -s ${ETC_DIR}/atslog.conf ${ETC_DIR}/atslog.conf.default; then ${RM} -f ${ETC_DIR}/atslog.conf; fi
 	@${RM} -f ${ETC_DIR}/atslog.conf.default
 	@${RM} -rf ${DATA_DIR}/atslog
+	@${ECHO} ATSlog uninstalled. You need to delete ${LOG_DIR} manually.
