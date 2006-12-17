@@ -65,7 +65,7 @@ echo("
 echo ("
 			</td>
 			<td nowrap><a href=\"/map/\" title=\"быстрый просмотр содержимого сайта\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\"  alt=\"\">&nbsp;карта сайта</a></td>
-			<td nowrap><a href=\"/en/\" title=\"site in english\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\"  alt=\"\">&nbsp;english</a></td>
+			<td nowrap><a href=\"/en/about/\" title=\"site in english\"><img src=\"/img/menu.arrowhead.right.gif\" width=\"6\" height=\"10\" hspace=\"0\" vspace=\"0\" border=\"0\"  alt=\"\">&nbsp;english</a></td>
 		</tr>
 		</table>
 	</td>
