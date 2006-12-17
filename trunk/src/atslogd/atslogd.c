@@ -58,7 +58,7 @@ char *pid_file="/var/run/atslogd.pid";
 char dirname[MAXPATHLEN+1+MAXFILENAMELEN+1];
 char filename[MAXFILENAMELEN+1]="raw";
 int dirlen=0;
-int gpid=0;
+int pid=0;
 int filenamelen=0;
 // count of childrens
 int childcount=0;
@@ -131,13 +131,10 @@ void close_tty( HANDLE hCom)
 static int daemonize( void )
 {
 	int rc;
-	int rc_gpid;
 	rc = fork();
 	if( rc==(-1) ) return (-1);
 	if( rc!=0 ) _exit(EX_OK);
-	rc_gpid=setsid();
-	if( rc_gpid==(-1) ) return (-1);
-	return rc_gpid;
+	return rc;
 }
 
 FILE *open_pid()
@@ -671,17 +668,17 @@ int main( int argc, char *argv[] )
 
 	my_syslog( "Starting" );
 	
-	if (do_daemonize) 
-		gpid = daemonize();
+	if (do_daemonize) pid=daemonize();
+	else pid=getpid();
 
-	if( do_daemonize && gpid==(-1) ) {
+	if( do_daemonize && pid==(-1) ) {
 		my_syslog( "Can't become daemon, exiting" );
 		my_exit( 1 );
 	}
 
 	pfd = open_pid();
 	if (pfd!=NULL) {
-	    (void)fprintf(pfd, "%ld\n", (long)gpid);
+	    (void)fprintf(pfd, "%ld\n", (long)pid);
 	    fclose(pfd);
 	}else{
 	    my_syslog( "Can't write PID file, exiting" );
