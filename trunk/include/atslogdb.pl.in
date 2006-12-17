@@ -7,7 +7,7 @@ use Sys::Syslog qw(:DEFAULT setlogsock);# logging error messages to syslog
 use DBI;# DataBase common class
 use POSIX qw(locale_h); # For language settings
 
-
+$prefix="@prefix@";
 $config_file="@sysconfdir@/atslog.conf";
 
 open(IN,$config_file) || die print("Can't open config file $config_file.\n");

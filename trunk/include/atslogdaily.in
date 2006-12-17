@@ -6,6 +6,7 @@
 # текстового лог-файла и записи её в базу SQL сервера.
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
+prefix=@prefix@
 
 # Readin config file                              
 if [ -r @sysconfdir@/atslog.conf ]; then

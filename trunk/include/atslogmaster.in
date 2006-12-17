@@ -5,6 +5,7 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
 NOWDATE=`LANG=en_US;date`
 BASENAME=`basename $0`
+prefix=@prefix@
 
 # Readin config file                              
 if [ -r @sysconfdir@/atslog.conf ]; then
