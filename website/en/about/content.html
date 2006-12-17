@@ -1,118 +1,77 @@
-<div align="center"><font size=+2>ABOUT THE PROGRAM</font></div>
-<h3><a name="about4"></a>The destination of the program</h3>
-<table align=right width="220" cellspacing=3 cellpadding=3 border=0>
-<tr>
-    <td>
-<?
-/* path */ 
-include(dirname($_SERVER["SCRIPT_FILENAME"])."/../../conf.inc.php");
+<div class="header">About the Software</div>
+<h3><a name="about4"></a>Program Aims and Goals</h3>
 
-require $poll_path."/include/config.inc.php";
-require $poll_path."/include/$POLLDB[class]";
-require $poll_path."/include/class_poll.php";
-require $poll_path."/include/class_pollcomment.php";
-$CLASS["db"] = new polldb_sql;
-$CLASS["db"]->connect(); 
-
-$php_poll = new poll();
-
-/* poll */ 
-$php_poll->set_template_set("plain");
-$php_poll->set_max_bar_length(100);
-$php_poll->set_max_bar_height(10);
-echo $php_poll->poll_process(8);
-
-$php_comm = new pollcomment();
-
-/* poll comments */
-$php_comm->set_template("poll_comment");
-$php_comm->set_comments_per_page(5);
-$php_comm->set_date_format("d/m/Y H:i");
-$php_comm->data_order_by("time","desc");
-echo $php_comm->view_poll_comments(8);
-echo $php_comm->get_comment_pages(8); 
-
-
-?>
-    </td>
-</tr>
-</table>
-<p>ATSlog  gives a convenient interface with access from the web-browser for wathing and
-analysis of calls of the different models of PBX. The program is free, it spreads under
-<a href="http://www.gnu.org/copyleft/gpl.html" target="_blank">GPL</a> license, and it
-has fully opened code.<br>
-The program is successfully working
-with such models as Panasonic KX-TA308, KX-TA308RU, KX-TA616RU, KX-TD816RU,
-KX-TD1232; Samsung SKP-816.
-If you want to put into the register of supported by PBX another model, you
-should look to the division <b>&lt;</b><a href="/en/about/#about1">The upgrading
-and extension of the program</a><b>&gt;</b>.
+<p>The ATSlog software provides a handy web-oriented interface for viewing and analysing calls for various types of PBX (Private Branch eXchange) models. The program is GNUWare, distributed under the 
+ <a href="http://www.gnu.org/copyleft/gpl.html" target="_blank">GPL</a> license, and is completely open-source.
+<br>
+At present the program operates successfully with 
+Panasonic, Samsung, 
+Hybrex, Siemens, LG, and  Alcatel PBX models. If your particular type of PBX 
+is not supported yet, we can add this functionality.  Please claim for additional functionalities using either Forum or Support links.
 </p>
-<p>An author will be thankful to the programmer, who will help the development
-of the program. The information is in division
-<b>&lt;</b><a href="/en/about/#about2">For programmer</a><b>&gt;</b></p>
-<h3><a name="about5"></a>The abilities of ATSlog</h3>
+<p>It is the author's pleasure to express his deepest gratitude towards the developpers who have contributed to the software support and development. See the <a href="/about/#about2">For Developpers</a> section.</p>
+<h3><a name="about5"></a>ATSlog functionalities:</h3>
 <ol>
-    <li>A comfortable web-interface for access to the statistics:
-	<ul>
-	    <li>Flexible mode of the task of a range of dates.</li>
-    	    <li>An opportunity to analyze the information from two sides&nbsp;&#151;
-either from the side of the outside telephone lines that are connected
-to the ATS or from the side of internal telephones.
-	    <li>The separating of  the call statistics on different types&nbsp;&#151;
-the in-town calls, the calls between cities and countries, incoming and
-outcoming.
-	    <li>A color painting for different types of calls. 
-	    <li>A sorting by the head-lines of the columns of the table (direct and
-indirect order).
-	    <li>Before printing preparing.
-	    <li>Cashing of the SQL asks, which allows quicker working on the information.
-	    <li><a href="/en/screenshots/">To watch the screenshots</a>.</li>
-	    <li><a href="/atslog/calls/?day=01&mon=01&year=2004&day2=31&mon2=01&year2=2004&type=IntAll">A test watching
-of the statistics</a>.
-You can get in the real using of the program ATSlog. To enter, you should use
-the name of the user 'atslog', password 'atslog'
-	    </li>
-	</ul>
-    <li>The server functions :
-    <ul>
-	<li>The shift of text log-files ATS into the format of the program ATSlog.
-	<li>A rotation of the text log-files with the information of the telephone calls of PBX.
-	<li>Critical messages about the mistakes are shifted in the syslog.
-	</ul>
-    </li>
+<li>Handy web interface for accessing the statistics:
+<ul>
+<li>Flexible date interval inquiring.</li>
+<li>Two-side data processing&#151; from both external lines switched to the PBX and internal phones.</li>
+<li>Diversification according to the call types&#151; urbain calls, trunk calls (interurbain and international), incoming and outgoing, cell cals.</li>
+<li>Coloring differentiation for different kinds of cals.</li>
+<li>Multiuser abonnee interface; only the information on their personal call is displayed.</li>
+<li>Assotiating internal phone numbers with the names of the abonnees.
+<li>Assotiating external phone lines with phone numbers.
+<li>Data export into Excel format.
+<li>Multilanguage support. Adding new languages is easy.</li>
+<li>Tunable Настраиваемый multipage output.</li>
+<li>Sorting according to the table slopes headers (direct or reverse order).</li>
+<li>Print preview.</li>
+<li>Caching SQL requests, which essentially speeds up processing.</li>
+<li><a href="/screenshots/">Here you can view the screenshots</a>.</li>
+<li><a href="/atslog/calls/index.php?incoming=2&amp;type=IntAll&amp;day=01&amp;mon=12&amp;year=2006&amp;day2=31&amp;mon2=12&amp;year2=2006&amp;search=&amp;newStatus=TRUE">Test version of the statistics.</a>. Here you can try out the use of the ATSlog software. Click an follow the link from the appropriate screenshot. Login with the username:  <tt>atslog</tt>, password: <tt>atslog</tt>
+</li>
+</ul>
+</li>
+<li>Server functions:
+<ul>
+<li>Translating existing PBX log files into the internal format of the ATSlog program.
+<li>Rotating text log files with call data within PBX.
+<li>Critical error messages are parsed to the syslog.
+<li>MySQL and PostgresSQL support. In the nearest future SQLite support implementation.
+<li>Working with PBX using serial port or TCP/IP.
+</ul>
+<li>Supported PBX:
+<ul>
+<li><u>Alcatel:</u> 4200E
+<li><u>GoldStar:</u> GPS-6A
+<li><u>Hybrex:</u> GD-320
+<li><u>LG:</u> GDK-100, GHX 46, LDK-100, LDK-300
+<li><u>Panasonic:</u> TA616RU, KX-TA308RU, KX-TA308, KX-TD1232, KX-TD500, KX-TD816RU
+<li><u>Samsung:</u> NX-820, SKP-816
+<li><u>Siemens:</u> Hicom 250, Hicom 350H
+</ul>
+</li>
 </ol>
-<h3><a name="about6"></a>The model of the program</h3>
+<h3><a name="about6"></a>Model of the software</h3>
 <ul>
-  <li>For work you need: SH, Perl 5.X, PHP 4.X. Everything was tested on the base of Apache server 1.3.X</li>
-  <li>The program wokr on *NIX platforms: FreeBSD, Linux; The porting under other POSIX systems is possible.</li>
-  <li>To work the module atslogd is used for reading  the information from ATS,
-  perl script is used for writing in the data base, PHP and any http server is
-  used for access to the statistics throughout  the web-interface.</li>
-  <li>ATSlog is easily used and tuned.</li>
+  <li>Needed: sh, Perl 5.X, MySQL (3 or higher) or PostgresSQL, PHP (4 or higher), HTTP Server (for example, Apache).</li>
+  <li>Supported platfors: *NIX (FreeBSD, Linux); porting to other platforms can be provided.</li>
+  <li>Uses the C language module <tt>atslogd</tt> for fetching information from PBX, perl script for writing into database, PHP and any http server for accessing statistics via web interface.</li>
+  <li>ATSlog is handy in the installation and setup.</li>
 </ul>
-<h3><a name="about3"></a>The nearest plans of developing</h3>
-<p>The list of things that should be done:</p>
+<h3><a name="about3"></a>Nearest future</h3>
+<p>To-Do list:</p>
 <ul>
-  <li>The translating of the documentation into English.</li>
-  <li>The showing of the time diapason in web-interface.</li>
+  <li>Billing</li>
+  <li>English translation.</li>
+  <li>Add SQLite support, which allows operating without SQL server.</li>  
+  <li>Setting time intervals (not only the dates) in the web interface.</li>
 </ul>
-<h3><a name="about1"></a>The upgrading and widening of the program</h3>
-<p>The author of ATSlog works on the program with pleasure and interest and
-that is why He is ready to help in it's adaptation to new models of ATS and
-another operation systems. To do this, you should just send the equivalents
-of the text log-files. To connect the author
-<a href="http://www.01.dp.ua/connect/" target="_blank">click here</a>.</p>
-<h3><a name="about2"></a>For the developers</h3>
-<p>
-Dear colleagues! If you want o share your work on the base of ATSlog, the
-author is ready to get them thankfully and give them all for access by all
-who want. ATSlog needs widening and adaptation. If you want to take part in
-this process, you must look the
-<b>&lt;</b><a href="/en/about/#about3">The nearest plans of developing</a><b>&gt;</b>.</p>
-<h3>Вы заметили ошибку на странице?</h3>
-<p>Если вы заметили орфографическую или стилистическую
-ошибку на этой странице, просто выделите мышью текст с
-ошибкой и нажмите Ctrl+Enter. Выделенный текст будет
-немедленно отослан вебмастеру.
-</p>
+<h3><a name="about1"></a>Improvement and develoment of the program</h3>
+<p>The author of the ATSlog software enjoys working under its development, therefore he is ready to help adapting it to novel PBX models and porting to other operating systems. From your part it will be enough just to send us the text log files. You will find <a href="http://www.01.dp.ua/connect/" target="_blank">here</a> how to contact the author.</p>
+<h3><a name="about2"></a>For developpers</h3>
+<p>Dear Colleagues! If you want to share your own artworks
+based on the ATSlog software, the author will greatly appreciate the possibility 
+of acquainting with them and providing them for the wide public access.
+The ATSlog program needs further development and adaptation. If you are ready to participate, look into the <b>&lt;</b><a href="/forum/">Forum</a> section.</p>
+
