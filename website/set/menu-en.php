@@ -28,37 +28,37 @@ if (isset($menu) && $menu=="doc")
 			<table cellspacing=0 cellpadding=0 border=0>
 				<tr>
 					<td nowrap valign=bottom><img src=\"/img/menu.arrowhead.right.gif\" width=6 height=10 hspace=0 vspace=0 border=0  alt=\"\"></td>
-					<td nowrap>&nbsp;<a href=\"/doc/\" title=\"Documentation\">документация</a></td>
+					<td nowrap>&nbsp;<a href=\"/en/doc/\" title=\"Documentation\">документация</a></td>
 				</tr>
 				<tr>
 					<td nowrap><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/doc/installing/\" title=\"Монтирование АТС и подключение к компьютеру\">монтирование и подключение</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/installing/\" title=\"Монтирование АТС и подключение к компьютеру\">монтирование и подключение</a></td>
 				</tr>
 				<tr>
 					<td nowrap><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/doc/solder-up/\" title=\"Схемы распайки кабеля для подключения АТС к компьютеру\">схемы распайки кабеля</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/solder-up/\" title=\"Схемы распайки кабеля для подключения АТС к компьютеру\">схемы распайки кабеля</a></td>
 				</tr>
 				<tr>
 					<td nowrap valign=top><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/doc/setup/\" title=\"установка и настройка программы ATSlog\">установка и настройка программы</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/setup/\" title=\"установка и настройка программы ATSlog\">установка и настройка программы</a></td>
 				</tr>
 				<tr>
 					<td nowrap valign=top><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/doc/updating/\" title=\"обновление с предыдущих версий программы\">обновление предыдущих версий</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/updating/\" title=\"обновление с предыдущих версий программы\">обновление предыдущих версий</a></td>
 				</tr>
 				<tr>
 					<td nowrap valign=top><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/doc/using/\" title=\"использование ATSlog\">использование ATSlog</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/using/\" title=\"использование ATSlog\">использование ATSlog</a></td>
 				</tr>
 				<tr>
 					<td nowrap valign=top><img src=\"/img/menu.dotsLeftCorner.gif\" width=8 height=12 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/doc/deleting/\" title=\"удаление ATSlog\">удаление программы</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/deleting/\" title=\"удаление ATSlog\">удаление программы</a></td>
 				</tr>
 			</table>
 ");
 }else{
 echo("
-				<a href=\"/doc/\" title=\"ATSlog Documentation\"><img src=\"/img/menu.arrowhead.right.gif\" width=6 height=10 hspace=0 vspace=0 border=0  alt=\"\">&nbsp;documentation</a>
+				<a href=\"/en/doc/\" title=\"ATSlog Documentation\"><img src=\"/img/menu.arrowhead.right.gif\" width=6 height=10 hspace=0 vspace=0 border=0  alt=\"\">&nbsp;documentation</a>
 ");
 }
 
