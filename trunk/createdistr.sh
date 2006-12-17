@@ -1,5 +1,7 @@
 #!/bin/sh
 
+PATH=${PATH}:/usr/local/gnu-autotools/bin/
+
 rm -rf tmp
 . version.inc
 echo "Creating atslog-${ver} tarball"
@@ -13,5 +15,26 @@ mkdir -p tmp/atslog-${ver}/data >/dev/null
 svn export src/atslogd tmp/atslog-${ver}/atslogd >/dev/null
 svn export sql tmp/atslog-${ver}/data/sql >/dev/null
 svn export textlogs tmp/atslog-${ver}/data/textlogs >/dev/null
+svn export INSTALL tmp/atslog-${ver}/INSTALL
+svn export DEINSTALL tmp/atslog-${ver}/DEINSTALL
+svn export USAGE tmp/atslog-${ver}/USAGE
+svn export UPDATING tmp/atslog-${ver}/UPDATING
+svn export TODO tmp/atslog-${ver}/TODO
+svn export CHANGES tmp/atslog-${ver}/CHANGES
+svn export Makefile.in tmp/atslog-${ver}/Makefile.in
+svn export configure.in tmp/atslog-${ver}/configure.in
+svn export aclocal.m4 tmp/atslog-${ver}/aclocal.m4
+cd tmp/atslog-${ver};autoconf
+cd ../../
+exit
+echo "replacing @version@ and buildnumber"
+perl scripts/subdir_subst.pl -x -d tmp/ '\@version\@' ${ver}  >/dev/null
+perl scripts/subdir_subst.pl -x -d tmp/ '\@buildnumber\@' ${build} >/dev/null
+find ./tmp -name \*sds_sav -type f |xargs rm
+
+echo "Creating ChangeLog"
+#svn2cl ../ -o tmp/atslog-${ver}/ChangeLog
+echo "Creating atslog-${ver}.tar.gz"
 cd tmp
-tar -cvzf atslog-${ver}.tar.gz  atslog-${ver} 
+#tar -cvzf atslog-${ver}.tar.gz  atslog-${ver}
+echo "Done"

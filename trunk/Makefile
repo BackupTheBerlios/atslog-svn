@@ -1,65 +1,39 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
-# Copyright (C) 2.03 Denis CyxoB www.yamiyam.dp.ua
-#
-# Using:
-# make all - for building.
-#
-# make install - for building and installing.
-#
-# make clean - for cleaning temporaly files.
+# Makefile
+
+prefix     = /usr/local
+exec_prefix= ${prefix}
 
 CC=gcc
-MAKE=make
-SH=/bin/sh
-RM=rm
-SUBDIR+= tmp/src/atslogd
-CURDIR?=`pwd`
-PREFIX?=/usr/local
+WWW_ROOT=${prefix}/var/www
+BIN_DIR=$(exec_prefix)/bin
+ETC_DIR=${prefix}/etc
+LIBEXEC_DIR=${exec_prefix}/libexec
+MAN_DIR=${prefix}/man
+DATA_DIR=${prefix}/share
+RM=/bin/rm
+CP=/bin/cp
+MKDIR=/bin/mkdir
+ECHO=/bin/echo
 
-# Cnfigure args
-DISABLELIBWRAP?=NO
-DISABLEUPDATE?=NO
-SQLTYPE?=MySQL
+all: atslog-daemon
 
-CONFIGURE_ARGS+= --disable-libwrap=${DISABLELIBWRAP}
-CONFIGURE_ARGS+= --disable-update=${DISABLEUPDATE}
-CONFIGURE_ARGS+= --sql-type=${SQLTYPE}
-CONFIGURE_ARGS+= --prefix=${PREFIX}
-
-all:	version atslogd
-
-atslogd:
-	@for sub in ${SUBDIR}; do \
-	    if test -d ${CURDIR}/$${sub}; then \
-		cd ${CURDIR}/$${sub}; \
-		${MAKE}; \
-	    fi; \
-	done
-
-configure:	config
-
-config:
-	@if [ ! -r ${CURDIR}/tmp/configure.flag ]; \
-	then ${SH} ${CURDIR}/configure $(CONFIGURE_ARGS); \
-	fi
+atslog-daemon:
+	@cd atslogd; $(MAKE)
 
 clean:
-	@$(RM) -rf ${CURDIR}/tmp
+	@cd atslogd; $(MAKE) clean
 
-configure:	config
-uninstall:	deinstall
-remove:		deinstall
-clear:		clean
-
-install:	all
-	@$(SH) ${CURDIR}/tmp/installing --install --sqlroot=${SQLROOT}
+install: all
+	@${MKDIR} -p ${WWW_ROOT}
+	@${ECHO} "Installing web interface to the ${WWW_ROOT}/atslog directory"
+	@${CP} -r www/ ${WWW_ROOT}/atslog
+	@${ECHO} "Installing atslog libraries to the ${LIBEXEC_DIR}/atslog directory"
+	@${CP} -r libexec/ ${LIBEXEC_DIR}/atslog
+	@${ECHO} "Installing atslog binaries to the ${BIN_DIR} directory"
+	@${CP} atslogd/atslogd include/atslogcleardb.pl include/atslogdaily include/atslogdb.pl include/atslogmaster include/atslogrotate ${BIN_DIR}
+	@if test ! -f ${ETC_DIR}/atslog.conf; then ${CP} ${ETC_DIR}/atslog.conf.default ${ETC_DIR}/atslog.conf;fi
 
 deinstall:
-	@$(SH) ${CURDIR}/installing --deinstall
-
-version: config
-	@if [ -r ${CURDIR}/tmp/version.inc ]; then \
-	    $(SH) ${CURDIR}/scripts/version; \
-	    $(RM) ${CURDIR}/tmp/version.inc; \
-	    $(RM) ${CURDIR}/tmp/scripts/version; \
-	fi
+	@${RM} -rf ${WWW_ROOT}/atslog
+	@${RM} -rf ${LIBEXEC_DIR}/atslog
+	@${RM} ${BIN_DIR}/atslogd ${BIN_DIR}/atslogcleardb.pl ${BIN_DIR}/atslogdaily ${BIN_DIR}/atslogdb.pl ${BIN_DIR}/atslogmaster ${BIN_DIR}/atslogrotate
