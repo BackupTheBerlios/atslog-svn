@@ -38,12 +38,17 @@ install: all include/atslog.conf
 	@${ECHO} "Installing web interface to the ${WWW_ROOT}/atslog directory"
 	@${CP} -r www/ ${WWW_ROOT}/atslog
 	@${ECHO} "Installing atslog libraries to the ${LIBEXEC_DIR}/atslog directory"
-	@${CP} -r libexec/ ${LIBEXEC_DIR}/atslog
+	@${MKDIR} -p ${LIBEXEC_DIR}/atslog
+	@${CP} -r libexec/ ${LIBEXEC_DIR}/atslog/
 	@${ECHO} "Installing atslog binaries to the ${BIN_DIR} directory"
+	@${MKDIR} -p ${BIN_DIR}
 	@${CP} atslogd/atslogd include/atslogcleardb.pl include/atslogdaily include/atslogdb.pl include/atslogmaster include/atslogrotate ${BIN_DIR}
+	@${ECHO} "Installing atslog man pages to the ${MAN_DIR} directory"
+	@${MKDIR} -p ${MAN_DIR}/man8
+	@${CP} man/en/atslogd.8 man/en/atslogmaster.8 ${MAN_DIR}/man8/
+	@${MKDIR} -p ${ETC_DIR}
 	@${CP} include/atslog.conf.default ${ETC_DIR}
 	@if test ! -f ${ETC_DIR}/atslog.conf; then ${CP} ${ETC_DIR}/atslog.conf.default ${ETC_DIR}/atslog.conf;fi
-	@${MKDIR} -p ${DATA_DIR}/atslog/lang
 	@${MKDIR} -p ${DATA_DIR}/atslog/lang
 	@${CP} -r include/lang/* ${DATA_DIR}/atslog/lang
 	@${MKDIR} -p ${LOG_DIR}/atslog ${PIDFILE_DIR}
@@ -56,4 +61,5 @@ deinstall:
 	@if cmp -s ${ETC_DIR}/atslog.conf ${ETC_DIR}/atslog.conf.default; then ${RM} -f ${ETC_DIR}/atslog.conf; fi
 	@${RM} -f ${ETC_DIR}/atslog.conf.default
 	@${RM} -rf ${DATA_DIR}/atslog
+	@${RM} -f ${MAN_DIR}/man8/atslogd.8  ${MAN_DIR}/man8/atslogmaster.8
 	@${ECHO} ATSlog uninstalled. You need to delete ${LOG_DIR} manually.
