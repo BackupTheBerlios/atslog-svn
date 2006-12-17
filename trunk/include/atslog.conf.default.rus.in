@@ -186,7 +186,6 @@ debug=no
 startlogfile=atstart.log
 
 # PID файл.
-# На самом деле это не только PID, а и GPID всех запущенных демонов.
 #
 pidfile=/var/run/atslogd.pid
 

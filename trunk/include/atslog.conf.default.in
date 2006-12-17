@@ -185,7 +185,7 @@ debug=no
 startlogfile=atstart.log
 
 # PID file.
-# Its not only the PID, but GPID of the running daemons.
+# contain PID of the running daemon.
 #
 pidfile=@localstatedir@/run/atslogd.pid
 
