@@ -27,15 +27,14 @@ svn export configure.in tmp/atslog-${ver}/configure.in
 svn export aclocal.m4 tmp/atslog-${ver}/aclocal.m4
 cd tmp/atslog-${ver};autoconf
 cd ../../
-exit
 echo "replacing @version@ and buildnumber"
 perl scripts/subdir_subst.pl -x -d tmp/ '\@version\@' ${ver}  >/dev/null
 perl scripts/subdir_subst.pl -x -d tmp/ '\@buildnumber\@' ${build} >/dev/null
 find ./tmp -name \*sds_sav -type f |xargs rm
 
 echo "Creating ChangeLog"
-#svn2cl ../ -o tmp/atslog-${ver}/ChangeLog
+svn2cl ../ -o tmp/atslog-${ver}/ChangeLog
 echo "Creating atslog-${ver}.tar.gz"
 cd tmp
-#tar -cvzf atslog-${ver}.tar.gz  atslog-${ver}
+tar -cvzf atslog-${ver}.tar.gz  atslog-${ver}
 echo "Done"

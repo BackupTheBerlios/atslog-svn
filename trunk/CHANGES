@@ -6,7 +6,10 @@
 
 
 === ATSLOG 2.0-DEV ===
-
+! (samm) new GNU autoconf based configure script. I hope this will make 
+         install process easer and more portable.
+# (samm) gpid replaced with pid. We have only one process, so we dont
+         really need gpid.
 + (samm) Now library names are not hardcoded into atslogdb.pl
          This allow user to add new library easer.
 + (samm) Added support for the Panasonic KX-TD500 PBX (untested) 

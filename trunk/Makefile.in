@@ -51,7 +51,7 @@ install: all include/atslog.conf
 deinstall:
 	@${RM} -rf ${WWW_ROOT}/atslog
 	@${RM} -rf ${LIBEXEC_DIR}/atslog
-	@${RM} ${BIN_DIR}/atslogd ${BIN_DIR}/atslogcleardb.pl ${BIN_DIR}/atslogdaily ${BIN_DIR}/atslogdb.pl ${BIN_DIR}/atslogmaster ${BIN_DIR}/atslogrotate
+	@${RM} -f ${BIN_DIR}/atslogd ${BIN_DIR}/atslogcleardb.pl ${BIN_DIR}/atslogdaily ${BIN_DIR}/atslogdb.pl ${BIN_DIR}/atslogmaster ${BIN_DIR}/atslogrotate
 	@if cmp -s ${ETC_DIR}/atslog.conf ${ETC_DIR}/atslog.conf.default; then ${RM} -f ${ETC_DIR}/atslog.conf; fi
-	@${RM} ${ETC_DIR}/atslog.conf.default
+	@${RM} -f ${ETC_DIR}/atslog.conf.default
 	@${RM} -rf ${DATA_DIR}/atslog
