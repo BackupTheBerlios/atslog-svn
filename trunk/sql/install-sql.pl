@@ -3,7 +3,7 @@
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 
 BEGIN {
-print "ATSlog MySQL database installer/updater\n";
+print "\nATSlog SQL database installer/updater\n\n";
 }
 use DBI;
 

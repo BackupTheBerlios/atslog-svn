@@ -6,8 +6,13 @@
 
 
 === ATSLOG 2.0-DEV ===
+! (samm) new Perl SQL installer. Currently work only with MySQL but will
+         support PostgresSQL soon. Also we need to integrate it with Make
+         file.
 ! (samm) new GNU autoconf based configure script. I hope this will make 
          install process easer and more portable.
+# (samm) when atslogd was not in daemon mode (default!) we had 0 in the 
+         PID file
 # (samm) gpid replaced with pid. We have only one process, so we dont
          really need gpid.
 + (samm) Now library names are not hardcoded into atslogdb.pl
