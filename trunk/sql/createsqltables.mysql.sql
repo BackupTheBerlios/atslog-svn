@@ -1,16 +1,3 @@
-CREATE DATABASE IF NOT EXISTS @sqldatabase@;
-
-USE @sqldatabase@;
-
-GRANT USAGE ON *.* TO '@sqlmasteruser@'@'@sqlfromhost@' IDENTIFIED BY '@sqlmaspasswd@';
-GRANT ALL PRIVILEGES ON @sqldatabase@.* TO '@sqlmasteruser@'@'@sqlfromhost@';
-
-
-# --------------------------------------------------------
-
-#
-# Структура таблицы `calls`
-#
 
 CREATE TABLE `calls` (
   `timeofcall` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -27,16 +14,6 @@ CREATE TABLE `calls` (
   KEY `cost` (`cost`)
 ) COMMENT='www.ATSlog.dp.ua';
 
-#
-# Дамп данных таблицы `calls`
-#
-
-
-# --------------------------------------------------------
-
-#
-# Структура таблицы `country`
-#
 
 CREATE TABLE `country` (
   `id` int(4) unsigned NOT NULL default '0',
@@ -44,10 +21,6 @@ CREATE TABLE `country` (
   PRIMARY KEY  (`id`)
 ) COMMENT='List of countries with tel codes';
 
-
-#
-# Структура таблицы `unauth`
-#
 
 CREATE TABLE `unauth` (
   `username` varchar(64) NOT NULL default '',
@@ -61,16 +34,6 @@ CREATE TABLE `unauth` (
   KEY `ip` (`ip`)
 ) COMMENT='Attempts of authentifications';
 
-#
-# Дамп данных таблицы `unauth`
-#
-
-
-# --------------------------------------------------------
-
-#
-# Структура таблицы `users`
-#
 
 CREATE TABLE `users` (
   `internally` varchar(25) NOT NULL default '0',
@@ -82,22 +45,12 @@ CREATE TABLE `users` (
   PRIMARY KEY  (`internally`,`login`)
 ) COMMENT='Personnels';
 
-# --------------------------------------------------------
-
-#
-# Структура таблицы `usersgroups`
-#
-
 CREATE TABLE `usersgroups` (
   `login` varchar(25) NOT NULL default '',
   `groups` varchar(25) NOT NULL default '',
   KEY `login` (`login`),
   KEY `groups` (`groups`)
 ) COMMENT='Permissions';
-
-#
-# Структура таблицы `extlines`
-#
 
 CREATE TABLE `extlines` (
   `line` varchar(25) NOT NULL default '0',
@@ -106,16 +59,6 @@ CREATE TABLE `extlines` (
   KEY `name` (`name`)
 ) COMMENT='Names of external lines';
 
-#
-# Дамп данных таблицы `extlines`
-#
-
-
-# --------------------------------------------------------
-
-#
-# Структура таблицы `intphones`
-#
 
 CREATE TABLE `intphones` (
   `intnumber` varchar(25) NOT NULL default '0',
@@ -123,17 +66,6 @@ CREATE TABLE `intphones` (
   UNIQUE KEY `intnumber` (`intnumber`),
   KEY `name` (`name`)
 ) COMMENT='Names of internally phones';
-
-#
-# Дамп данных таблицы `intphones`
-#
-
-
-# --------------------------------------------------------
-
-#
-# Структура таблицы `phonebook`
-#
 
 CREATE TABLE `phonebook` (
   `login` varchar(25) default NULL,
@@ -143,24 +75,6 @@ CREATE TABLE `phonebook` (
   KEY `login` (`login`),
   KEY `description` (`description`)
 ) COMMENT='Phone book';
-
-#
-# Дамп данных таблицы `phonebook`
-#
-
-
-# --------------------------------------------------------
-
-#
-# Дамп данных таблицы `tarif`
-#
-
-
-# --------------------------------------------------------
-
-#
-# Структура таблицы `towns`
-#
 
 CREATE TABLE `towns` (
   `id` int(6) unsigned NOT NULL default '0',

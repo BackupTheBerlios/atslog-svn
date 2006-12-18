@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# FreeBSD related hack
 PATH=${PATH}:/usr/local/gnu-autotools/bin/
 
 rm -rf tmp
