@@ -3,13 +3,15 @@
 
 # - Bug fixed
 + - Feature added
-
+! - Information
 
 === ATSLOG 2.0-DEV ===
-! (samm) new Perl SQL installer. Currently work only with MySQL but will
++ (samm) Added support for the PANASONIC KX-TD1232 with Russian Firmware
+! (samm) Directory structure was changed. 
++ (samm) new Perl SQL installer. Currently work only with MySQL but will
          support PostgresSQL soon. Also we need to integrate it with Make
          file.
-! (samm) new GNU autoconf based configure script. I hope this will make 
++ (samm) new GNU autoconf based configure script. I hope this will make 
          install process easer and more portable.
 # (samm) when atslogd was not in daemon mode (default!) we had 0 in the 
          PID file
