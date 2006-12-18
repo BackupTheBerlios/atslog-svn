@@ -15,7 +15,7 @@ RM=@RM@
 CP=@CP@
 MKDIR=@MKDIR@
 ECHO=@ECHO@
-all: atslog-daemon
+all: atslog-daemon include/atslog.conf
 edit = sed \
         -e 's,@datadir\@,${DATA_DIR},g' \
         -e 's,@bindir\@,${BIN_DIR},g' \
