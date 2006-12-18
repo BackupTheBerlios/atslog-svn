@@ -56,16 +56,17 @@ sub echoerrors(){
  $toexit=1;
 }
 
+# ampto24 with russian and english language support
 sub AmPmTo24(){
     $hour=$_[0];
     $AmPm=$_[1];
-    if ($AmPm eq 'PM'){
+    if ($AmPm eq 'PM' || $AmPm eq 'èè'){
 	if($hour < 12){
 	    $return24=$hour+12;
 	}elsif($hour == 12){
 	    $return24=12;
 	}
-    }elsif($AmPm eq 'AM'){
+    }elsif($AmPm eq 'AM' || $AmPm eq 'Ñè'){
         if($hour < 12){
             $return24=$hour;
         }elsif($hour == 12){
