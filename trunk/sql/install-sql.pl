@@ -7,6 +7,8 @@ print "ATSlog MySQL database installer/updater\n";
 }
 use DBI;
 
+my $dbtype =input('Database type: (mysql or postgressql)',    'mysql');
+
 my $root =input('Database manager',    'root');
 my $rpsw =input('Manager\'s password', '');
 my $dbhost =input('Database manager',    'localhost');
