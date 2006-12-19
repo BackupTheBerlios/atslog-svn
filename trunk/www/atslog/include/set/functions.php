@@ -51,7 +51,7 @@ function CreateMobileR($MobileCodeCodes){
     foreach ($MobileCodeCodes as $key=>$v){
 	$MobileCodeCodes[$key]=$MobileCallsPrefix.$v.$MobileCallsSuffix;
     }
-    $query=implode("|",$v);
+    $query=implode("|",$MobileCodeCodes);
     return $query;
 }
 /*

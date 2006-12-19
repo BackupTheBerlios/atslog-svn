@@ -6,6 +6,8 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
+# (samm) External Mobile codes support was broken at pre3. Thanks to
+         Alexander Logvinov for the report.
 + (samm) Added support for the PANASONIC KX-TD1232 with Russian Firmware
 ! (samm) Directory structure was changed. 
 + (samm) new Perl SQL installer. Currently work only with MySQL but will
