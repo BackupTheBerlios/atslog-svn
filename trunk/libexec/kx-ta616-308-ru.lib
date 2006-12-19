@@ -54,7 +54,7 @@ sub unitecurcalls() {
 		$number=0;
 	}
 
-	if($dialed_number =~ /<INCOMING>|<BXO„Ÿ™ˆ‰>/){
+	if($dialed_number =~ /incoming/i){
 		$way='1';
 	}else{
 		$way='2';
