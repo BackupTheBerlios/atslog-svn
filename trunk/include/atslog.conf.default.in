@@ -211,6 +211,7 @@ howmonth=12
 # Hybrex    GD-320
 # Siemens   HICOM-350H
 #           HICOM-250
+#           HIPATH-3750 (3000/3750 with compressed mode format)
 # LG        GDK-100
 #           GDK-162
 #           GHX-46
