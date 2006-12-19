@@ -6,7 +6,6 @@
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2006
 #
 
-parsecurcalls();
 
 sub parsecurcalls() {
 	while ($str=<>)
