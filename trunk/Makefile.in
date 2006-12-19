@@ -63,3 +63,6 @@ deinstall:
 	@${RM} -rf ${DATA_DIR}/atslog
 	@${RM} -f ${MAN_DIR}/man8/atslogd.8  ${MAN_DIR}/man8/atslogmaster.8
 	@${ECHO} ATSlog uninstalled. You need to delete ${LOG_DIR} manually.
+
+install-sql:
+	cd data/sql;./install-sql.pl ${ETC_DIR}/atslog.conf

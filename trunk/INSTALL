@@ -6,12 +6,12 @@ UPDATING file
 
 Installation. The step-by-step instruction. 
 
-2.1 Download and unpack atslog-2.0.0pre4.tar.gz:
-    fetch http://atslog.dp.ua/download/archives/atslog-2.0.0pre4.tar.gz
-    tar vzxfmp atslog-2.0.0pre4.tar.gz
+2.1 Download and unpack atslog-@version@.tar.gz:
+    fetch http://atslog.dp.ua/download/archives/atslog-@version@.tar.gz
+    tar vzxfmp atslog-@version@.tar.gz
 
 2.2 Look at the "configure" options:
-    cd atslog-2.0.0pre4
+    cd atslog-@version@
     ./configure --help
 	and run "configure" with your settings
 
@@ -28,48 +28,7 @@ Installation. The step-by-step instruction.
 
 2.5 Run your SQL server (PostgreSQL or MySQL).
 
-2.6.1 If you are using MySQL:
-
-    If you already have a version of ATSlog on your system, you have to 
-    decide if you want to keep the information which is in the database 
-    at the moment. If you don't want to keep it, drop the database. 
-    Only do this if you don't want to keep the information currently in your 
-    squidalyser database. You need to know the name of the database ("atslog"
-    by default), the MySQL admin user (usually "root") and the admin password:
-
-    $ mysql -u  <admin_username> -p
-    Enter password:
-    drop database <dbname>;
-    exit
-
-    Than, you need to create the database; then grant the appropriate 
-    permissions to the database user; and finally create the database tables 
-    and the information contained in them. The "logfile" table contains a 
-    few entries for testing purposes, which can be deleted after testing.
-    
-    $ mysql -u <admin_username> -p
-      Enter password:
-
-      create database <dbname>;
-
-      /* "atslog" is the suggested dbname.  */
-
-      grant all on <dbname>.* to <dbuser>@localhost identified by '<dbpass>';
-     
-      /* "atslog" is the suggested dbuser. Make up your own password :-)  */
-
-      flush privileges;
-      exit
-
-     When you've done that, create the tables and insert the information they contain:
- 
-     mysql <dbname> -u <admin_username> -p < sql/createsqltables.mysql.sql
-     mysql <dbname> -u <admin_username> -p < sql/data.sql
-
-2.6.2 If you are using PostgresSQL: 
-     TODO.
-
-
+2.6 Run make install-sql
 
 2.7 Read USAGE file for the ATSlog PBX part.
 
