@@ -10,7 +10,7 @@ sub parsecurcalls() {
 	{
 		$stringNumber++;
 		# regexp
-		if ($str =~ /(\d{2}\/\d{2}\/\d{2}) (.) (.{1}:\d{2}.{2})  ([\d ]{2})  (\d{2}) (.{37}) (.{8})\" (.{4})  (\r)?$/){
+		if ($str =~ /(\d{2}\/\d{2}\/\d{2}) (.) (.{1}:\d{2}.{2})  (\d{2})  (\d{2}) (.{37}) (.{8})\" (.{4})  (\r)?$/){
 			unitecurcalls();
 		}else{
 			if ($vars{nowrlog} =~ /yes/i){
