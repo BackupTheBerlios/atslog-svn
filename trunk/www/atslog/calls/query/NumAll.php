@@ -135,6 +135,7 @@
 	    echo("&nbsp;</td>");
 	    print ("</tr>\n");
 
+	    if($pages > 1 or $debug){
 		echo("<tr ".$COLORS['TotalTrBgcolor']."><td>".$GUI_LANG['Altogether'].":&nbsp;&nbsp;</td>");
     		echo("<td colspan=2>");
 		echo totalTableFooter('5',0);
@@ -143,17 +144,20 @@
 		echo totalTableFooter('8',0);
 		echo("&nbsp;</td>");
 		print ("</tr>\n");
+	    }
 
 	    print ("</table>\n\n </td></tr></table>");
 	}else{
 	    array($TTF);
 	    $TTF[2]=$GUI_LANG['GeneralDuration'].": ".sumTotal($InAll[2],2);
 
+	    if($pages > 1 or $debug){
 	    	array($TTFa);
 		$TTFa[5]=totalTableFooter('5',2);
 		$TTFa[6]=totalTableFooter('6',2);
 		$TTFa[7]=totalTableFooter('7',2);
 		$TTFa[8]=totalTableFooter('8',2);
+	    }
 	    TTFprint();
 	}
 

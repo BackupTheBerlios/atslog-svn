@@ -325,13 +325,15 @@ if ($res && $res->RecordCount() > 0) {
 	if(empty($MobLine))echo ("<td nowrap>".sumTotal($InAll[5],1)."</td>");
 	if(empty($NationalLine))echo ("<td nowrap>".sumTotal($InAll[6],1)."</td>");
 	print ("</tr>\n");
-	echo ("<tr ".$COLORS['TotalTrBgcolor']."><td>".$GUI_LANG['Altogether'].":</td>");
-	echo ("<td nowrap><b>".totalTableFooter('4',1)."</b></td>");
-	if(empty($CityLine))echo ("<td nowrap>".sumTotal(totalTableFooter('5',1),1)."</td>");
-	if(empty($TrunkLine))echo ("<td nowrap>".sumTotal(totalTableFooter('6',1),1)."</td>");
-	if(empty($MobLine))echo ("<td nowrap>".sumTotal(totalTableFooter('7',1),1)."</td>");
-	if(empty($NationalLine))echo ("<td nowrap>".sumTotal(totalTableFooter('8',1),1)."</td>");
-	print ("</tr>\n");
+	if($pages > 1 or $debug){
+	    echo ("<tr ".$COLORS['TotalTrBgcolor']."><td>".$GUI_LANG['Altogether'].":</td>");
+	    echo ("<td nowrap><b>".totalTableFooter('4',1)."</b></td>");
+	    if(empty($CityLine))echo ("<td nowrap>".sumTotal(totalTableFooter('5',1),1)."</td>");
+	    if(empty($TrunkLine))echo ("<td nowrap>".sumTotal(totalTableFooter('6',1),1)."</td>");
+	    if(empty($MobLine))echo ("<td nowrap>".sumTotal(totalTableFooter('7',1),1)."</td>");
+	    if(empty($NationalLine))echo ("<td nowrap>".sumTotal(totalTableFooter('8',1),1)."</td>");
+	    print ("</tr>\n");
+	}
 	print ("</table>\n\n </td></tr></table>");
     }else{
 	$expor_excel->MontaConteudo($linha+3, 0, $GUI_LANG['Total'].": ".$InAll[0]);
@@ -340,13 +342,15 @@ if ($res && $res->RecordCount() > 0) {
 	if(empty($TrunkLine)) $expor_excel->MontaConteudo($linha+3, 3, sumTotal($InAll[4],0));
 	if(empty($MobLine)) $expor_excel->MontaConteudo($linha+3, 4, sumTotal($InAll[5],0));
 	if(empty($NationalLine)) $expor_excel->MontaConteudo($linha+3, 5, sumTotal($InAll[6],0));
-	
-	$expor_excel->MontaConteudo($linha+4, 0, $GUI_LANG['Altogether'].":");
-	$expor_excel->MontaConteudo($linha+4, 1, totalTableFooter('4',1));
-	if(empty($CityLine)) $expor_excel->MontaConteudo($linha+4, 2, sumTotal(totalTableFooter('5',1),0));
-	if(empty($TrunkLine)) $expor_excel->MontaConteudo($linha+4, 3, sumTotal(totalTableFooter('6',1),0));
-	if(empty($MobLine)) $expor_excel->MontaConteudo($linha+4, 4, sumTotal(totalTableFooter('7',1),0));
-	if(empty($NationalLine)) $expor_excel->MontaConteudo($linha+4, 5, sumTotal(totalTableFooter('8',1),0));
+
+	if($pages > 1 or $debug){
+	    $expor_excel->MontaConteudo($linha+4, 0, $GUI_LANG['Altogether'].":");
+	    $expor_excel->MontaConteudo($linha+4, 1, totalTableFooter('4',1));
+	    if(empty($CityLine)) $expor_excel->MontaConteudo($linha+4, 2, sumTotal(totalTableFooter('5',1),0));
+	    if(empty($TrunkLine)) $expor_excel->MontaConteudo($linha+4, 3, sumTotal(totalTableFooter('6',1),0));
+	    if(empty($MobLine)) $expor_excel->MontaConteudo($linha+4, 4, sumTotal(totalTableFooter('7',1),0));
+	    if(empty($NationalLine)) $expor_excel->MontaConteudo($linha+4, 5, sumTotal(totalTableFooter('8',1),0));
+	}
     }
 
     if(!empty($export)) $expor_excel->GeraArquivo();
