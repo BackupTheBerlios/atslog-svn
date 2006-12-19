@@ -6,6 +6,12 @@ BEGIN {
 print "\nATSlog SQL database installer/updater\n\n";
 }
 use DBI;
+use File::Copy; # copy/move functions
+
+$config=$ARGV[0];
+if ( ! -f $config) {
+    die ("USAGE: install-sql <atslog_config>\n\nCant open \"$config\" file\n");
+}
 
 # my $dbtype =input('Database type: (mysql or postgressql)',    'mysql');
 
@@ -34,11 +40,13 @@ $db->do("DROP DATABASE IF EXISTS ${atslogdb}"); print $db->err ? $db->errstr : '
 $db->do("CREATE DATABASE ${atslogdb}"); print $db->err ? $db->errstr : '';
 $db->do("USE ${atslogdb}"); print $db->err ? $db->errstr : '';
 
-# die("\n");
+
 
 #die("GRANT USAGE ON *.* TO '${atslogdu}'@'localhost' IDENTIFIED BY '${atslogdp}'");
+$db->do("delete from mysql.user where user=\'${atslogdu}\';"); print $db->err ? $db->errstr : '';
 $db->do("GRANT USAGE ON *.* TO \'${atslogdu}\'@\'localhost' IDENTIFIED BY \'${atslogdp}\' WITH GRANT OPTION;"); print $db->err ? $db->errstr : '';
 $db->do("GRANT ALL PRIVILEGES ON ${atslogdb}.* TO \'${atslogdu}\'@\'localhost\'"); print $db->err ? $db->errstr : '';
+$db->do("FLUSH PRIVILEGES;"); print $db->err ? $db->errstr : '';
 
 print "Creating tables...\n";
 my $row;
@@ -49,9 +57,23 @@ open(DATA,"createsqltables.mysql.sql") || die print("Can open SQL");
 readsql();
 close(DATA);
 
-open(DATA,"data.sql") || die print("Can open DATA SQL");
+open(DATA,"data.sql") || die print("Cant open SQL dump");
 readsql();
 close(DATA);
+
+print("Patching configuration file...\n");
+move($config,$config.".bak");
+open IN,  $config.".bak" or die $!;
+open OUT,  ">$config" or die $!;
+while ($row =<IN>) {
+    $row =~ s/^sqlhost=.*$/sqlhost=$dbhost/g;
+    $row =~ s/^sqldatabase=.*$/sqldatabase=$atslogdb/g;
+    $row =~ s/^sqlmasteruser=.*$/sqlmasteruser=$atslogdu/g;
+    $row =~ s/^sqlmaspasswd=.*$/sqlmaspasswd=$atslogdp/g;
+    print OUT $row;
+}
+close IN;close OUT;
+
 print("Done :)\n");
 
 sub input {
