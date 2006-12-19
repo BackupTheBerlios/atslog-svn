@@ -575,6 +575,7 @@ function AddTableHeader($fname,$thname,$toprint){
 }
 
 function totalTableFooter($field,$returnType){
+	$results="";
 
 	global $conn,$from_date,$to_date,$additionalReq,$LocalCalls;
 	global $isNoCityCalls,$LongDistanceCalls,$MobileCallsR;
@@ -668,8 +669,8 @@ function totalTableFooter($field,$returnType){
 		if(!$TTFfirst) $TTFfirst=TRUE;
 	    }
 	}
-	
-	return($results);
+	if(isset($results))	return($results);
+	else return;
 
 }
 
