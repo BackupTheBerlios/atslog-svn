@@ -42,7 +42,7 @@ $MobileCallsSuffix=".+";
 if(!isset($MobileCodes)) { // default codes for the ukrainian mobile operators
     $MobileCodes=array("050", "095", "066", "099", "067", "098", "068", "097", "096","039","063", "093", "094", "092");
 }
-$MobileCallsR=CreateMobileR($MobileCodeCodes);
+$MobileCallsR=CreateMobileR($MobileCodes);
 // Long distance codes of mobile operators.
 
 function CreateMobileR($MobileCodeCodes){
