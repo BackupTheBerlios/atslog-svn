@@ -94,8 +94,8 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
         $dbh->{mysql_auto_reconnect} = 1;
     }
     
-    # this library support 3 different models
-    if($vars{model} =~ /KX-TA308RU/i or $vars{model} =~ /KX-TA308/i or $vars{model} =~ /KX-TA616RU/i){
+    # this library support 4 different models
+    if($vars{model} =~ /(KX-TA308RU|KX-TA308|KX-TA616|KX-TEM824)/i){
 	$vars{model}="kx-ta616-308-ru";
     }
 
