@@ -1,4 +1,3 @@
-#!/usr/bin/perl
 # ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 # GPS-6A text logfile processing Copyright by
@@ -6,7 +5,6 @@
 #
 # Разбираем строки текстового-лог файла для АТС GoldStar GPS-6A
 
-# &parsecurcalls;
 
 sub parsecurcalls() {
     while ($str=<STDIN>)
