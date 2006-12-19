@@ -7,7 +7,7 @@ print "\nATSlog SQL database installer/updater\n\n";
 }
 use DBI;
 
-my $dbtype =input('Database type: (mysql or postgressql)',    'mysql');
+# my $dbtype =input('Database type: (mysql or postgressql)',    'mysql');
 
 my $root =input('Database manager',    'root');
 my $rpsw =input('Manager\'s password', '');
@@ -21,10 +21,24 @@ my $mysql=DBI->connect("DBI:mysql:mysql",$root,$rpsw)
         ||die("Couls not connect to mysql as '$root'");
 my $db   =$mysql;
 
+
+$db->do("USE ${atslogdb}");
+if(!$db->err){
+    print("WARNING: Database \"${atslogdb}\" already exists.\nInstaller will drop it and create a new one.\n");
+   if(input('Continue (yes|no)?','no')!~/^yes$/i) {
+	die("Please backup your existing database and try again.\n");
+    }
+}
+
 $db->do("DROP DATABASE IF EXISTS ${atslogdb}"); print $db->err ? $db->errstr : '';
 $db->do("CREATE DATABASE ${atslogdb}"); print $db->err ? $db->errstr : '';
 $db->do("USE ${atslogdb}"); print $db->err ? $db->errstr : '';
+
 # die("\n");
+
+#die("GRANT USAGE ON *.* TO '${atslogdu}'@'localhost' IDENTIFIED BY '${atslogdp}'");
+$db->do("GRANT USAGE ON *.* TO \'${atslogdu}\'@\'localhost' IDENTIFIED BY \'${atslogdp}\' WITH GRANT OPTION;"); print $db->err ? $db->errstr : '';
+$db->do("GRANT ALL PRIVILEGES ON ${atslogdb}.* TO \'${atslogdu}\'@\'localhost\'"); print $db->err ? $db->errstr : '';
 
 print "Creating tables...\n";
 my $row;
@@ -38,7 +52,7 @@ close(DATA);
 open(DATA,"data.sql") || die print("Can open DATA SQL");
 readsql();
 close(DATA);
-print("Done\n");
+print("Done :)\n");
 
 sub input {
  my ($pr, $dv) =@_;
