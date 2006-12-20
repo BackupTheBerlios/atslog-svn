@@ -1,3 +1,6 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+
 === Upgrade from 2.00pre1-2.00pre3 ===
 
 Please uninstall atslog-2.00 and install new version as described in the 

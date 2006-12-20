@@ -1,5 +1,5 @@
-# ATSlog version 2.0.0pre4 build 326 www.atslog.dp.ua  
-# Copyright (C) 2003 Denis SuhoV www.yamiyam.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 
 If you upgrading from previous versions of the ATSLog or Panalog please read
 UPDATING file
