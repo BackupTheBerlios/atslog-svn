@@ -47,13 +47,18 @@ sqltype=MySQL
 #    port=cuaa0
 # Linux
 #    port=ttyS0
-# 2. Via TCP/IP port.
+# 2. Via TCP/IP  (server).
 #    The demon will open a TCP socket and will expect connection on
 #    specified number of port.
 #    It is necessary to specify a prefix tcp:port_number
 # Sample:
 #    port=tcp:1234
 #
+# 3  Via TCP/IP (client)
+#    The  daemon will open TCP connection to the remote IP address 
+# Sample:
+#    port=rtcp:remote.host:1234
+
 port=cuaa0
 
 # Speed of the server serial port $port
