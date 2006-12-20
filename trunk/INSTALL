@@ -1,10 +1,10 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 
-If you upgrading from previous versions of the ATSLog or Panalog please read
-UPDATING file
+If you are upgrading from previous versions of the ATSLog or Panalog please
+read the file UPDATING.  
 
-Installation. The step-by-step instruction. 
+Installation. The step-by-step instructions. 
 
 2.1 Download and unpack atslog-@version@.tar.gz:
     fetch http://atslog.dp.ua/download/archives/atslog-@version@.tar.gz
