@@ -23,6 +23,7 @@ svn export USAGE tmp/atslog-${ver}/USAGE
 svn export UPDATING tmp/atslog-${ver}/UPDATING
 svn export TODO tmp/atslog-${ver}/TODO
 svn export CHANGES tmp/atslog-${ver}/CHANGES
+svn export LICENSE  tmp/atslog-${ver}/LICENSE
 svn export Makefile.in tmp/atslog-${ver}/Makefile.in
 svn export configure.in tmp/atslog-${ver}/configure.in
 svn export aclocal.m4 tmp/atslog-${ver}/aclocal.m4
