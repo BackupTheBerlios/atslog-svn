@@ -89,37 +89,40 @@ if($vars{sqlhost} ne "localhost"){
     $host = ";host=".$vars{sqlhost};
 }
 
+# this library support 4 different models
+if($vars{model} =~ /(KX-TA308RU|KX-TA308|KX-TA616|KX-TEM824)/i){
+	$vars{model}="kx-ta616-308-ru";
+}
+
+$libname="$vars{libdir}/".lc($vars{model}).".lib";
+
+# load library
+if ( (-e $libname) && (-r $libname) ) 
+{
+	require $libname;
+}else{
+        $ERRORMESSAGE="$vars{msg31}";
+        echoerrors();
+	closelog();
+	exit $toexit;
+}
+
 if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0})){
     if($vars{sqltype}  =~ /MySQL/i){
         $dbh->{mysql_auto_reconnect} = 1;
     }
     
-    # this library support 4 different models
-    if($vars{model} =~ /(KX-TA308RU|KX-TA308|KX-TA616|KX-TEM824)/i){
-	$vars{model}="kx-ta616-308-ru";
-    }
-
-    $libname="$vars{libdir}/".lc($vars{model}).".lib";
-
-    if ( (-e $libname) && (-r $libname) ) 
-    {
-	require $libname;
-    }else{
-        $ERRORMESSAGE="$vars{msg31}";
-        echoerrors();
-	exit $toexit;
-    }
-    
+    # parsing calls
     parsecurcalls();
 
     if($callsCount == 0){                                                           
         $ERRORMESSAGE="\n$vars{msg32}";
         echoerrors();
-    }                                                                       
+    }
+    $dbh->disconnect;
 }else{
- $ERRORMESSAGE="$vars{msg33}"; 
+ $ERRORMESSAGE="$vars{msg33}:".$DBI::errstr; 
  echoerrors();
 }
 closelog();
-$dbh->disconnect;
 exit $toexit;
