@@ -26,6 +26,7 @@ edit = @sed \
 
 include/atslog.conf:
 	$(edit) include/atslog.conf.default.in > include/atslog.conf.default
+	$(edit) include/atslog.conf.default.rus.in > include/atslog.conf.default.rus
 
 atslog-daemon:
 	@cd atslogd; $(MAKE)
@@ -47,7 +48,7 @@ install: all include/atslog.conf
 	@${MKDIR} -p ${MAN_DIR}/man8
 	@${CP} man/en/atslogd.8 man/en/atslogmaster.8 ${MAN_DIR}/man8/
 	@${MKDIR} -p ${ETC_DIR}
-	@${CP} include/atslog.conf.default ${ETC_DIR}
+	@${CP} include/atslog.conf.default include/atslog.conf.default.rus ${ETC_DIR}
 	@if test ! -f ${ETC_DIR}/atslog.conf; then ${CP} ${ETC_DIR}/atslog.conf.default ${ETC_DIR}/atslog.conf;fi
 	@${MKDIR} -p ${DATA_DIR}/atslog/lang
 	@${CP} -r include/lang/* ${DATA_DIR}/atslog/lang
@@ -59,7 +60,7 @@ deinstall:
 	@${RM} -rf ${LIBEXEC_DIR}/atslog
 	@${RM} -f ${BIN_DIR}/atslogd ${BIN_DIR}/atslogcleardb.pl ${BIN_DIR}/atslogdaily ${BIN_DIR}/atslogdb.pl ${BIN_DIR}/atslogmaster ${BIN_DIR}/atslogrotate
 	@if cmp -s ${ETC_DIR}/atslog.conf ${ETC_DIR}/atslog.conf.default; then ${RM} -f ${ETC_DIR}/atslog.conf; fi
-	@${RM} -f ${ETC_DIR}/atslog.conf.default
+	@${RM} -f ${ETC_DIR}/atslog.conf.default ${ETC_DIR}/atslog.conf.default.rus
 	@${RM} -rf ${DATA_DIR}/atslog
 	@${RM} -f ${MAN_DIR}/man8/atslogd.8  ${MAN_DIR}/man8/atslogmaster.8
 	@${ECHO} ATSlog uninstalled. You need to delete ${LOG_DIR} manually.
