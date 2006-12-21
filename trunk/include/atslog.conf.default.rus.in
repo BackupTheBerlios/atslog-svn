@@ -15,8 +15,7 @@ build=@buildnumber@
 #
 # Пароль для пользователя $sqlmasteruser
 # Серверные программы ATSlog от имени этого пользователя
-# инициализируют все обращения к SQL серверу для внесения изменений
-# в базы данных.
+# инициализируют все обращения к SQL серверу для внесения изменений в базы данных.
 # Например: 
 # sqlmaspasswd=Edktxtybt
 #
@@ -44,19 +43,22 @@ sqltype=MySQL
 #    будет обращаться к порту как к девайсу /dev/$port. В
 #    конфигурационном файле префикс "/dev/" опускается.
 #    Например:
+# BSD
 #    port=cuaa0
+# Linux
+#    port=ttyS0
 # 2. Через TCP/IP порт. При этом демон откроет TCP сокет
 #    и будет ожидать соединения по указанному номеру порта.
 #    Обязательно нужно указать префикс tcp:номер_порта.
 #    Например:
 #    port=tcp:1234
+#
 # 3. Через TCP/IP порт. При этом демон откроет TCP соединение на удалённых 
 #    хост по указанному номеру порта.
 #    Обязательно нужно указать префикс rtcp:хост:номер_порта.
 #    Например:
 #    port=rtcp:remote.com:1234
 
-#
 port=cuaa0
 
 # Скорость последовательного порта $port сервера
@@ -94,20 +96,20 @@ stopbits=1
 
 # Директория с исполняемыми файлами программы
 # 
-bindir=/usr/local/bin
+bindir=@bindir@
 
 # Директория с файлами библиотек (Perl модулей) поддержки
 # различных моделей АТС.
-#
-libdir=/usr/local/libexec/atslog
+
+libdir=@libexecdir@/atslog
 
 # Директория с текстовыми лог-файлами
 #
-logdir=/var/log/atslog
+logdir=@localstatedir@/log
 
 # Директория с дополнительными файлами использующимися ATSlog.
 #
-sharedir=/usr/local/share/atslog
+sharedir=@datadir@/atslog
 
 # Поддиректория с файлами сообщений на различных языках.
 # Располагается в $sharedir
@@ -127,17 +129,17 @@ masterscript=atslogmaster
 
 # Скрипт запуска программы при старте системы
 #
-initscript=/usr/local/etc/rc.d/atslogdinit.sh
+initscript=@sysconfdir@/rc.d/atslogdinit.sh
 
 # Скрипт ежемесячного вызова ротации логов
 #
-monthlyscript=/usr/local/etc/periodic/monthly/atslogrotate
+monthlyscript=@bindir@/atslogrotate
 
 # Скрипт ежедневного вызова сбора информации из
 # текстового лог-файла и записи её в базу SQL сервера.
 # Скрипт активируется только если параметр $fastwrite=no
-#
-dailyscript=/usr/local/etc/periodic/daily/atslogdaily
+
+dailyscript=@bindir@/atslogdaily
 
 # Скрипт, передающий информацию о звонках SQL серверу
 #
@@ -145,6 +147,7 @@ atslogdb=atslogdb.pl
 
 # Скрипт, позволяющий очистить от данных таблицы SQL сервера. Скрипт не
 # удаляет таблицы и базы данных, а только очищает от информации.
+#
 # Пример использования:
 # [root@server /]$ atslogmaster cleardb
 #
@@ -154,13 +157,12 @@ cleardb=atslogcleardb.pl
 # месяц. По окончанию месяца файл будет сжат bzip2 и сохранён под
 # именем $callslogfile.1.bz2 В следующий месяц будет произведена его
 # ротация в соответствующем порядке.
-#
 callslogfile=calls.log
 
 # Текстовый лог-файл текущих звонков.
 # После того, как из этого файла данные будут записаны в базу SQL
 # сервера его содержимое переносится в $callslogfile
-#
+
 curcallslogfile=currentcalls.log
 
 # Файл со строками, информация из которых не была перенесена из текстового
@@ -193,7 +195,7 @@ startlogfile=atstart.log
 
 # PID файл.
 #
-pidfile=/var/run/atslogd.pid
+pidfile=@localstatedir@/run/atslogd.pid
 
 # Сколько месяцев хранить текстовые лог-файлы
 # указанные параметрами $callslogfile, $notwritelog и $startlogfile.
