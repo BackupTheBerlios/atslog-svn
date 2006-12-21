@@ -10,8 +10,8 @@ The following packages must be installed on your system, for ATSlog to
 work:
 
   * GCC compiler
-  * MySQL (tested on 4.xx and 5.xx) or PostgresSQL
-  * Perl DBI module with modules for the MySQL or PostgresSQL
+  * MySQL (tested on 4.xx and 5.xx) or PostgreSQL
+  * Perl DBD-mysql or DBD-Pg modules  modules for the MySQL or PostgreSQL.
   * Web Server (tested with Apache HTTPD) with PHP (4.3 or later) if you
     want to use web interface.
 
