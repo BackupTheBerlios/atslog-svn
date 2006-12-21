@@ -6,6 +6,7 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
+# (samm) Fixed bug in www with sending http auth header if db connection fail
 ! (samm) INSTALL file updated
 + (samm) Added support for the Siemens HiPath 3000/3750 (untested)
 # (samm) External Mobile codes support was broken at pre3. Thanks to
