@@ -4,20 +4,31 @@
 If you are upgrading from previous versions of the ATSLog or Panalog please
 read the file UPDATING.  
 
+Requirements.
+
+The following packages must be installed on your system, for ATSlog to
+work:
+
+  * GCC compiler
+  * MySQL (tested on 4.xx and 5.xx) or PostgresSQL
+  * Perl DBI module with modules for the MySQL or PostgresSQL
+  * Web Server (tested with Apache HTTPD) with PHP (4.3 or later) if you
+    want to use web interface.
+
 Installation. The step-by-step instructions. 
 
-2.1 Download and unpack atslog-@version@.tar.gz:
+1 Download and unpack atslog-@version@.tar.gz:
     fetch http://atslog.dp.ua/download/archives/atslog-@version@.tar.gz
     tar vzxfmp atslog-@version@.tar.gz
 
-2.2 Look at the "configure" options:
+2 Look at the "configure" options:
     cd atslog-@version@
     ./configure --help
 	and run "configure" with your settings
 
-2.3 Run "make install"
+3 Run "make install"
 
-2.4 Adjust settings in the
+4 Adjust settings in the
     $PREFIX/atslog.conf  (e.g. /usr/local/etc/atslog.conf) file.
 
     Pay special attention on such parameters as:
@@ -26,9 +37,9 @@ Installation. The step-by-step instructions.
       $fastwrite
       $model
 
-2.5 Run your SQL server (PostgreSQL or MySQL).
+5 Run your SQL server (PostgreSQL or MySQL).
 
-2.6 Run make install-sql
+6 Run make install-sql
 
 2.7 Read USAGE file for the ATSlog PBX part.
 
