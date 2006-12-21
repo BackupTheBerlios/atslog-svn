@@ -1,21 +1,21 @@
 <?php
 
 if(isset($_POST['newLang'])){
-    setcookie("lang",$_POST['newLang'],time() + 60*60*24*365,"/",$_SERVER["SERVER_NAME"]);
+    setcookie("lang",$_POST['newLang'],time() + 60*60*24*365,"/");
     $setupLang = $_POST['newLang'];
 }
 
 if(isset($_POST['newColor'])){
-    setcookie("color",$_POST['newColor'],time() + 60*60*24*365,"/",$_SERVER["SERVER_NAME"]);
+    setcookie("color",$_POST['newColor'],time() + 60*60*24*365,"/");
     $setupColor = $_POST['newColor'];
 }
 
 if(isset($_POST['baseOrder'])){
-    setcookie("baseOrder",$_POST['baseOrder'],time() + 60*60*24*365,"/",$_SERVER["SERVER_NAME"]);
+    setcookie("baseOrder",$_POST['baseOrder'],time() + 60*60*24*365,"/");
 }
 
 if(isset($_POST['rows'])){
-    setcookie("cRows",$_POST['rows'],time() + 60*60*24*365,"/",$_SERVER["SERVER_NAME"]);
+    setcookie("cRows",$_POST['rows'],time() + 60*60*24*365,"/");
     $setupRows = $_POST['rows'];
 }
 
