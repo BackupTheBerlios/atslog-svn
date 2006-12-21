@@ -126,9 +126,15 @@ if($sqltype == "PostgreSQL"){
 }else{
     $adodbDriver="MySQL";
 }
-$conn = &ADONewConnection($adodbDriver);   // create a connection 
+$conn = &ADONewConnection($adodbDriver);   // create a connection
 $conn->cacheSecs = $ADODB_CACHE_TTL;   // время жизни кеша SQL запроса
-$conn->PConnect($sqlhost,$sqlmasteruser,$sqlmaspasswd,$sqldatabase); // connect to SQL, agora db
+$rc=$conn->PConnect($sqlhost,$sqlmasteruser,$sqlmaspasswd,$sqldatabase); // connect to SQL, agora db
+if($rc!=true) { // database connection failed
+	echo ("Database connection failed!<br>");
+	echo $conn->ErrorMsg();
+	exit;
+}
+
 if($debug==2) $conn->debug = true;
 
 
