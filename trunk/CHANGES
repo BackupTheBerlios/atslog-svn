@@ -7,7 +7,8 @@
 
 === ATSLOG 2.0-DEV ===
 
-2006-DEC-15: New atslog-2.0-pre4 stable snapshot released
+2006-DEC-22: New atslog-2.0-pre4 stable snapshot released
+
 # (samm) fixed bug with stale pid file if atslogd exit on failure.
 # (samm) Fixed bug in www with sending http auth header if db connection fail
 ! (samm) INSTALL file updated
