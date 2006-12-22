@@ -31,7 +31,7 @@ cd tmp/atslog-${ver}
 autoconf
 rm -rf autom4te.cache
 cd ../../
-echo "replacing @version@ and buildnumber"
+echo "replacing @version@ and @buildnumber@"
 perl scripts/subdir_subst.pl -x -d tmp/ '\@version\@' ${ver}  >/dev/null
 perl scripts/subdir_subst.pl -x -d tmp/ '\@buildnumber\@' ${build} >/dev/null
 find ./tmp -name \*sds_sav -type f |xargs rm
