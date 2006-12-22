@@ -7,16 +7,17 @@
 
 === ATSLOG 2.0-DEV ===
 
+2006-DEC-15: New atslog-2.0-pre4 stable snapshot released
 # (samm) fixed bug with stale pid file if atslogd exit on failure.
 # (samm) Fixed bug in www with sending http auth header if db connection fail
 ! (samm) INSTALL file updated
-+ (samm) Added support for the Siemens HiPath 3000/3750 (untested)
++ (samm) Added support for the Siemens HiPath 3000/3750
 # (samm) External Mobile codes support was broken at pre3. Thanks to
          Alexander Logvinov for the report.
 + (samm) Added support for the PANASONIC KX-TD1232 with Russian Firmware
 ! (samm) Directory structure was changed. 
 + (samm) new Perl SQL installer. Currently work only with MySQL but will
-         support PostgresSQL soon. 
+         support PostgresSQL at 2.0.0 release. 
 + (samm) new GNU autoconf based configure script. I hope this will make 
          install process easer and more portable.
 # (samm) when atslogd was not in daemon mode (default!) we had 0 in the 

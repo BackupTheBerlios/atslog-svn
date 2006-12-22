@@ -15,6 +15,11 @@ work:
   * Web Server (tested with Apache HTTPD) with PHP (4.3 or later) if you
     want to use web interface.
 
+2.0 PRE-RELEASE NOTES
+Currently SQL installer for the PostgreSQL is not ready. Please use MySQL
+or contact author if you need to use PostgreSQL and want to be a beta tester.
+This issue will be fixed in 2.0.0 Release.
+
 Installation. The step-by-step instructions. 
 
 1 Download and unpack atslog-@version@.tar.gz:

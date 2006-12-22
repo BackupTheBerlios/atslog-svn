@@ -1,6 +1,6 @@
-2.0.0 Release plans:
-Add postgressql support to the installer.
-Proofread translation of the english web interface
+2.0.0 Release plans
+* Add postgressql support to the installer.
+* Proofread translation of the english web interface
 
 2.1.x plans
 * daemon - make fast_write mode more reliable (we need to control atslogdb.pl 
