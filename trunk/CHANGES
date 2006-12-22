@@ -6,6 +6,8 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
+
+# (samm) fixed bug with stale pid file if atslogd exit on failure.
 # (samm) Fixed bug in www with sending http auth header if db connection fail
 ! (samm) INSTALL file updated
 + (samm) Added support for the Siemens HiPath 3000/3750 (untested)
@@ -23,7 +25,7 @@
          really need gpid.
 + (samm) Now library names are not hardcoded into atslogdb.pl
          This allow user to add new library easer.
-+ (samm) Added support for the Panasonic KX-TD500 PBX (untested) 
++ (samm) Added support for the Panasonic KX-TD500 PBX (tested by Ivan Frolov) 
 
 2006-DEC-15: New atslog-2.0-pre3 stable snapshot released
 
