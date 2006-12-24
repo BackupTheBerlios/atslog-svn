@@ -40,8 +40,6 @@ while(<LN>) {
 }
 close(LN);
 
-print $vars{msg29}."calls: ";
-
 if($vars{sqltype} =~ /PostgreSQL/i){
     $sqltype=Pg;
 }else{
@@ -53,8 +51,9 @@ if($vars{sqlhost} ne "localhost"){
     $host = ";host=".$vars{sqlhost};
 }
 	
-$dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0});
+if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0})){
 
+print $vars{msg29}."calls: ";
 $del_query="TRUNCATE TABLE calls;";
 #print $del_query;
 
@@ -67,4 +66,8 @@ if ($sth->execute) {
     $toexit=1;
 }
 $dbh->disconnect;
+}
+else {
+    print $DBI::errstr."\n";
+}
 exit $toexit;
