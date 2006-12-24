@@ -63,8 +63,10 @@ echomess(){
     if [ -n "$ECHOMESSAGE" ];then
 	MESSAGE=$ECHOMESSAGE
     else
-	MESSAGE=$ERRORMESSAGE
-	logger -p $syslogfacility "${masterscript}${ECHOATSLOGDpid}: $MESSAGE"
+	if [ -n "$syslogfacility" ]; then
+	    MESSAGE=$ERRORMESSAGE
+	    logger -p $syslogfacility "${masterscript}${ECHOATSLOGDpid}: $MESSAGE"
+	fi
     fi
     echo "${masterscript}: $MESSAGE"
     echo "$NOWDATE ${masterscript}${ECHOATSLOGDpid}: $MESSAGE" >> $logdir/$startlogfile

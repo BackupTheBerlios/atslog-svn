@@ -43,15 +43,19 @@ $callsCount=0;
 $toexit=0;
 
 # Разберёмся с уровнем для системного журнала
-$vars{syslogfacility} =~ /(.*)\.(.*)/;
-$sFas1 = $1;
-$sFas2 = $2;
+if($vars{syslogfacility}){
+    $vars{syslogfacility} =~ /(.*)\.(.*)/;
+    $sFas1 = $1;
+    $sFas2 = $2;
+}
 
 # Опишем основные функции
 
 # Функция выводит сообщения об ошибках в системный журнал и в STDERR
 sub echoerrors(){
- syslog("$sFas2", "$ERRORMESSAGE");
+if($vars{syslogfacility}){
+    syslog("$sFas2", "$ERRORMESSAGE");
+} 
  warn ("$ERRORMESSAGE\n");
  $toexit=1;
 }
@@ -77,8 +81,10 @@ sub AmPmTo24(){
 }
 
 # Let`s go!
-setlogsock('unix'); # syslogd socket type
-openlog("atslogdb", 'pid, ndelay, cons', "$sFas1");#Откроем сокет на syslogd
+if($vars{syslogfacility}){
+    setlogsock('unix'); # syslogd socket type
+    openlog("atslogdb", 'pid, ndelay, cons', "$sFas1");#Откроем сокет на syslogd
+}
 if($vars{sqltype}  =~ /PostgreSQL/i){
     $sqltype=Pg;
 }else{
@@ -103,7 +109,9 @@ if ( (-e $libname) && (-r $libname) )
 }else{
         $ERRORMESSAGE="$vars{msg31}";
         echoerrors();
-	closelog();
+	if($vars{syslogfacility}){	
+	    closelog();
+	}	
 	exit $toexit;
 }
 
@@ -124,5 +132,7 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
  $ERRORMESSAGE="$vars{msg33}:".$DBI::errstr; 
  echoerrors();
 }
-closelog();
+if($vars{syslogfacility}){
+    closelog();
+}    
 exit $toexit;

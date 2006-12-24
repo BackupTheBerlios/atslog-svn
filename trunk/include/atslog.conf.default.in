@@ -238,7 +238,8 @@ model=KX-TA616RU
 
 # syslogd level
 # syslogd used for critical error messsages.
-# refer to man logger(1), syslog.conf(5) for the additional information
+# Refer to man logger(1), syslog.conf(5) for the additional information.
+# Leave this blank to disable syslog messages.
 #
 syslogfacility=user.err
 
