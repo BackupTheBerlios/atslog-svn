@@ -23,8 +23,8 @@ my $atslogdu =input('Database user',       'atslog');
 my $atslogdp =input('User\'s password',    randomPassword(8));
 
 print "Connecting to 'DBI:mysql:mysql' as '$root'...\n";
-my $mysql=DBI->connect("DBI:mysql:mysql",$root,$rpsw)
-        ||die("Couls not connect to mysql as '$root'");
+my $mysql=DBI->connect("DBI:mysql:mysql",$root,$rpsw,{PrintError => 0})
+        ||die("Could not connect to mysql as '$root'. ".$DBI::errstr);
 my $db   =$mysql;
 
 
