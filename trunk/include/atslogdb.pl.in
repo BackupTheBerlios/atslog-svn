@@ -96,8 +96,11 @@ if($vars{sqlhost} ne "localhost"){
 }
 
 # this library support 4 different models
-if($vars{model} =~ /(KX-TA308RU|KX-TA308|KX-TA616|KX-TEM824)/i){
+if($vars{model} =~ /^(KX-TA308RU|KX-TA308|KX-TA616|KX-TEM824)$/i){
 	$vars{model}="kx-ta616-308-ru";
+}
+elsif($vars{model} =~ /^(HIPATH-150)$/i){
+	$vars{model}="hipath-3750";
 }
 
 $libname="$vars{libdir}/".lc($vars{model}).".lib";

@@ -214,7 +214,8 @@ howmonth=12
 # Samsung   SKP-816
 #           NX-820
 # Hybrex    GD-320
-# Siemens   HICOM-350H
+# Siemens   HICOM-150
+#           HICOM-350H
 #           HICOM-250
 #           HIPATH-3750 (3000/3750 with compressed mode format)
 # LG        GDK-100
