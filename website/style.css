@@ -56,4 +56,5 @@ P {
 .ruler{
 	width:100%;background-color:#8F8F8F;height:3px;
 }
-TT,PRE{background-color:#f0f0f0}
+TT{background-color:#f0f0f0}
+PRE{background-color:#000; color: #fff;padding:2px;}
