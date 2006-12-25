@@ -12,7 +12,7 @@ $sqldatabase='atslog';
 // atslog SQL user password
 $sqlmaspasswd='';
 // atslog SQL user name
-$sqlmasteruser='root';
+$sqlmasteruser='atslog';
 // database type
 $sqltype='mysql'; // PostgreSQL or MySQL
 // PBX model
