@@ -581,8 +581,7 @@ int main( int argc, char *argv[] )
 			dirlen=strlen(optarg);
 			if( dirlen>MAXPATHLEN ) {
 				(void)fprintf( stderr,"Too long directory name\n" );
-				close_pid();
-				return 1;
+				my_exit(1);
 			}
 			if( dirlen==0 ) {
 				dirname[0]='.'; dirlen=1;
@@ -605,8 +604,7 @@ int main( int argc, char *argv[] )
 			filenamelen=strlen(optarg);
 			if( filenamelen>MAXFILENAMELEN ) {
 				(void)fprintf( stderr,"Too long file name\n" );
-				close_pid();
-				return 1;
+				my_exit(1);
 			}
 			memcpy( filename,optarg,filenamelen );
 			break;
@@ -658,8 +656,7 @@ int main( int argc, char *argv[] )
 		errout=fopen( logfile,"at" );
 		if( errout==NULL ) {
 			(void)fprintf( stderr,"Can't open '%s': %s\n",logfile,strerror(errno) );
-			close_pid();
-			return 1;
+			my_exit(1);
 		}
 	} else {
 		errout=stderr;
@@ -750,28 +747,24 @@ int main( int argc, char *argv[] )
 			{
 				my_syslog( "Invalid TCP port 0 to listen");
 				hCom=INVALID_HANDLE_VALUE;
-				close_pid();
-				return 1;
+				my_exit(1);
 			}
 				s=socket(PF_INET,SOCK_STREAM,0);
 				if(s==INVALID_HANDLE_VALUE) {
 					my_syslog( "socket() failed: %s",my_strerror() );
-					close_pid();
-					return 1;
+					my_exit(1);
 				}
 				if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(char *)&opt,sizeof(opt)) < 0)
 				{
 					my_syslog( "setsockopt() failed: %s",my_strerror() );
-					close_pid();
-					return 1;
+					my_exit(1);
 				}
 				// send keepalive packets. if remote end hangs then we'll can know
 				// this ?
 				if (setsockopt(s,SOL_SOCKET,SO_KEEPALIVE,(char *)&opt,sizeof(opt)) < 0)
 				{
 					my_syslog( "setsockopt() failed: %s",my_strerror() );
-					close_pid();
-					return 1;
+					my_exit(1);
 				}
 				h2close=s;
 				memset( &sa_lserver,0,sizeof(sa_lserver) );
@@ -788,11 +781,11 @@ int main( int argc, char *argv[] )
 						my_syslog( "bind() on port %s:%d failed: %s",hostname,tcpPort,my_strerror() );
 					else
 						my_syslog( "bind() on port %d failed: %s",tcpPort,my_strerror() );
-					goto err_ret;
+					my_exit(1);
 				}
 				if( listen(s,5)==(-1) ) {
 					my_syslog( "listen() failed: %s",my_strerror() );
-					goto err_ret;
+					my_exit(1);
 				}
 				if (hostname!=NULL)
 					my_syslog( "Waiting TCP connection on port %s:%d",hostname,tcpPort );
@@ -802,7 +795,6 @@ int main( int argc, char *argv[] )
 					sa_rclient_len=sizeof(sa_rclient);
 					if( (new_s=accept(s,(struct sockaddr*)&sa_rclient,&sa_rclient_len ))==(-1) ) {
 						my_syslog( "accept() failed: %s",my_strerror() );
-						err_ret:
 						h2close=INVALID_HANDLE_VALUE;
 						hCom=h2close;
 						close(s);
@@ -909,31 +901,27 @@ int main( int argc, char *argv[] )
 			{
 				my_syslog( "Invalid hostname to connect: %s",rhostname);
 				hCom=INVALID_HANDLE_VALUE;
-				close_pid();
-				return 1;
+				my_exit(1);
 			}
 				
 			if (rtcpPort==0)
 			{
 				my_syslog( "Invalid TCP port number to connect: %d",rtcpPort);
 				hCom=INVALID_HANDLE_VALUE;
-				close_pid();
-				return 1;
+				my_exit(1);
 			}
 rtcp:
 			s=socket(PF_INET,SOCK_STREAM,0);
 			if(s==INVALID_HANDLE_VALUE) {
 				my_syslog( "socket() failed: %s",my_strerror() );
-				close_pid();
-				return 1;
+				my_exit(1);
 			}
 			// send keepalive packets. if remote end hangs then we'll can know
 			// this ?
 			if (setsockopt(s,SOL_SOCKET,SO_KEEPALIVE,(char *)&opt,sizeof(opt)) < 0)
 			{
 				my_syslog( "setsockopt() failed: %s",my_strerror() );
-				close_pid();
-				return 1;
+				my_exit(1);
 			}
 			memset(&sa_rclient,0,sizeof(sa_rclient));
 			memcpy(&sa_rclient.sin_addr.s_addr, he_rserver->h_addr_list[0], he_rserver->h_length);
@@ -948,8 +936,7 @@ rtcp:
 						sleep( next_open_timeout );
 						goto rtcp;
 					}
-					close_pid();
-					return 1;
+					my_exit(1);
 				}
 			else
 				my_syslog( "Connected to %s:%d",inet_ntoa(sa_rclient.sin_addr),ntohs(sa_rclient.sin_port) );
@@ -963,15 +950,13 @@ rtcp:
 
 	if( hCom==INVALID_HANDLE_VALUE ) {
 		my_syslog( "Can't open '%s', exiting",argv[0] );
-		close_pid();
-		return 1;
+		my_exit(1);
 	}
 
 	memcpy( dirname+dirlen,filename,strlen(filename));
 	if( (cur_logfile=fopen(dirname,"at"))==NULL ){
 		my_syslog( "Can't open CDR file '%s': %s",dirname,strerror(errno) );
-		close_pid();
-		return 1;
+		my_exit(1);
 	}
 
 	while( (rc=read_string( hCom,buf,MAXSTRINGLEN ))>=0 ) {
@@ -1002,8 +987,7 @@ rtcp:
 				hCom = open_io( argv[0],speed,data_bits,parity,stop_bits );
 				if( hCom==INVALID_HANDLE_VALUE ) {
 					my_syslog( "Can't open '%s', exiting",argv[0] );
-					close_pid();
-					return 1;
+					my_exit(1);
 				}
 			}
 			continue;
@@ -1016,6 +1000,6 @@ rtcp:
 			break;
 		}
 	}
-	close_pid();
+	my_exit(0);
 	return 0;
 }

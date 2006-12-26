@@ -18,7 +18,7 @@ $(NAME):	$(NAME).c
 	$(CC) $(CFLAGS) -DCDRR_VER=$(CDRR_VER_DOT) -o $@ $(NAME).c $(LIBWRAP)
 
 clean:
-	-$(RM) $(EXES)
+	-$(RM) $(EXES) *~
 
 diff:
 	diff -u cdr_read.orig.c atslogd.c > cdr_read.c.diff
