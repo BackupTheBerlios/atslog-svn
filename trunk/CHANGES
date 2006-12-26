@@ -7,6 +7,9 @@
 
 === ATSLOG 2.0-DEV ===
 
++ (samm) Added support for the HiCom-150 using HiPath 3750 Library
++ (samm) Sergey Solonina created library to support Samsung OfficeServ 7200
+
 2006-DEC-22: New atslog-2.0-pre4 stable snapshot released
 
 # (samm) fixed bug with stale pid file if atslogd exit on failure.
