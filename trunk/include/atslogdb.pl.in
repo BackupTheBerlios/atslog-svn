@@ -99,7 +99,7 @@ if($vars{sqlhost} ne "localhost"){
 if($vars{model} =~ /^(KX-TA308RU|KX-TA308|KX-TA616|KX-TEM824)$/i){
 	$vars{model}="kx-ta616-308-ru";
 }
-elsif($vars{model} =~ /^(HIPATH-150)$/i){
+elsif($vars{model} =~ /^(HICOM-150)$/i){
 	$vars{model}="hipath-3750";
 }
 
