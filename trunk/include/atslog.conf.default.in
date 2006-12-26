@@ -104,7 +104,7 @@ libdir=@libexecdir@/atslog
 
 # Text-log files directory
 #
-logdir=@localstatedir@/log
+logdir=@localstatedir@/log/atslog
 
 # Additional ATSlog files directory
 #

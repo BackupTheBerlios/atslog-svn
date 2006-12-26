@@ -105,7 +105,7 @@ libdir=@libexecdir@/atslog
 
 # Директория с текстовыми лог-файлами
 #
-logdir=@localstatedir@/log
+logdir=@localstatedir@/log/atslog
 
 # Директория с дополнительными файлами использующимися ATSlog.
 #
