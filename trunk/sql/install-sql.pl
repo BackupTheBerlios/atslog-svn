@@ -44,7 +44,7 @@ $db->do("USE ${atslogdb}"); print $db->err ? $db->errstr : '';
 
 #die("GRANT USAGE ON *.* TO '${atslogdu}'@'localhost' IDENTIFIED BY '${atslogdp}'");
 $db->do("delete from mysql.user where user=\'${atslogdu}\';"); print $db->err ? $db->errstr : '';
-$db->do("GRANT USAGE ON *.* TO \'${atslogdu}\'@\'localhost' IDENTIFIED BY \'${atslogdp}\' WITH GRANT OPTION;"); print $db->err ? $db->errstr : '';
+$db->do("GRANT USAGE ON *.* TO \'${atslogdu}\'@\'${dbhost}' IDENTIFIED BY \'${atslogdp}\' WITH GRANT OPTION;"); print $db->err ? $db->errstr : '';
 $db->do("GRANT ALL PRIVILEGES ON ${atslogdb}.* TO \'${atslogdu}\'@\'localhost\'"); print $db->err ? $db->errstr : '';
 $db->do("FLUSH PRIVILEGES;"); print $db->err ? $db->errstr : '';
 
