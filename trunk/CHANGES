@@ -9,6 +9,7 @@
 
 + (samm) Added support for the HiCom-150 using HiPath 3750 Library
 + (samm) Sergey Solonina created library to support Samsung OfficeServ 7200
+# (samm) fixed bug #009819 - atslogd hangs in tcp mode if port is busy
 
 2006-DEC-22: New atslog-2.0-pre4 stable snapshot released
 
