@@ -38,6 +38,7 @@ install: all include/atslog.conf
 	@${MKDIR} -p ${DESTDIR}${WWW_ROOT}
 	@${ECHO} "Installing web interface to the ${DESTDIR}${WWW_ROOT}/atslog directory"
 	@${CP} -r www/ ${DESTDIR}${WWW_ROOT}/atslog
+	@if test ! -f ${DESTDIR}${WWW_ROOT}/atslog/include/set/conf.inc.php; then ${CP} ${DESTDIR}${WWW_ROOT}/atslog/include/set/conf.inc.php.default ${DESTDIR}${WWW_ROOT}/atslog/include/set/conf.inc.php;fi
 	@${ECHO} "Installing atslog libraries to the ${DESTDIR}${LIBEXEC_DIR}/atslog directory"
 	@${MKDIR} -p ${DESTDIR}${LIBEXEC_DIR}/atslog
 	@${CP}  libexec/* ${DESTDIR}${LIBEXEC_DIR}/atslog/
@@ -49,7 +50,8 @@ install: all include/atslog.conf
 	@${CP} man/en/atslogd.8 man/en/atslogmaster.8 ${DESTDIR}${MAN_DIR}/man8/
 	@${CP} man/ru.KOI8-R/atslogd.8 man/en/atslogmaster.8 ${DESTDIR}${MAN_DIR}/ru/man8/
 	@${MKDIR} -p ${DESTDIR}${ETC_DIR}
-	@${CP} include/atslog.conf.default.rus ${DESTDIR}${ETC_DIR}/atslog.conf
+	@${CP} include/atslog.conf.default include/atslog.conf.default.rus ${DESTDIR}${ETC_DIR}
+	@if test ! -f ${DESTDIR}${ETC_DIR}/atslog.conf; then ${CP} ${DESTDIR}${ETC_DIR}/atslog.conf.default ${DESTDIR}${ETC_DIR}/atslog.conf;fi
 	@${MKDIR} -p ${DESTDIR}${DATA_DIR}/atslog/lang
 	@${CP} -r include/lang/* ${DESTDIR}${DATA_DIR}/atslog/lang
 	@${CP} Makefile ${DESTDIR}${DATA_DIR}/atslog/
