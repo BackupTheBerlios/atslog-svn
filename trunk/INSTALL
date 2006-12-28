@@ -20,7 +20,10 @@ Currently SQL installer for the PostgreSQL is not ready. Please use MySQL
 or contact author if you need to use PostgreSQL and want to be a beta tester.
 This issue will be fixed in 2.0.0 Release.
 
-Installation. The step-by-step instructions. 
+FreeBSD installation: it`s recommended to use FreeBSD port system.
+See http://www.freshports.org/comms/atslog/ for additional information.
+
+Manual installation. The step-by-step instructions. 
 
 1 Download and unpack atslog-@version@.tar.gz:
     fetch http://atslog.dp.ua/download/archives/atslog-@version@.tar.gz
@@ -46,5 +49,7 @@ Installation. The step-by-step instructions.
 
 6 Run make install-sql
 
-2.7 Read USAGE file for the ATSlog PBX part.
+7 Change web interface settings in the www/include/set/config.php.
+  Copy SQL settings from atslog.conf to this file
 
+8 Read USAGE file for the ATSlog PBX part.
