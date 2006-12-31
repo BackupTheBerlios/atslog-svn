@@ -1,27 +1,28 @@
 <?php
 error_reporting(E_ERROR);
+//error_reporting(E_ALL);
  /*
+ 
  
    ATSlog web interface settings
                                               
  */
 
 // hostname of the SQL server 
-$sqlhost='';
+$sqlhost='db.berlios.de';
 // Atslog Database
-$sqldatabase='';
+$sqldatabase='atslog';
 // atslog SQL user password
-$sqlmaspasswd='';
+$sqlmaspasswd='p1w0DEDxDpy1XjT';
 // atslog SQL user name
-$sqlmasteruser='';
+$sqlmasteruser='atslog';
 // database type
-$sqltype=''; // PostgreSQL or MySQL
+$sqltype='mysql'; // PostgreSQL or MySQL
 // PBX model
-$model='';
+$model='DEMO';
 // SQL cache directory.
 $ADODB_CACHE_DIR = '/tmp/adodb';
 $ADODB_CACHE_TTL = 60*60; // 1 hour. SQL query cache lifetime.
 $debugMode=FALSE; // Debug mode.
-$demoMode=FALSE; // Demo mode.
-
+$demoMode=TRUE; // Demo mode.
 ?>

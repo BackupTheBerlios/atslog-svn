@@ -2,7 +2,7 @@
 echo ("
 <table align=\"center\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">
 <tr>
-    <td align=left><a href=\"http://www.atslog.dp.ua/\" title=\"Анализ и учет звонков различных моделей мини-АТС\"><img src=\"/img/atslog.logo.gif\" width=223 height=84 border=0 alt=\"Анализ и учет звонков различных моделей мини-АТС\"></a></td>
+    <td align=left><a href=\"http://www.atslog.com/\" title=\"Анализ и учет звонков различных моделей мини-АТС\"><img src=\"/img/atslog.logo.gif\" width=223 height=84 border=0 alt=\"Анализ и учет звонков различных моделей мини-АТС\"></a></td>
     <td valign=\"top\">
 		<table cellspacing=\"5\" cellpadding=\"5\" border=\"0\">
 		<tr valign=\"top\">

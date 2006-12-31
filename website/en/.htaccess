@@ -1,2 +1,2 @@
-ErrorDocument 404 http://atslog.dp.ua/en/404/
-ErrorDocument 401 http://atslog.dp.ua/en/401/
+ErrorDocument 404 http://atslog.com/en/404/
+ErrorDocument 401 http://atslog.com/en/401/
