@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 
 BEGIN {

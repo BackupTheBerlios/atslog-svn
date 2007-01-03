@@ -3,7 +3,7 @@
     (C) Alexey V. Kuznetsov, avk@gamma.ru, 2001, 2002
     changed by Denis CyxoB www.yamiyam.dp.ua
     and Andrew Kornilov akornilov@gmail.com
-    for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+    for the ATSlog version @version@ build @buildnumber@ www.atslog.com
 
 */
 
@@ -510,7 +510,7 @@ void usage( void )
 "CDR Reader for PBXs v.%s (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002\n"
 "changed by Denis CyxoB www.yamiyam.dp.ua\n"
 "and Andrew Kornilov akornilov@gmail.com\n"
-"for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua\n"
+"for the ATSlog version @version@ build @buildnumber@ www.atslog.com\n"
 "\n"
 "atslogd [-D dir] [-L logfile] [-F filename] [-s speed] [-c csize] [-p parity] [-f sbits] [-d] [-e] [-o]\n"
 "        [-x number] [-w seconds] [-b] [-P pidfile] tcp[:address]:port|rtcp:address:port|dev\n"

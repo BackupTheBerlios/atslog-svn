@@ -12,7 +12,7 @@ DESCRIPTION
 	CDR Reader for PBXs v.1.09 (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
 	changed by Denis CyxoB www.yamiyam.dp.ua
 	and Andrew Kornilov akornilov@gmail.com
-	for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+	for the ATSlog version @version@ build @buildnumber@ www.atslog.com
 
 OPTIONS
 

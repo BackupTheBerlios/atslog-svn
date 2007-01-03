@@ -14,7 +14,7 @@ DESCRIPTION
 	atslogd - это модификация CDR Reader for PBXs v.1.09 (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
 	изменен by Denis CyxoB www.yamiyam.dp.ua 2003-2004
 	и Andrew Kornilov akornilov@gmail.com 2004-2006
-	для программы ATSlog версии @version@ build @buildnumber@ www.atslog.dp.ua
+	для программы ATSlog версии @version@ build @buildnumber@ www.atslog.com
 
 OPTIONS
 
@@ -61,5 +61,5 @@ AUTHOR
 	
 SITE
 
-www.atslog.dp.ua
+www.atslog.com
 
