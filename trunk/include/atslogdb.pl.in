@@ -102,6 +102,9 @@ if($vars{model} =~ /^(KX-TA308RU|KX-TA308|KX-TA616|KX-TEM824)$/i){
 elsif($vars{model} =~ /^(HICOM-150)$/i){
 	$vars{model}="hipath-3750";
 }
+elsif($vars{model} =~ /^(TDA-200)$/i){
+	$vars{model}="kx-tda100";
+}
 
 $libname="$vars{libdir}/".lc($vars{model}).".lib";
 

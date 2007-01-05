@@ -6,7 +6,8 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
-
++ (samm) Added support for the Panasonic KX-TDA100, KX-TDA200 (untested)
+! (samm) New project domain name - atslog.com
 + (samm) Added support for the HiCom-150 using HiPath 3750 Library
 + (samm) Sergey Solonina created library to support Samsung OfficeServ 7200
 # (samm) fixed bug #009819 - atslogd hangs in tcp mode if port is busy
