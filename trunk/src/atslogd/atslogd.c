@@ -26,6 +26,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <arpa/telnet.h>
 
 #include <termios.h>
 #include <sysexits.h>
@@ -67,6 +68,7 @@ int maxtcpclients=1;
 // startup tty settings
 struct termios oldtio;
 int is_tcp=0,is_rtcp=0;
+int	tflag=0;					/* Telnet Emulation */
 
 #define LT_RAW		0
 #define LT_DEFINITY	1
@@ -432,11 +434,68 @@ int set_tty_params( HANDLE hCom,long speed,int data_bits,char parity,int stop_bi
 	return 0;
 }
 
+/* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
+/* taken from the BSD netcat */
+
+/*
+ * ensure all of data on socket comes through. f==read || f==write
+ */
+ssize_t
+atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+{
+	char *s = _s;
+	ssize_t res, pos = 0;
+
+	while (n > pos) {
+		res = (f) (fd, s + pos, n - pos);
+		switch (res) {
+		case -1:
+			if (errno == EINTR || errno == EAGAIN)
+				continue;
+		case 0:
+			return (res);
+		default:
+			pos += res;
+		}
+	}
+	return (pos);
+}
+
+void
+atelnet(int nfd, unsigned char *buf, unsigned int size)
+{
+	unsigned char *p, *end;
+	unsigned char obuf[4];
+
+	end = buf + size;
+	obuf[0] = '\0';
+
+	for (p = buf; p < end; p++) {
+		if (*p != IAC)
+			break;
+
+		obuf[0] = IAC;
+		p++;
+		if ((*p == WILL) || (*p == WONT))
+			obuf[1] = DONT;
+		if ((*p == DO) || (*p == DONT))
+			obuf[1] = WONT;
+		if (obuf) {
+			p++;
+			obuf[2] = *p;
+			obuf[3] = '\0';
+			if (atomicio((ssize_t (*)(int, void *, size_t))write,
+			    nfd, obuf, 3) != 3)
+				(void)fprintf( stderr,"atelnet: Write Error!\n" );
+			obuf[0] = '\0';
+		}
+	}
+}
+
 int read_string( HANDLE hCom,char *buf,int blen )
 {
 	DWORD dwLength;
 	int count;
-
 	for( count=0; count<blen; count++,buf++ ) {
 		do {
 			while( (dwLength=read( hCom,buf,1 ))>=0 ) {
@@ -448,6 +507,8 @@ int read_string( HANDLE hCom,char *buf,int blen )
 					if( dbg && count ) my_syslog( "read_string: '%s'",buf-count );
 					return count;
 				}
+				if (tflag)
+					atelnet(hCom, buf, dwLength);
 				if( *buf=='\n' || *buf=='\r' || *buf==0 ) {
 					if( count ) {
 						buf[0]=0;
@@ -526,6 +587,7 @@ void usage( void )
 "-e\t\t\tcopy error messages to stderr (in case if -L has value)\n"
 "-o\t\t\twrite CDR additionally to stdout\n"
 "-x number\t\tmaximum number of clients for TCP connections; default is 1\n"
+"-t\t\t\tanswer TELNET negotiation\n"
 #ifdef USE_LIBWRAP
 "\t\t\tsee also /etc/hosts.allow, /etc/hosts.deny\n"
 #endif /* USE_LIBWRAP */
@@ -547,6 +609,8 @@ void usage( void )
 
 my_exit(1);
 }
+
+
 
 int main( int argc, char *argv[] )
 {
@@ -575,7 +639,7 @@ int main( int argc, char *argv[] )
 	
 	HANDLE hCom;
 
-	while( (rc=getopt(argc,argv,"bohdes:D:L:P:F:p:c:f:x:w:s:"))!=(-1) ) {
+	while( (rc=getopt(argc,argv,"tbohdes:D:L:P:F:p:c:f:x:w:s:"))!=(-1) ) {
 		switch( rc ) {
 		case 'D':
 			dirlen=strlen(optarg);
@@ -610,6 +674,9 @@ int main( int argc, char *argv[] )
 			break;
 		case 's':
 			speed=atol(optarg);
+			break;
+		case 't':
+			tflag = 1;
 			break;
 		case 'p':
 			parity=optarg[0];
