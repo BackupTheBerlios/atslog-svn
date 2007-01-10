@@ -498,7 +498,7 @@ int read_string( HANDLE hCom,char *buf,int blen )
 					obuf[2] = *p;
 					if (atomicio((ssize_t (*)(int, void *, size_t))write,
 						hCom, obuf, 3) != 3)
-					   my_syslog( stderr,"atelnet: Write Error!\n" );
+					   my_syslog( "atelnet: Write Error!\n" );
 					iac=0;
 					continue;
 				}
