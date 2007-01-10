@@ -1,16 +1,3 @@
-SET client_min_messages = 'ERROR';
-SET SESSION AUTHORIZATION '@sqlmasteruser@';
-SET client_encoding = 'WIN';
-SET check_function_bodies = false;
-SET search_path = public, pg_catalog;
-
---
--- CREATE SCHEMA public AUTHORIZATION @sqlmasteruser@;
--- 
-GRANT ALL ON SCHEMA public TO @sqlmasteruser@ WITH GRANT OPTION;
-GRANT ALL ON SCHEMA public TO public;
-ALTER USER @sqlmasteruser@ NOCREATEDB NOCREATEUSER;
-
 CREATE TABLE calls (
     timeofcall timestamp without time zone NOT NULL,
     forwarded character(3),
@@ -108,3 +95,4 @@ CREATE TABLE towns (
 CREATE INDEX towns_ip ON towns (id);
 CREATE INDEX towns_id_country ON towns (id_country);
 COMMENT ON TABLE towns IS 'Towns codes with the links to country';
+
