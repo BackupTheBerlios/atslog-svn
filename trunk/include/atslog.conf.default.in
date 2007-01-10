@@ -119,6 +119,8 @@ langdir=lang
 # The program reading out data from PBX
 #
 atslogd=atslogd
+# flags. see man atslogd(8). Use -t if you get no data in the TCP mode
+atslogd_flags=
 
 # The main operating script
 #

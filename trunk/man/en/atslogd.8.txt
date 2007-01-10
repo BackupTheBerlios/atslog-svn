@@ -29,6 +29,7 @@ OPTIONS
 	-o                      write CDR additionally to stdout
 	-x number               maximum number of clients for TCP connections; default is 1
 	                        see also /etc/hosts.allow, /etc/hosts.deny
+	-t                      answer TELNET negotiation
 	-w seconds              timeout before I/O port will be opened next time after EOF;
 							default is 5
 	-b                      become daemon
