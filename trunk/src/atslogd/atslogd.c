@@ -1,10 +1,13 @@
 /*
-
-    (C) Alexey V. Kuznetsov, avk@gamma.ru, 2001, 2002
-    changed by Denis CyxoB www.yamiyam.dp.ua
-    and Andrew Kornilov akornilov@gmail.com
-    for the ATSlog version @version@ build @buildnumber@ www.atslog.com
-
+    Original - (c) Alexey V. Kuznetsov, avk@gamma.ru, 2001, 2002
+    
+    Modifications for the ATSlog project:
+    	Denis CyxoB www.yamiyam.dp.ua 
+    	Andrew Kornilov <akornilov@gmail.com>
+    	Alex Samorukov <samm@os2.kiev.ua>
+	RFC 854 WILL/WONT DO/DONT negotiation is based on the BSD netcat
+	
+    ATSlog version @version@ build @buildnumber@ www.atslog.com
 */
 
 #include <ctype.h>
@@ -434,8 +437,6 @@ int set_tty_params( HANDLE hCom,long speed,int data_bits,char parity,int stop_bi
 	return 0;
 }
 
-/* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
-/* taken from the BSD netcat */
 
 /*
  * ensure all of data on socket comes through. f==read || f==write
@@ -481,6 +482,7 @@ int read_string( HANDLE hCom,char *buf,int blen )
 					return count;
 				}
 				p=buf;
+				/* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
 				if(tflag && *p==IAC){
 					iac=1;
 					continue;
