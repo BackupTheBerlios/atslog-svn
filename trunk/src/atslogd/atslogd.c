@@ -461,41 +461,14 @@ atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
 	return (pos);
 }
 
-void
-atelnet(int nfd, unsigned char *buf, unsigned int size)
-{
-	unsigned char *p, *end;
-	unsigned char obuf[4];
-
-	end = buf + size;
-	obuf[0] = '\0';
-
-	for (p = buf; p < end; p++) {
-		if (*p != IAC)
-			break;
-
-		obuf[0] = IAC;
-		p++;
-		if ((*p == WILL) || (*p == WONT))
-			obuf[1] = DONT;
-		if ((*p == DO) || (*p == DONT))
-			obuf[1] = WONT;
-		if (obuf) {
-			p++;
-			obuf[2] = *p;
-			obuf[3] = '\0';
-			if (atomicio((ssize_t (*)(int, void *, size_t))write,
-			    nfd, obuf, 3) != 3)
-				(void)fprintf( stderr,"atelnet: Write Error!\n" );
-			obuf[0] = '\0';
-		}
-	}
-}
 
 int read_string( HANDLE hCom,char *buf,int blen )
 {
+	unsigned char *p;
+	unsigned char obuf[4];
 	DWORD dwLength;
-	int count;
+	int count,iac=0;
+	
 	for( count=0; count<blen; count++,buf++ ) {
 		do {
 			while( (dwLength=read( hCom,buf,1 ))>=0 ) {
@@ -507,8 +480,28 @@ int read_string( HANDLE hCom,char *buf,int blen )
 					if( dbg && count ) my_syslog( "read_string: '%s'",buf-count );
 					return count;
 				}
-				if (tflag)
-					atelnet(hCom, buf, dwLength);
+				p=buf;
+				if(tflag && *p==IAC){
+					iac=1;
+					continue;
+				}
+				if(tflag && iac){
+					obuf[0] = IAC;
+					obuf[3] = '\0';
+					if ((*p == WILL) || (*p == WONT)) {
+						obuf[1] = DONT;
+					}
+					if ((*p == DO) || (*p == DONT))  {
+						obuf[1] = WONT;
+					}
+					read( hCom,buf,1 );
+					obuf[2] = *p;
+					if (atomicio((ssize_t (*)(int, void *, size_t))write,
+						hCom, obuf, 3) != 3)
+					(void)fprintf( stderr,"atelnet: Write Error!\n" );
+					iac=0;
+					continue;
+				}
 				if( *buf=='\n' || *buf=='\r' || *buf==0 ) {
 					if( count ) {
 						buf[0]=0;
