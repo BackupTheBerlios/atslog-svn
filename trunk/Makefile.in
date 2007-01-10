@@ -38,7 +38,7 @@ install: all include/atslog.conf
 	@${MKDIR} -p ${DESTDIR}${WWW_ROOT}
 	@${ECHO} "Installing web interface to the ${DESTDIR}${WWW_ROOT}/atslog directory"
 	@${CP} -r www/ ${DESTDIR}${WWW_ROOT}/atslog
-	@if test ! -f ${DESTDIR}${WWW_ROOT}/atslog/include/set/conf.inc.php; then ${CP} ${DESTDIR}${WWW_ROOT}/atslog/include/set/conf.inc.php.default ${DESTDIR}${WWW_ROOT}/atslog/include/set/conf.inc.php;fi
+	@if test ! -f ${DESTDIR}${WWW_ROOT}/atslog/include/config.inc.php; then ${CP} ${DESTDIR}${WWW_ROOT}/atslog/include/config.inc.php.default ${DESTDIR}${WWW_ROOT}/atslog/include/config.inc.php;fi
 	@${ECHO} "Installing atslog libraries to the ${DESTDIR}${LIBEXEC_DIR}/atslog directory"
 	@${MKDIR} -p ${DESTDIR}${LIBEXEC_DIR}/atslog
 	@${CP}  libexec/* ${DESTDIR}${LIBEXEC_DIR}/atslog/

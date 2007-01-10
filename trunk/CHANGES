@@ -6,6 +6,8 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
+! (samm) www configuration moved from include/set/conf.inc.php to the 
+         include/config.inc.php.
 + (samm) Added support for the telnet negotiation (tested with LDK-300)
 + (samm) Added support for the Panasonic KX-TDA100, KX-TDA200 (untested)
 ! (samm) New project domain name - atslog.com

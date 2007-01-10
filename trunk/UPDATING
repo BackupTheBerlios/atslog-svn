@@ -6,7 +6,7 @@
 Please uninstall atslog-2.00 and install new version as described in the 
 INSTALL file.
 Skip install-sql step and change your SQL password in the atslog.conf and
-conf.inc.php files. Run 'atslogmaster start' and check your log files.
+config.inc.php files. Run 'atslogmaster start' and check your log files.
 
 === Upgrade from 1.xx: ===
 Currently automatic update from 1.xx versions is not supported. 
