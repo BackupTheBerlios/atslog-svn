@@ -13,50 +13,98 @@ if ( ! -f $config) {
     die ("USAGE: install-sql <atslog_config>\n\nCant open \"$config\" file\n");
 }
 
-# my $dbtype =input('Database type: (mysql or postgressql)',    'mysql');
+my $dbtype =input('Database type: (mysql or postgresql)',    'mysql');
+
+my @drivers = DBI->available_drivers;
+die "No drivers found!\n" unless @drivers; # should never happen
+
+if ($dbtype !~ /^(mysql|postgresql)$/){
+	die("Wrong database type '$dbtype'\n");
+}
+
+if ($dbtype eq "postgresql"){
+	$sqltype="Pg";
+	$dbname="template1";
+}
+else{ # mysql
+	$sqltype="mysql";
+	$dbname="mysql";
+}
+
+if (!grep { /^(${sqltype})$/ } @drivers) {
+	die("Please install DBI:$sqltype driver\n");
+}
 
 my $root =input('Database manager',    'root');
 my $rpsw =input('Manager\'s password', '');
-my $dbhost =input('Database manager',    'localhost');
+my $dbhost =input('Database host',    'localhost');
 my $atslogdb =input('Database name',       'atslog');
 my $atslogdu =input('Database user',       'atslog');
 my $atslogdp =input('User\'s password',    randomPassword(8));
 
-print "Connecting to 'DBI:mysql:mysql' as '$root'...\n";
-my $mysql=DBI->connect("DBI:mysql:mysql:${dbhost}",$root,$rpsw,{PrintError => 0})
-        ||die("Could not connect to mysql as '$root'. ".$DBI::errstr);
-my $db   =$mysql;
+my $dsn="DBI:$sqltype:database=$dbname;";
+if($dbhost ne "localhost") { $dsn .= "host=$dbhost;";}
 
+print "Connecting to '$dsn' as '$root'...\n";
+my $db=DBI->connect($dsn,$root,$rpsw,{PrintError => 0})
+        ||die("Could not connect to $sqltype as '$root'. ".$DBI::errstr);
 
-$db->do("USE ${atslogdb}");
-if(!$db->err){
-    print("WARNING: Database \"${atslogdb}\" already exists.\nInstaller will drop it and create a new one.\n");
-   if(input('Continue (yes|no)?','no')!~/^yes$/i) {
-	die("Please backup your existing database and try again.\n");
-    }
+print "Creating database...";
+$db->do("CREATE DATABASE ${atslogdb};");
+if($db->err){
+	if($db->err==7 || $db->err==1007){ # mysql and Pg
+		print "FAILED\n";
+		print("WARNING: Database \"${atslogdb}\" already exists.\nInstaller will drop it and create a new one.\n");
+		if(input('Continue (yes|no)?','no')!~/^yes$/i) {
+			die("Please backup your existing database and try again.\n");
+		}
+		print "Drop database ${atslogdb}...";
+		$db->do("DROP DATABASE  ${atslogdb};"); print $db->err ? $db->errstr : '';
+		print "OK\n";
+		$db->do("CREATE DATABASE ${atslogdb};");
+	}
+	elsif($db->err) {
+		die($db->err.":".$db->errstr."\n");
+	}
+}
+else {	print "OK\n";}
+print "Creating user...";
+if ($sqltype eq "mysql") {
+	$db->do("delete from mysql.user where user=\'${atslogdu}\';"); print $db->err ? $db->errstr : '';
+	$db->do("GRANT USAGE ON *.* TO \'${atslogdu}\'@\'${dbhost}' IDENTIFIED BY \'${atslogdp}\' WITH GRANT OPTION;"); print $db->err ? $db->errstr : '';
+	$db->do("GRANT ALL PRIVILEGES ON ${atslogdb}.* TO \'${atslogdu}\'@\'localhost\'"); print $db->err ? $db->errstr : '';
+	$db->do("FLUSH PRIVILEGES;"); print $db->err ? $db->errstr : '';
+}
+elsif($sqltype eq "Pg"){
+	$db->do("SET client_min_messages = 'ERROR';"); print $db->err ? $db->errstr : '';
+	$db->do("DROP USER ${atslogdu}");
+	$db->do("CREATE USER ${atslogdu} PASSWORD '${atslogdp}' CREATEDB CREATEUSER;"); print $db->err ? $db->errstr : '';
+	$db->do("SET SESSION AUTHORIZATION '${atslogdu}';"); print $db->err ? $db->errstr : '';
+	$db->do("GRANT ALL ON DATABASE ${atslogdb} TO ${atslogdu};"); print $db->err ? $db->errstr : '';
+}
+print "OK\n";
+
+if ($sqltype eq "mysql") {
+	$db->do("USE ${atslogdb};"); print $db->err ? $db->errstr : '';
+}
+elsif ($sqltype eq "Pg") {
+	$db->disconnect;
+	$dsn="DBI:$sqltype:database=${atslogdb};";
+	if($dbhost ne "localhost") { $dsn .= "host=$dbhost;";}
+	print "Connecting to '$dsn' as '$root'...\n";
+	$db=DBI->connect($dsn,$root,$rpsw,{PrintError => 0})
+        ||die("Could not connect to $sqltype as '$root'. ".$DBI::errstr);
 }
 
-$db->do("DROP DATABASE IF EXISTS ${atslogdb}"); print $db->err ? $db->errstr : '';
-$db->do("CREATE DATABASE ${atslogdb}"); print $db->err ? $db->errstr : '';
-$db->do("USE ${atslogdb}"); print $db->err ? $db->errstr : '';
-
-
-
-#die("GRANT USAGE ON *.* TO '${atslogdu}'@'localhost' IDENTIFIED BY '${atslogdp}'");
-$db->do("delete from mysql.user where user=\'${atslogdu}\';"); print $db->err ? $db->errstr : '';
-$db->do("GRANT USAGE ON *.* TO \'${atslogdu}\'@\'${dbhost}' IDENTIFIED BY \'${atslogdp}\' WITH GRANT OPTION;"); print $db->err ? $db->errstr : '';
-$db->do("GRANT ALL PRIVILEGES ON ${atslogdb}.* TO \'${atslogdu}\'@\'localhost\'"); print $db->err ? $db->errstr : '';
-$db->do("FLUSH PRIVILEGES;"); print $db->err ? $db->errstr : '';
-
-print "Creating tables...\n";
 my $row;
 my $cmd ='';
 my $cmt ='';
 
-open(DATA,"createsqltables.mysql.sql") || die print("Can open SQL");
+open(DATA,"createsqltables.${sqltype}.sql") || die print("Can open SQL dump createsqltables.${sqltype}.sql");
 readsql();
 close(DATA);
 
+exit();
 open(DATA,"data.sql") || die print("Cant open SQL dump");
 readsql();
 close(DATA);
