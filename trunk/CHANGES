@@ -9,12 +9,12 @@
 
 2007-JAN-11: ATSlog 2.0.0 Release
 
-+ (samm) Added postgresql support to the SQL installer (untested)
 ! (samm) www configuration moved from include/set/conf.inc.php to the 
          include/config.inc.php.
+! (samm) New project domain name - atslog.com
++ (samm) Added postgresql support to the SQL installer (untested)
 + (samm) Added support for the telnet negotiation (tested with LDK-300)
 + (samm) Added support for the Panasonic KX-TDA100, KX-TDA200 (untested)
-! (samm) New project domain name - atslog.com
 + (samm) Added support for the HiCom-150 using HiPath 3750 Library
 + (samm) Sergey Solonina created library to support Samsung OfficeServ 7200
 # (samm) fixed bug #009819 - atslogd hangs in tcp mode if port is busy
