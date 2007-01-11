@@ -15,11 +15,6 @@ work:
   * Web Server (tested with Apache HTTPD) with PHP (4.3 or later) if you
     want to use web interface.
 
-2.0 PRE-RELEASE NOTES
-Currently SQL installer for the PostgreSQL is not ready. Please use MySQL
-or contact author if you need to use PostgreSQL and want to be a beta tester.
-This issue will be fixed in 2.0.0 Release.
-
 FreeBSD installation: it`s recommended to use FreeBSD port system.
 See http://www.freshports.org/comms/atslog/ for additional information.
 
@@ -49,7 +44,7 @@ Manual installation. The step-by-step instructions.
 
 6 Run make install-sql
 
-7 Change web interface settings in the www/include/set/config.php.
+7 Change web interface settings in the www/include/config.php.
   Copy SQL settings from atslog.conf to this file
 
 8 Read USAGE file for the ATSlog PBX part.
