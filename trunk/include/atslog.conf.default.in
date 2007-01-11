@@ -222,7 +222,7 @@ howmonth=12
 # Siemens   HICOM-150
 #           HICOM-350H
 #           HICOM-250
-#           HIPATH-3750 (3000/3750 with compressed mode format)
+#           HIPATH-3750 (3000/3750 with compressed log format)
 # LG        GDK-100
 #           GDK-162
 #           GHX-46
