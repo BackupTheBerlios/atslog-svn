@@ -99,15 +99,17 @@ elsif ($sqltype eq "Pg") {
 my $row;
 my $cmd ='';
 my $cmt ='';
-
+print "Creating tables...";
 open(DATA,"createsqltables.${sqltype}.sql") || die print("Can open SQL dump createsqltables.${sqltype}.sql");
 readsql();
 close(DATA);
+print "OK\n";
 
-exit();
+print "Inserting data...";
 open(DATA,"data.sql") || die print("Cant open SQL dump");
 readsql();
 close(DATA);
+print "OK\n";
 
 print("Patching configuration file...\n");
 move($config,$config.".bak");
@@ -118,6 +120,7 @@ while ($row =<IN>) {
     $row =~ s/^sqldatabase=.*$/sqldatabase=$atslogdb/g;
     $row =~ s/^sqlmasteruser=.*$/sqlmasteruser=$atslogdu/g;
     $row =~ s/^sqlmaspasswd=.*$/sqlmaspasswd=$atslogdp/g;
+    $row =~ s/^sqltype=.*$/sqltype=$dbtype/g;
     print OUT $row;
 }
 close IN;close OUT;
