@@ -1,0 +1,17 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+
+=== Upgrade from 2.00pre4 ===
+Web interface configuration file name changed.
+Please move include/set/conf.inc.php to the include/config.inc.php file.
+
+=== Upgrade from 2.00pre1-2.00pre3 ===
+
+Please uninstall atslog-2.00 and install new version as described in the 
+INSTALL file.
+Skip install-sql step and change your SQL password in the atslog.conf and
+config.inc.php files. Run 'atslogmaster start' and check your log files.
+
+=== Upgrade from 1.xx: ===
+Currently automatic update from 1.xx versions is not supported. 
+Please, install atslog-@version@ and import your text logs again.

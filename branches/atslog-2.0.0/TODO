@@ -1,0 +1,14 @@
+2.0.x plans
+* Proofread translation of the english web interface
+
+2.1.x plans
+* daemon - make fast_write mode more reliable (we need to control atslogdb.pl 
+  state), we need to be sure that data was transferred to sql, etc...
+  Good idea is to use "tail" mode for the log files
+* add accounting code (AKA business code) support to the upcoming 2.1
+* Replace http-header based auth with form-based one. This will allow to 
+  run atslog-www with php-cgi and to implement "logout" function.
+
+May be, someday
+* accounting (billing)
+* smarty-based templates

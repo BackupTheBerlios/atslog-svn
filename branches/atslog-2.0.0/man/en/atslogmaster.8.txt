@@ -1,0 +1,39 @@
+NAME
+
+ATSlog gives the convenient interface for viewing and analysing bells of various models PBX.
+
+SYNOPSIS
+
+atslogmaster [start] [stop] [restart] [writedb] [rotate] [cleardb] [alltodb]
+
+DESCRIPTION
+
+atslogmaster - control ATSlog daemon
+
+OPTIONS
+
+start			start ATSlog.
+stop			stop.
+restart			restart.
+reload			synonym of "restart"
+writedb			write latest calls to the SQL database. 
+rotate			log file rotation.
+cleardb			clear calls information from SQL database.
+alltodb			Record of all (archived) calls to the SQL database. Data about current calls from a file/var/log/atslog/currentcalls.log are not added because of possible duplication of the information. Ifyou need to transfer current calls - use writedb command
+			    
+
+EXAMPLES
+
+atslogmaster start - start daemon to collect PBX data
+
+SEE ALSO
+
+atslogd(8), /usr/local/etc/atslog.conf
+
+AUTHOR
+
+Denis CyxoB www.yamiyam.dp.ua
+
+SITE
+
+www.atslog.com

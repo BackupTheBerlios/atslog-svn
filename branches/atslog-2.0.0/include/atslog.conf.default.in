@@ -1,0 +1,267 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+#
+# ATSlog settings
+#
+# Use of blanks between the name of parameter and its value (from both parties
+# from a sign "=") is not allowed
+#
+
+# ATSlog variables.
+# Dont change this values.
+#
+build=@buildnumber@
+
+#
+# The password for the user $sqlmasteruser
+# Server ATSlog programs on behalf of this user initialize all references to
+# SQL server for modifications in databases.
+# Example:
+# sqlmaspasswd=Edktxtybt
+#
+sqlmaspasswd=
+
+# Other SQL server settings
+#
+sqlhost=localhost
+sqldatabase=atslog
+sqlmasteruser=atslog
+
+# SQL Server type
+# Currently MySQL and PostgreSQL are supported.
+# Example:
+# sqltype=MySQL
+# sqltype=PostgreSQL
+#
+sqltype=MySQL
+
+# COMMUNICATION PORT SETTINGS
+
+# Port for connection with PBX.
+# It is possible to use two kinds of connection:
+# 1. Through a serial port. In this case the program will use port as device
+# named /dev/$port.
+# In the configuration file the prefix "/dev/" falls.
+#    E.g:
+# BSD
+#    port=cuaa0
+# Linux
+#    port=ttyS0
+# 2. Via TCP/IP  (server).
+#    The demon will open a TCP socket and will expect connection on
+#    specified number of port.
+#    It is necessary to specify a prefix tcp:port_number
+# Sample:
+#    port=tcp:1234
+#
+# 3  Via TCP/IP (client)
+#    The  daemon will open TCP connection to the remote IP address 
+# Sample:
+#    port=rtcp:remote.host:1234
+
+port=cuaa0
+
+# Speed of the server serial port $port
+# Speed should correspond to adjustments of speed of the
+# automatic telephone exchange port.
+# Valid values:
+# speed=2400
+# speed=4800
+# speed=9600
+# speed=19200
+# speed=38400
+# speed=57600
+# speed=115200
+#
+speed=9600
+
+# length of character on serial port
+# valid values from 5 to 8
+charsize=8
+
+# parity of serial port
+# Valid values:
+# parity=e  (even parity)
+# parity=o  (odd parity)
+# parity=n  (no parity)
+#
+parity=n
+
+# number of stop bits on serial port;
+# Valid values:
+# stopbits=1
+# stopbits=2
+#
+stopbits=1
+
+# Directory with executed files of the program
+bindir=@bindir@
+
+# the Directory with files of libraries (Perl modules) supports
+# various PBX models
+
+libdir=@libexecdir@/atslog
+
+# Text-log files directory
+#
+logdir=@localstatedir@/log/atslog
+
+# Additional ATSlog files directory
+#
+sharedir=@datadir@/atslog
+
+# Language file directory. Located in $sharedir
+
+# If you had a desire to make new translation - kind
+# to welcome in participants of the project!:)
+langdir=lang
+
+# The program reading out data from PBX
+#
+atslogd=atslogd
+# flags. see man atslogd(8). Use -t if you get no data in the TCP mode
+atslogd_flags=
+
+# The main operating script
+#
+masterscript=atslogmaster
+
+# Init script of the program (system start & stop)
+#
+initscript=@sysconfdir@/rc.d/atslogdinit.sh
+
+# Monthly log rotate script
+#
+monthlyscript=@bindir@/atslogrotate
+
+# daily script called for gathering the information from text file and
+# making records in the SQL server table. 
+# This script is activated only if parameter $fastwrite=no
+
+dailyscript=@bindir@/atslogdaily
+
+# The script transferring the information on calls to the SQL server
+#
+atslogdb=atslogdb.pl
+
+# Script, allowing to clear data in the server SQL tables. 
+# The script will not delete tables and databases but only clears the 
+# information. 
+#
+# an example of use: # [root@server /]$ atslogmaster cleardb
+#
+cleardb=atslogcleardb.pl
+
+# ASCII log file in which script writes down calls from the PBX
+# for current  month. On the end of month the file will be compressed bzip2 and
+# kept under the name $callslogfile.1.bz2 
+# next month rotation in the corresponding order will be made it.
+callslogfile=calls.log
+
+# Text log file of the current calls 
+# After data from this file will be written down in SQL 
+# its contents is transferred to the $callslogfile 
+
+curcallslogfile=currentcalls.log
+
+# File with lines, the information from which has not been transferred from 
+# text log to a database. As a rule, it is lines containing the information 
+# not concerning calls. For example, headings of columns explanatories. 
+# This file is stored in a folder described in parameter $logdir and submits to
+# rules of rotation. For the additional information see the description 
+# of $howmonth and $debug parameters.
+#
+notwritelog=notwrite.log
+
+# Whether to write out record to the $notwritelog file or not. 
+# Record of this log is used, basically, for debugging. It is convenient to 
+# trace those data, which have not been processed by the module of analysis of
+# lines. Earlier the parameter $debug referred to $nowrlog. 
+# It has been renamed for the best understanding of value.
+#
+# Valid values:
+# debug=yes
+# debug=no
+#
+debug=no
+
+# Main log file. 
+# In it this log file you can find records about startup, shutdown, errors and
+# other event. File is stored in a folder described in parameter $logdir and
+# submits to rules of rotation.
+startlogfile=atstart.log
+
+# PID file.
+# contain PID of the running daemon.
+#
+pidfile=@localstatedir@/run/atslogd.pid
+
+# How many months to store text log files specified with
+# $callslogfile, $notwritelog and $startlogfile.
+# Minimum - 1. Recommended - 12.
+# Log files are stored in compressed format  (using bzip2)
+#
+howmonth=12
+
+# PBX model.
+# PBX`s supported by current version of the ATSLog:
+# Panasonic KX-TA308RU
+#           KX-TA308
+#           KX-TA616RU
+#           KX-TD1232
+#           KX-TD1232-RU (russian firmware)
+#	    KX-TD816RU
+#	    KX-TD500
+#           KX-TEM824
+#           KX-TDA100
+#           KX-TDA200
+# Samsung   SKP-816
+#           NX-820
+#           OFFICESERV-7200
+# Hybrex    GD-320
+# Siemens   HICOM-150
+#           HICOM-350H
+#           HICOM-250
+#           HIPATH-3750 (3000/3750 with compressed mode format)
+# LG        GDK-100
+#           GDK-162
+#           GHX-46
+#           LDK-300
+#           LDK-100
+# GoldStar  GPS-6A
+# Alcatel   4200E
+#
+# At the $model parameter it is necessary to set only a designation of PBX model
+# without the name of the manufacturer. 
+# it is necessary to specify precisely marks of model since adapted models
+# will distinguish a format of date; for example for KX-TA616RU date 
+# are in DD/MM/YY format, instead of how in native - MM/DD/YY for KX-TA616
+# models.
+# Example:
+# model=KX-TA616RU
+#
+model=KX-TA616RU
+
+# syslogd level
+# syslogd used for critical error messsages.
+# Refer to man logger(1), syslog.conf(5) for the additional information.
+# Leave this blank to disable syslog messages.
+#
+syslogfacility=user.err
+
+# Direct recording from PBX to SQL server.
+# With "no" value calls are transfered to the text log file ($curcallslogfile),
+# and then, daily, to the SQL server.
+# Value "yes" on this parameter will tranfer call information directly to SQL
+# at the call time.
+# Data is stored in the text log file ($callslogfile) in any case.
+# "yes" setting will switch atslog to daemon mode and will use Perl permanently,
+# so it will use more hardware resources.
+#
+# Possible values:
+# fastwrite=no
+# fastwrite=yes
+#
+fastwrite=yes
+
+# End of configuration file...  Have a nice day!

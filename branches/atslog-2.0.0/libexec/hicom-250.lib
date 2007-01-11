@@ -1,0 +1,58 @@
+# ATSlog @version@ build @buildnumber@ www.atslog.com
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+# For Siemens Hicom 250
+# Copyleft 2005.12.21 Im'jano Famil'jano <mojaschik@yandex.ru>
+
+#parsecurcalls();
+
+sub parsecurcalls()
+{
+    while($str=<>)
+    {
+	$stringnumber++;
+	if($str =~ /^(\d{2})\/(\d{2})\/(\d{2})(\s{2})(\d{2}):(\d{2}):(\d{2})(\s{2})(\d{2}):(\d{2}):(\d{2})(\s{3})(\d{3})(\s{4})(\d{2})(\s{2})(\d+)/)
+	{
+	    unitecurcalls();
+	}
+	else
+	{
+	    if ($vars{nowrlog} =~ /yes/i)
+	    {
+	        if ($str !~ /^$/)
+		{
+	    	    print $str;
+	        };
+	    };
+        };                                
+    };
+};                                    
+
+sub unitecurcalls()
+{
+	    $forwarded = 0;
+	    $way = 2;
+	    $internally = $13;
+	    $co = $15;
+	    $duration = (($9 * 3600) + ($10 * 60) + $11);
+	    $Year = $3;
+	    $Month = $2;
+	    $Day = $1;
+	    $Date = "$Year-$Month-$Day";
+	    $Hours = $5;
+	    $Minutes = $6;
+	    $Seconds = $7;
+	    $Time = "$Hours:$Minutes:$Seconds";
+	    $number = $17;
+	    #print $number[0];
+    	    $timeofcall = "$Date $Time";
+    	    if($timeofcall ne ""){
+# Проверим, имеется ли хоть одна запись звонков подлежащая
+# записи в db.
+		$callsCount++;
+	    }
+	    $ins_query = "INSERT INTO calls (timeofcall, forwarded, internally, co, way, number, duration) VALUES ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	    $sth = $dbh->prepare($ins_query);
+	    $sth->execute;
+};
+
+1;

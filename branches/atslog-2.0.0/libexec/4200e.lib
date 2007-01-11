@@ -1,0 +1,106 @@
+# ATSlog version 1.4 build 48 www.atslog.com
+# Copyright (C) 2003 Denis Suhov www.yamiyam.dp.ua
+#
+# Library for the Alcatel 4200
+# (c) Alex Samorukov, samm@os2.kiev.ua, 2006
+
+sub parsecurcalls() {
+	while ($str=<>)
+	{
+		$stringNumber++;
+		if ($str =~ /\s(.{5}) (.{5}) (.{3}) (.{3}) (.{8}) (.{5}) (.{8}) (.{5})(.{2}) (.{6}) (.{26}) (.{1}) (.{5}) (.{10}) (.{16}) (.{16}).*$/){
+			unitecurcalls();
+		}else{
+			if ($vars{nowrlog} =~ /yes/i){
+				if ($str !~ /^$/){
+					print $str;
+				};
+			};
+		};
+	};
+};
+
+sub unitecurcalls() {
+	$initial_user=$1;
+	$charged_user=$2;
+	$type=$3;
+	$line=$4;
+	$date=$5;
+	$time=$6;
+	$call_duration=$7;
+	$taxes=$8;
+	$serv=$9;
+	$facilities=$10;
+	$dialed_number=$11;
+	$mode=$12;
+	$ringing=$13;
+	$cost=$14;
+	$business_code=$15;
+	$subscriber_name=$16;
+	
+	
+	# mandatory fields
+	
+	#$TimeOfCall+
+	#$Forwarded+
+	#$Internally+
+	#$CO+
+	#$Way+
+	#$Number+
+	#$Duration+
+	
+	# bonus
+	#$Code+
+	
+	$co=substr($line,1,2)+10;
+	if ($dialed_number=~/(\d+)/) 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+	
+	if($type =~ /<--/){
+		$way='1';
+	}else{
+		$way='2';
+	};
+	
+	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
+		$Month=$2;
+		$Day=$1;
+		$Year=$3+2000;
+		$timeofcall = "$Year-$Month-$Day $time:00";
+	}
+	
+	$internally=substr($charged_user,1);
+	
+	if ($call_duration=~(/(\d{2}):(\d{2}):(\d{2})/)) {
+		$duration = (($1*60*60)+($2*60)+$3);
+	}
+	
+	if($facilities=~/N|X/){
+		$forwarded=1;
+	}
+	else {
+		$forwarded =0;
+	}
+	
+	if($business_code=~/(\d+)/){
+		$code=$1;
+	}
+	else {
+		$code=0;
+	}
+	if ($timeofcall ne ""){
+		# We need to check that we had records for database
+		$callsCount++;
+	}
+	#print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');");
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;
+}
+
+1;

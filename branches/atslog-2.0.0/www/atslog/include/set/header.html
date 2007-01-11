@@ -1,0 +1,93 @@
+<!--
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <META NAME="Description" coNTENT="<?php echo $GUI_LANG["meta-description"]; ?>">
+    <META NAME="Keywords" coNTENT="<?php echo $GUI_LANG["meta-keywords"]; ?>">
+    <META name="AUTHOR-coRPORATE" content="Denis CyxoB www.yamiyam.dp.ua">
+    <META NAME="ROBOTS" coNTENT="ALL">
+
+<title>ATSlog - <?php echo $title ?>. </title>
+	<style type="text/css">
+		body {
+			text-decoration: none;
+			margin:15px;
+			<?php echo $COLORS['StyleBodyScrollbarBaseColor']."\n"; ?>
+			<?php echo $COLORS['StyleBodyScrollbarArrowColor']."\n"; ?>
+
+		}
+<?php
+
+if (!isset($toprint) || $toprint!="yes"){
+echo ("
+		A {
+			text-decoration : none;
+		}
+		A:hover{
+			".$COLORS['StyleAHover']."
+			text-decoration : underline;
+		}
+		A.menu {
+			".$COLORS['StyleAMenu']."
+			font-family : Verdana;
+			text-decoration : none;
+		}
+		A.menu:hover{
+			".$COLORS['StyleAMenuHover']."
+			text-decoration : none;
+		}
+");
+}else{
+echo("
+		A {
+			text-decoration : none;
+			color:#000000;
+		}
+");
+}
+?>
+		input{
+			<?php echo $COLORS['StyleInputBackground']."\n"; ?>
+		}
+		select{
+			<?php echo $COLORS['StyleSelectBackground']."\n"; ?>
+		}
+		textarea{
+			<?php echo $COLORS['StyleTextareaBackground']."\n"; ?>
+		}
+		input.submit{
+			<?php echo $COLORS['StyleInputSubmitBackground']."\n"; ?>
+			<?php echo $COLORS['StyleInputSubmitBorderRight']."\n"; ?>
+			<?php echo $COLORS['StyleInputSubmitBorderTop']."\n"; ?>
+			<?php echo $COLORS['StyleInputSubmitBorderLeft']."\n"; ?>
+			<?php echo $COLORS['StyleInputSubmitBorderBottom']."\n"; ?>
+			font-family : Verdana;
+		}
+		.content { 
+			margin-left:50px;
+			margin-right:50px;
+		} 
+	</style>
+<?php
+// JavaScript Functions                
+// ------------------------------------
+if (!isset($toprint) || $toprint!="yes"){                                       
+    include("../include/set/functions.js");
+}
+                                       
+// ------------------------------------
+
+echo "
+</head>
+
+<body ".$COLORS['BodyBgcolor']." ".$COLORS['BodyText']." ".$COLORS['BodyLink']." ".$COLORS['BodyVlink']." ".$COLORS['BodyAlink'].">
+";
+?>
+
+<table cellpadding="2" cellspacing="4" border=0 align="center" width="80%">
+    <tr>
+        <td>
