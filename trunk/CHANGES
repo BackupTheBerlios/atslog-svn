@@ -6,6 +6,9 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
+
+2007-JAN-11: ATSlog 2.0.0 Release
+
 + (samm) Added postgresql support to the SQL installer (untested)
 ! (samm) www configuration moved from include/set/conf.inc.php to the 
          include/config.inc.php.
