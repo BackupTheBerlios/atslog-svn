@@ -1,0 +1,84 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+
+AC_PREREQ(2.59)
+AC_INIT(atslog, 2.0.3, samm@os2.kiev.ua)
+
+
+AC_CONFIG_SRCDIR([atslogd/atslogd.h])
+#AC_CONFIG_HEADER([config.h])
+
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_MAKE_SET
+AC_PATH_PROGS(RM,rm,rm)
+AC_PATH_PROGS(CP,cp,cp)
+AC_PATH_PROGS(MKDIR,mkdir,mkdir)
+AC_PATH_PROGS(ECHO,echo,echo)
+
+AC_PROG_PERL_VERSION(5.0.0,,AC_MSG_ERROR(atslog require perl>=5.0.0))
+AC_PROG_PERL_MODULES(Sys::Syslog,,AC_MSG_ERROR(atslog requires SYS:Syslog))
+AC_PROG_PERL_MODULES(DBI,,AC_MSG_ERROR(atslog requires DBI))
+AC_PROG_PERL_MODULES(POSIX,,AC_MSG_ERROR(atslog requires POSIX))
+
+
+AC_ARG_VAR(ATSLOG_DB_HOST,[Hostname where ATSlog database located])
+AC_ARG_VAR(ATSLOG_DB_NAME,[Name of ATSlog database])
+AC_ARG_VAR(ATSLOG_DB_USER,[Name of ATSlog database user])
+AC_ARG_VAR(ATSLOG_DB_PASS,[Password of ATSlog database user])
+
+
+if test "$ATSLOG_DB_HOST" == ""; then
+    AC_SUBST(ATSLOG_DB_HOST,[localhost])
+fi
+if test "$ATSLOG_DB_NAME" == ""; then
+    AC_SUBST(ATSLOG_DB_NAME,[atslog])
+fi
+
+if test "$ATSLOG_DB_USER" == ""; then
+    AC_SUBST(ATSLOG_DB_USER,[atslog])
+fi
+
+
+dnl
+dnl WWW root directory
+dnl
+AC_ARG_WITH(wwwroot, AC_HELP_STRING([--with-wwwroot=DIR], [Set the WWW root directory]),
+	  WWW_ROOT="$withval", WWW_ROOT="$localstatedir/www")
+
+AC_SUBST(WWW_ROOT)
+
+#if test "$WWW_ROOT" == ""; then
+#    AC_SUBST(WWW_ROOT,[$(prefix)/www])
+#fi
+			  
+# Checks for libraries.
+# FIXME: Replace `main' with a function in `-lwrap':
+AC_CHECK_LIB([wrap], [main])
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([arpa/inet.h arpa/telnet.h fcntl.h netdb.h netinet/in.h stdlib.h string.h sys/socket.h termios.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_PID_T
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_FUNC_FORK
+AC_FUNC_MALLOC
+AC_FUNC_STRFTIME
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS([bzero gethostbyname inet_ntoa memset socket strcasecmp strchr strerror strncasecmp strspn])
+
+AC_CONFIG_FILES(
+[Makefile 
+include/atslogcleardb.pl include/atslogdaily 
+include/atslogdb.pl  include/atslogmaster include/atslogrotate
+]
+)
+
+AC_OUTPUT
+AC_CONFIG_COMMANDS_POST[chmod +x include/atslogcleardb.pl include/atslogdaily include/atslogdb.pl  include/atslogmaster include/atslogrotate]

@@ -12,7 +12,7 @@ DESCRIPTION
 	CDR Reader for PBXs v.1.09 (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002
 	changed by Denis CyxoB www.yamiyam.dp.ua
 	and Andrew Kornilov akornilov@gmail.com
-	for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+	for the ATSlog version @version@ build @buildnumber@ www.atslog.com
 
 OPTIONS
 
@@ -29,6 +29,7 @@ OPTIONS
 	-o                      write CDR additionally to stdout
 	-x number               maximum number of clients for TCP connections; default is 1
 	                        see also /etc/hosts.allow, /etc/hosts.deny
+	-t                      answer TELNET negotiation
 	-w seconds              timeout before I/O port will be opened next time after EOF;
 							default is 5
 	-b                      become daemon

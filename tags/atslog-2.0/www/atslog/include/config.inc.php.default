@@ -1,20 +1,20 @@
 <?php
-error_reporting(E_ERROR);
+// error_reporting(E_ERROR);
  /*
  
    ATSlog web interface settings
                                               
  */
 // hostname of the SQL server 
-$sqlhost='';
+$sqlhost='localhost';
 // Atslog Database
-$sqldatabase='';
+$sqldatabase='atslog';
 // atslog SQL user password
 $sqlmaspasswd='';
 // atslog SQL user name
-$sqlmasteruser='';
+$sqlmasteruser='atslog';
 // database type
-$sqltype=''; // PostgreSQL or MySQL
+$sqltype='mysql'; // PostgreSQL or MySQL
 // PBX model
 $model='';
 // SQL cache directory.

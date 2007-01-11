@@ -1,11 +1,46 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
 # Copyright (C) 2003-2006 Denis CyxoB www.yamiyam.dp.ua
 
 # - Bug fixed
 + - Feature added
-
+! - Information
 
 === ATSLOG 2.0-DEV ===
++ (samm) Added postgresql support to the SQL installer (untested)
+! (samm) www configuration moved from include/set/conf.inc.php to the 
+         include/config.inc.php.
++ (samm) Added support for the telnet negotiation (tested with LDK-300)
++ (samm) Added support for the Panasonic KX-TDA100, KX-TDA200 (untested)
+! (samm) New project domain name - atslog.com
++ (samm) Added support for the HiCom-150 using HiPath 3750 Library
++ (samm) Sergey Solonina created library to support Samsung OfficeServ 7200
+# (samm) fixed bug #009819 - atslogd hangs in tcp mode if port is busy
+
+2006-DEC-22: New atslog-2.0-pre4 stable snapshot released
+
+# (samm) fixed bug with stale pid file if atslogd exit on failure.
+# (samm) Fixed bug in www with sending http auth header if db connection fail
+! (samm) INSTALL file updated
++ (samm) Added support for the Siemens HiPath 3000/3750
+# (samm) External Mobile codes support was broken at pre3. Thanks to
+         Alexander Logvinov for the report.
++ (samm) Added support for the PANASONIC KX-TD1232 with Russian Firmware
+! (samm) Directory structure was changed. 
++ (samm) new Perl SQL installer. Currently work only with MySQL but will
+         support PostgresSQL at 2.0.0 release. 
++ (samm) new GNU autoconf based configure script. I hope this will make 
+         install process easer and more portable.
+# (samm) when atslogd was not in daemon mode (default!) we had 0 in the 
+         PID file
+# (samm) gpid replaced with pid. We have only one process, so we dont
+         really need gpid.
++ (samm) Now library names are not hardcoded into atslogdb.pl
+         This allow user to add new library easer.
++ (samm) Added support for the Panasonic KX-TD500 PBX (tested by Ivan Frolov) 
+
+2006-DEC-15: New atslog-2.0-pre3 stable snapshot released
+
++ (hiddenman) Added new ukrainian mobile operator codes
 + (samm) Added possibility to redefine mobile operator codes in the 
          configuration file.
 # (samm) Fixed filter query bug. On query with 'exclude city calls' AND

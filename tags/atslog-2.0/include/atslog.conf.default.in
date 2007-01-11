@@ -1,4 +1,4 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #
 # ATSlog settings
@@ -7,8 +7,8 @@
 # from a sign "=") is not allowed
 #
 
-# ATSlog build number.
-# Dont change this value.
+# ATSlog variables.
+# Dont change this values.
 #
 build=@buildnumber@
 
@@ -47,13 +47,18 @@ sqltype=MySQL
 #    port=cuaa0
 # Linux
 #    port=ttyS0
-# 2. Via TCP/IP port.
+# 2. Via TCP/IP  (server).
 #    The demon will open a TCP socket and will expect connection on
 #    specified number of port.
 #    It is necessary to specify a prefix tcp:port_number
 # Sample:
 #    port=tcp:1234
 #
+# 3  Via TCP/IP (client)
+#    The  daemon will open TCP connection to the remote IP address 
+# Sample:
+#    port=rtcp:remote.host:1234
+
 port=cuaa0
 
 # Speed of the server serial port $port
@@ -90,20 +95,20 @@ parity=n
 stopbits=1
 
 # Directory with executed files of the program
-bindir=/usr/local/bin
+bindir=@bindir@
 
 # the Directory with files of libraries (Perl modules) supports
 # various PBX models
 
-libdir=/usr/local/libexec/atslog
+libdir=@libexecdir@/atslog
 
 # Text-log files directory
 #
-logdir=/var/log/atslog
+logdir=@localstatedir@/log/atslog
 
 # Additional ATSlog files directory
 #
-sharedir=/usr/local/share/atslog
+sharedir=@datadir@/atslog
 
 # Language file directory. Located in $sharedir
 
@@ -114,6 +119,8 @@ langdir=lang
 # The program reading out data from PBX
 #
 atslogd=atslogd
+# flags. see man atslogd(8). Use -t if you get no data in the TCP mode
+atslogd_flags=
 
 # The main operating script
 #
@@ -121,17 +128,17 @@ masterscript=atslogmaster
 
 # Init script of the program (system start & stop)
 #
-initscript=/usr/local/etc/rc.d/atslogdinit.sh
+initscript=@sysconfdir@/rc.d/atslogdinit.sh
 
 # Monthly log rotate script
 #
-monthlyscript=/usr/local/etc/periodic/monthly/atslogrotate
+monthlyscript=@bindir@/atslogrotate
 
 # daily script called for gathering the information from text file and
 # making records in the SQL server table. 
 # This script is activated only if parameter $fastwrite=no
 
-dailyscript=/usr/local/etc/periodic/daily/atslogdaily
+dailyscript=@bindir@/atslogdaily
 
 # The script transferring the information on calls to the SQL server
 #
@@ -185,9 +192,9 @@ debug=no
 startlogfile=atstart.log
 
 # PID file.
-# Its not only the PID, but GPID of the running daemons.
+# contain PID of the running daemon.
 #
-pidfile=/var/run/atslogd.pid
+pidfile=@localstatedir@/run/atslogd.pid
 
 # How many months to store text log files specified with
 # $callslogfile, $notwritelog and $startlogfile.
@@ -202,19 +209,27 @@ howmonth=12
 #           KX-TA308
 #           KX-TA616RU
 #           KX-TD1232
+#           KX-TD1232-RU (russian firmware)
 #	    KX-TD816RU
+#	    KX-TD500
+#           KX-TEM824
+#           KX-TDA100
+#           KX-TDA200
 # Samsung   SKP-816
 #           NX-820
+#           OFFICESERV-7200
 # Hybrex    GD-320
-# Siemens   HICOM-350H
+# Siemens   HICOM-150
+#           HICOM-350H
 #           HICOM-250
+#           HIPATH-3750 (3000/3750 with compressed mode format)
 # LG        GDK-100
 #           GDK-162
 #           GHX-46
 #           LDK-300
 #           LDK-100
 # GoldStar  GPS-6A
-# Alcatel   ALCATEL-4200
+# Alcatel   4200E
 #
 # At the $model parameter it is necessary to set only a designation of PBX model
 # without the name of the manufacturer. 
@@ -229,7 +244,8 @@ model=KX-TA616RU
 
 # syslogd level
 # syslogd used for critical error messsages.
-# refer to man logger(1), syslog.conf(5) for the additional information
+# Refer to man logger(1), syslog.conf(5) for the additional information.
+# Leave this blank to disable syslog messages.
 #
 syslogfacility=user.err
 

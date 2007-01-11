@@ -4,7 +4,7 @@
 
 $GUI_LANG = array (
     'meta-description'			=> 'ATSlog. Анализ и учет звонков мини-АТС.',
-    'meta-keywords'			=> 'atslog,atslog.dp.ua,panalog.dp.ua,panalog,php,mysql,ats,атс,pbx,smdr,tariff,тариф,call,звонков,тарификация,account,samsung,panasonic,hybrex,KX-TD816,KX-TA308,KX-TD1232,KX-TA616,SKP-816,GD-320,mini-ATS,мини-АТС,схема,распайка,руководство,описание.',
+    'meta-keywords'			=> 'atslog,atslog.com,panalog.dp.ua,panalog,php,mysql,ats,атс,pbx,smdr,tariff,тариф,call,звонков,тарификация,account,samsung,panasonic,hybrex,KX-TD816,KX-TA308,KX-TD1232,KX-TA616,SKP-816,GD-320,mini-ATS,мини-АТС,схема,распайка,руководство,описание.',
     'LANG'	                	=> 'Russian',
     'Charset'	                	=> 'windows-1251',
     'Number'                   		=> 'Номер',

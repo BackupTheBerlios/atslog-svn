@@ -1,51 +1,13 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 
-ОБНОВЛЕНИЕ до atslog-@version@, а так же любой из версий ATSlog.
+=== Upgrade from 2.00pre1-2.00pre3 ===
 
-1. Скачайте и распакуйте atslog-@version@.tar.gz:
-   fetch http://atslog.dp.ua/download/atslog-@version@.tar.gz
-   tar vzxfmp atslog-@version@.tar.gz
+Please uninstall atslog-2.00 and install new version as described in the 
+INSTALL file.
+Skip install-sql step and change your SQL password in the atslog.conf and
+config.inc.php files. Run 'atslogmaster start' and check your log files.
 
-2. Остановить демона сбора логов:
-   atslogmaster stop
-   
-3. Постройте новую систему с учетом обновлений. Будет автоматически 
-   произведён поиск файлов с предыдущими настройками.
-   cd atslog-@version@
-   make all
-
-4. Можно внеси изменения по желанию пользователя в новый
-   конфигурационный файл:
-   ./include/atslog.conf
-   который будет собран с учетом данных из старых конфигурационных файлов,
-   имеющихся в системе. Обратите особое внимание на такие параметры как:
-     $port
-     $speed
-     $fastwrite
-     $model                                         
-
-5. Деинсталлировать старую версию:
-   cd /usr/local/share/atslog
-   make deinstall
-   При деинсталляции текстовые лог-файлы (из /var/log/atslog) НЕ удаляются!
-
-6. Вернуться в директорию с пакетом установки и инсталлировать новую
-   версию, учитывая предыдущие настройки:
-   make install
-
-7. Данные за текущий день из файла calls.log, которые ещё _не были внесены_
-   в базы SQL сервера перенесите (не скопируйте, а именно перенесите) в файл
-   currentcalls.log. Этот файл находится в директории с остальными текстовыми
-   лог-файлами и служит для хранения текущих сеансов звонков.
-
-8. Желательно в базы SQL сервера заново внести данные из текстовых
-   лог-файлов.
-   Сделать это можно следующим образом:
-
-   atslogmaster cleardb # Очищаем таблицы от старой информации.
-   atslogmaster alltodb # Запишем информацию о звонках из текстовых лог-файлов.
-
-9. Запустить демона сбора логов.
-   atslogmaster start
-
+=== Upgrade from 1.xx: ===
+Currently automatic update from 1.xx versions is not supported. 
+Please, install atslog-@version@ and import your text logs again.

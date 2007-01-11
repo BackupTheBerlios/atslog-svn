@@ -1,10 +1,13 @@
 /*
-
-    (C) Alexey V. Kuznetsov, avk@gamma.ru, 2001, 2002
-    changed by Denis CyxoB www.yamiyam.dp.ua
-    and Andrew Kornilov akornilov@gmail.com
-    for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
-
+    Original - (c) Alexey V. Kuznetsov, avk@gamma.ru, 2001, 2002
+    
+    Modifications for the ATSlog project:
+    	Denis CyxoB www.yamiyam.dp.ua 
+    	Andrew Kornilov <akornilov@gmail.com>
+    	Alex Samorukov <samm@os2.kiev.ua>
+	RFC 854 WILL/WONT DO/DONT negotiation is based on the BSD netcat
+	
+    ATSlog version @version@ build @buildnumber@ www.atslog.com
 */
 
 #include <ctype.h>
@@ -26,6 +29,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <arpa/telnet.h>
 
 #include <termios.h>
 #include <sysexits.h>
@@ -58,7 +62,7 @@ char *pid_file="/var/run/atslogd.pid";
 char dirname[MAXPATHLEN+1+MAXFILENAMELEN+1];
 char filename[MAXFILENAMELEN+1]="raw";
 int dirlen=0;
-int gpid=0;
+int pid=0;
 int filenamelen=0;
 // count of childrens
 int childcount=0;
@@ -67,6 +71,7 @@ int maxtcpclients=1;
 // startup tty settings
 struct termios oldtio;
 int is_tcp=0,is_rtcp=0;
+int	tflag=0;					/* Telnet Emulation */
 
 #define LT_RAW		0
 #define LT_DEFINITY	1
@@ -131,13 +136,10 @@ void close_tty( HANDLE hCom)
 static int daemonize( void )
 {
 	int rc;
-	int rc_gpid;
 	rc = fork();
 	if( rc==(-1) ) return (-1);
 	if( rc!=0 ) _exit(EX_OK);
-	rc_gpid=setsid();
-	if( rc_gpid==(-1) ) return (-1);
-	return rc_gpid;
+	return rc;
 }
 
 FILE *open_pid()
@@ -151,6 +153,7 @@ void close_pid()
 {
 	if (pfd!=NULL)
 		unlink(pid_file);
+	pfd=NULL;
 }
 
 void my_exit(int code)
@@ -329,6 +332,7 @@ HANDLE open_tty( char *tty_name )
 	hCom = open( tty_name, O_RDWR | O_NONBLOCK);
 	if (hCom == INVALID_HANDLE_VALUE) {
 		my_syslog( "open_tty on '%s' failed: %s",tty_name,my_strerror() );
+		return hCom;
 	}
 
 	tcgetattr(hCom, &oldtio);
@@ -433,11 +437,39 @@ int set_tty_params( HANDLE hCom,long speed,int data_bits,char parity,int stop_bi
 	return 0;
 }
 
+
+/*
+ * ensure all of data on socket comes through. f==read || f==write
+ */
+ssize_t
+atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+{
+	char *s = _s;
+	ssize_t res, pos = 0;
+
+	while (n > pos) {
+		res = (f) (fd, s + pos, n - pos);
+		switch (res) {
+		case -1:
+			if (errno == EINTR || errno == EAGAIN)
+				continue;
+		case 0:
+			return (res);
+		default:
+			pos += res;
+		}
+	}
+	return (pos);
+}
+
+
 int read_string( HANDLE hCom,char *buf,int blen )
 {
+	unsigned char *p;
+	unsigned char obuf[4];
 	DWORD dwLength;
-	int count;
-
+	int count,iac=0;
+	
 	for( count=0; count<blen; count++,buf++ ) {
 		do {
 			while( (dwLength=read( hCom,buf,1 ))>=0 ) {
@@ -448,6 +480,29 @@ int read_string( HANDLE hCom,char *buf,int blen )
 					buf[0]=0;
 					if( dbg && count ) my_syslog( "read_string: '%s'",buf-count );
 					return count;
+				}
+				p=buf;
+				/* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
+				if(tflag && *p==IAC){
+					iac=1;
+					continue;
+				}
+				if(tflag && iac){
+					obuf[0] = IAC;
+					obuf[1] = obuf[3] = '\0';
+					if ((*p == WILL) || (*p == WONT)) {
+						obuf[1] = DONT;
+					}
+					if ((*p == DO) || (*p == DONT))  {
+						obuf[1] = WONT;
+					}
+					read( hCom,buf,1 );
+					obuf[2] = *p;
+					if (atomicio((ssize_t (*)(int, void *, size_t))write,
+						hCom, obuf, 3) != 3)
+					   my_syslog( "atelnet: Write Error!\n" );
+					iac=0;
+					continue;
 				}
 				if( *buf=='\n' || *buf=='\r' || *buf==0 ) {
 					if( count ) {
@@ -511,7 +566,7 @@ void usage( void )
 "CDR Reader for PBXs v.%s (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002\n"
 "changed by Denis CyxoB www.yamiyam.dp.ua\n"
 "and Andrew Kornilov akornilov@gmail.com\n"
-"for the ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua\n"
+"for the ATSlog version @version@ build @buildnumber@ www.atslog.com\n"
 "\n"
 "atslogd [-D dir] [-L logfile] [-F filename] [-s speed] [-c csize] [-p parity] [-f sbits] [-d] [-e] [-o]\n"
 "        [-x number] [-w seconds] [-b] [-P pidfile] tcp[:address]:port|rtcp:address:port|dev\n"
@@ -527,15 +582,16 @@ void usage( void )
 "-e\t\t\tcopy error messages to stderr (in case if -L has value)\n"
 "-o\t\t\twrite CDR additionally to stdout\n"
 "-x number\t\tmaximum number of clients for TCP connections; default is 1\n"
+"-t\t\t\tanswer TELNET negotiation\n"
 #ifdef USE_LIBWRAP
 "\t\t\tsee also /etc/hosts.allow, /etc/hosts.deny\n"
 #endif /* USE_LIBWRAP */
 "-w seconds\t\ttimeout before I/O port will be opened next time after EOF;\n"
-"\t\tdefault is 5\n"
-"-b\t\t\tbecome daemon\n"
+"\t\t\tdefault is 5\n"
+"-b\t\t\tdaemonize on startup\n"
 "-P\t\t\tpid-file; /var/run/atslogd.pid by default\n"
-"tcp[:address]:port\tIP-address and TCP-port for listen on\n"
-"\t\t\tyou may omit address and daemon will bind on all available IP addresses\n"
+"tcp[:address]:port\tIP-address and TCP-port for listening.\n"
+"\t\t\tYou may omit address and daemon will bind\n\t\t\ton all available IP addresses\n"
 "rtcp:address:port\tremote IP-address and TCP-port to connect\n"
 "dev \t\t\tserial device to use\n"
 "\n"
@@ -548,6 +604,8 @@ void usage( void )
 
 my_exit(1);
 }
+
+
 
 int main( int argc, char *argv[] )
 {
@@ -576,13 +634,13 @@ int main( int argc, char *argv[] )
 	
 	HANDLE hCom;
 
-	while( (rc=getopt(argc,argv,"bohdes:D:L:P:F:p:c:f:x:w:s:"))!=(-1) ) {
+	while( (rc=getopt(argc,argv,"tbohdes:D:L:P:F:p:c:f:x:w:s:"))!=(-1) ) {
 		switch( rc ) {
 		case 'D':
 			dirlen=strlen(optarg);
 			if( dirlen>MAXPATHLEN ) {
 				(void)fprintf( stderr,"Too long directory name\n" );
-				return 1;
+				my_exit(1);
 			}
 			if( dirlen==0 ) {
 				dirname[0]='.'; dirlen=1;
@@ -605,12 +663,15 @@ int main( int argc, char *argv[] )
 			filenamelen=strlen(optarg);
 			if( filenamelen>MAXFILENAMELEN ) {
 				(void)fprintf( stderr,"Too long file name\n" );
-				return 1;
+				my_exit(1);
 			}
 			memcpy( filename,optarg,filenamelen );
 			break;
 		case 's':
 			speed=atol(optarg);
+			break;
+		case 't':
+			tflag = 1;
 			break;
 		case 'p':
 			parity=optarg[0];
@@ -657,7 +718,7 @@ int main( int argc, char *argv[] )
 		errout=fopen( logfile,"at" );
 		if( errout==NULL ) {
 			(void)fprintf( stderr,"Can't open '%s': %s\n",logfile,strerror(errno) );
-			return 1;
+			my_exit(1);
 		}
 	} else {
 		errout=stderr;
@@ -671,20 +732,20 @@ int main( int argc, char *argv[] )
 
 	my_syslog( "Starting" );
 	
-	if (do_daemonize) 
-		gpid = daemonize();
+	if (do_daemonize) pid=daemonize();
+	else pid=getpid();
 
-	if( do_daemonize && gpid==(-1) ) {
+	if( do_daemonize && pid==(-1) ) {
 		my_syslog( "Can't become daemon, exiting" );
 		my_exit( 1 );
 	}
 
 	pfd = open_pid();
 	if (pfd!=NULL) {
-	    (void)fprintf(pfd, "%ld\n", (long)gpid);
+	    (void)fprintf(pfd, "%ld\n", (long)pid);
 	    fclose(pfd);
 	}else{
-	    my_syslog( "Can't write PID file, exiting" );
+	    my_syslog( "Can't write to '%s' PID file, exiting",pid_file );
 	    my_exit( 1 );
 	}
 
@@ -746,26 +807,26 @@ int main( int argc, char *argv[] )
 		{
 			if( tcpPort==0 )
 			{
-				my_syslog( "Invalid TCP port number to listen");
+				my_syslog( "Invalid TCP port 0 to listen");
 				hCom=INVALID_HANDLE_VALUE;
-				return hCom;
+				my_exit(1);
 			}
 				s=socket(PF_INET,SOCK_STREAM,0);
 				if(s==INVALID_HANDLE_VALUE) {
 					my_syslog( "socket() failed: %s",my_strerror() );
-					return s;
+					my_exit(1);
 				}
 				if (setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(char *)&opt,sizeof(opt)) < 0)
 				{
 					my_syslog( "setsockopt() failed: %s",my_strerror() );
-					return INVALID_HANDLE_VALUE;
+					my_exit(1);
 				}
 				// send keepalive packets. if remote end hangs then we'll can know
 				// this ?
 				if (setsockopt(s,SOL_SOCKET,SO_KEEPALIVE,(char *)&opt,sizeof(opt)) < 0)
 				{
 					my_syslog( "setsockopt() failed: %s",my_strerror() );
-					return INVALID_HANDLE_VALUE;
+					my_exit(1);
 				}
 				h2close=s;
 				memset( &sa_lserver,0,sizeof(sa_lserver) );
@@ -782,11 +843,11 @@ int main( int argc, char *argv[] )
 						my_syslog( "bind() on port %s:%d failed: %s",hostname,tcpPort,my_strerror() );
 					else
 						my_syslog( "bind() on port %d failed: %s",tcpPort,my_strerror() );
-					goto err_ret;
+					my_exit(1);
 				}
 				if( listen(s,5)==(-1) ) {
 					my_syslog( "listen() failed: %s",my_strerror() );
-					goto err_ret;
+					my_exit(1);
 				}
 				if (hostname!=NULL)
 					my_syslog( "Waiting TCP connection on port %s:%d",hostname,tcpPort );
@@ -796,7 +857,6 @@ int main( int argc, char *argv[] )
 					sa_rclient_len=sizeof(sa_rclient);
 					if( (new_s=accept(s,(struct sockaddr*)&sa_rclient,&sa_rclient_len ))==(-1) ) {
 						my_syslog( "accept() failed: %s",my_strerror() );
-						err_ret:
 						h2close=INVALID_HANDLE_VALUE;
 						hCom=h2close;
 						close(s);
@@ -903,27 +963,27 @@ int main( int argc, char *argv[] )
 			{
 				my_syslog( "Invalid hostname to connect: %s",rhostname);
 				hCom=INVALID_HANDLE_VALUE;
-				return hCom;
+				my_exit(1);
 			}
 				
 			if (rtcpPort==0)
 			{
 				my_syslog( "Invalid TCP port number to connect: %d",rtcpPort);
 				hCom=INVALID_HANDLE_VALUE;
-				return hCom;
+				my_exit(1);
 			}
 rtcp:
 			s=socket(PF_INET,SOCK_STREAM,0);
 			if(s==INVALID_HANDLE_VALUE) {
 				my_syslog( "socket() failed: %s",my_strerror() );
-				return s;
+				my_exit(1);
 			}
 			// send keepalive packets. if remote end hangs then we'll can know
 			// this ?
 			if (setsockopt(s,SOL_SOCKET,SO_KEEPALIVE,(char *)&opt,sizeof(opt)) < 0)
 			{
 				my_syslog( "setsockopt() failed: %s",my_strerror() );
-				return INVALID_HANDLE_VALUE;
+				my_exit(1);
 			}
 			memset(&sa_rclient,0,sizeof(sa_rclient));
 			memcpy(&sa_rclient.sin_addr.s_addr, he_rserver->h_addr_list[0], he_rserver->h_length);
@@ -938,7 +998,7 @@ rtcp:
 						sleep( next_open_timeout );
 						goto rtcp;
 					}
-					return INVALID_HANDLE_VALUE;
+					my_exit(1);
 				}
 			else
 				my_syslog( "Connected to %s:%d",inet_ntoa(sa_rclient.sin_addr),ntohs(sa_rclient.sin_port) );
@@ -952,13 +1012,13 @@ rtcp:
 
 	if( hCom==INVALID_HANDLE_VALUE ) {
 		my_syslog( "Can't open '%s', exiting",argv[0] );
-		return 1;
+		my_exit(1);
 	}
 
 	memcpy( dirname+dirlen,filename,strlen(filename));
 	if( (cur_logfile=fopen(dirname,"at"))==NULL ){
 		my_syslog( "Can't open CDR file '%s': %s",dirname,strerror(errno) );
-		return 1;
+		my_exit(1);
 	}
 
 	while( (rc=read_string( hCom,buf,MAXSTRINGLEN ))>=0 ) {
@@ -989,7 +1049,7 @@ rtcp:
 				hCom = open_io( argv[0],speed,data_bits,parity,stop_bits );
 				if( hCom==INVALID_HANDLE_VALUE ) {
 					my_syslog( "Can't open '%s', exiting",argv[0] );
-					return 1;
+					my_exit(1);
 				}
 			}
 			continue;
@@ -1002,5 +1062,6 @@ rtcp:
 			break;
 		}
 	}
+	my_exit(0);
 	return 0;
 }

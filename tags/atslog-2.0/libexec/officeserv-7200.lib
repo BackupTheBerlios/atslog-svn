@@ -1,0 +1,74 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
+# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+#
+# Samsung OfficeServ 7200 library (c) 2006 Sergey Solonina <slon@goldenpages.ua>
+#
+
+sub parsecurcalls()
+{
+	while ($str=<>)
+	{
+		$stringnumber++;
+
+		if ($str =~ /^\s+(\d+)\s+(\d+)\s+(\d*)\s+\#(\d+)\s+(\d+)\/(\d+)\s+(\d+)\:(\d+)\:(\d+)\s+(\d+)\:(\d+)\:(\d+)\s+(\D+)\s+(\d+\#*\d*)\s+(\d*)\s+(\d+)\.(\d+)\s+(\d*)\s+(\D*)\s*$/)
+
+		{
+			unitecurcalls();
+			#print ("Ok\n");
+		}else
+		{
+			#print("$stringnumber\n");
+			print $str if ($vars{debug} =~ /yes/i and $str !~ /^$/)
+		};
+	};
+};
+
+sub unitecurcalls() {
+
+	$internally=$2;
+	$co=$4;
+	$Month=$5;
+	$Day=$6;
+
+	$Year = (localtime())[5];
+	$Year += 1900;
+
+	$CallHour=$7;
+	$CallMinute=$8;
+	$CallSeconds=$9;
+	$duration = (($10*60*60)+($11*60)+$12);
+	$timeofcall = "$Year-$Month-$Day $CallHour\:$CallMinute\:$CallSeconds";
+
+	SWITCH:
+	{
+		$13 =~ /xT/i and  $forwarded=3, last SWITCH;
+		$13 =~ /T/i  and  $forwarded=1, last SWITCH;
+		$13 =~ /xI/i and  $forwarded=2, last SWITCH;
+		$forwarded=0;
+	}
+
+
+	if ($13 =~ /[x]*T/i or $13 =~ /[x]*I/i)
+	{
+		$way='1';
+		$number=0; # Not Specified
+	}else{
+		$way='2';
+		$Outnumber = $14;
+		$Outnumber =~ s/\D+//;
+		$number=substr($Outnumber,0,100);
+	}
+
+
+
+	if ($timeofcall ne "")
+	{
+		$callsCount++;
+	}
+	#print("Ok: $stringnumber $timeofcall $forwarded $internally $co $way $number $duration\n");
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co, way , number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;
+}
+
+1;

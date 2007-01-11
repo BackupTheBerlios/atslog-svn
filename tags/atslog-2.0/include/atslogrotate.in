@@ -1,12 +1,13 @@
 #!/bin/sh
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #                                                       
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
+prefix=@prefix@
 
 # Reading config file
-if [ -r /usr/local/etc/atslog.conf ]; then
-    . /usr/local/etc/atslog.conf
+if [ -r @sysconfdir@ ]; then
+    . @sysconfdir@/atslog.conf
     if [ -f $sharedir/$langdir/$LANG ]; then               
 # Переменная $LANG - берётся из настройки локали.
 	. $sharedir/$langdir/$LANG

@@ -1,0 +1,72 @@
+# Makefile
+
+prefix     = @prefix@
+exec_prefix= @exec_prefix@
+LOG_DIR=@localstatedir@/log
+PIDFILE_DIR=@localstatedir@/run
+CC=@CC@
+WWW_ROOT=@WWW_ROOT@
+BIN_DIR=@bindir@
+ETC_DIR=@sysconfdir@
+LIBEXEC_DIR=@libexecdir@
+MAN_DIR=@mandir@
+DATA_DIR=@datadir@
+RM=@RM@
+CP=@CP@
+MKDIR=@MKDIR@
+ECHO=@ECHO@
+all: atslog-daemon include/atslog.conf
+edit = @sed \
+        -e 's,@datadir\@,${DATA_DIR},g' \
+        -e 's,@bindir\@,${BIN_DIR},g' \
+        -e 's,@localstatedir\@,@localstatedir@,g' \
+        -e 's,@sysconfdir\@,${ETC_DIR},g' \
+        -e 's,@libexecdir\@,${LIBEXEC_DIR},g' \
+        -e 's,@prefix\@,${prefix},g'
+
+include/atslog.conf:
+	$(edit) include/atslog.conf.default.in > include/atslog.conf.default
+	$(edit) include/atslog.conf.default.rus.in > include/atslog.conf.default.rus
+
+atslog-daemon:
+	@cd atslogd; $(MAKE)
+
+clean:
+	@cd atslogd; $(MAKE) clean
+
+install: all include/atslog.conf
+	@${MKDIR} -p ${DESTDIR}${WWW_ROOT}
+	@${ECHO} "Installing web interface to the ${DESTDIR}${WWW_ROOT}/atslog directory"
+	@${CP} -r www/ ${DESTDIR}${WWW_ROOT}/atslog
+	@if test ! -f ${DESTDIR}${WWW_ROOT}/atslog/include/config.inc.php; then ${CP} ${DESTDIR}${WWW_ROOT}/atslog/include/config.inc.php.default ${DESTDIR}${WWW_ROOT}/atslog/include/config.inc.php;fi
+	@${ECHO} "Installing atslog libraries to the ${DESTDIR}${LIBEXEC_DIR}/atslog directory"
+	@${MKDIR} -p ${DESTDIR}${LIBEXEC_DIR}/atslog
+	@${CP}  libexec/* ${DESTDIR}${LIBEXEC_DIR}/atslog/
+	@${ECHO} "Installing atslog binaries to the ${DESTDIR}${BIN_DIR} directory"
+	@${MKDIR} -p ${DESTDIR}${BIN_DIR}
+	@${CP} atslogd/atslogd include/atslogcleardb.pl include/atslogdaily include/atslogdb.pl include/atslogmaster include/atslogrotate ${DESTDIR}${BIN_DIR}
+	@${ECHO} "Installing atslog man pages to the ${DESTDIR}${MAN_DIR} directory"
+	@${MKDIR} -p ${DESTDIR}${MAN_DIR}/man8 ${DESTDIR}${MAN_DIR}/ru/man8
+	@${CP} man/en/atslogd.8 man/en/atslogmaster.8 ${DESTDIR}${MAN_DIR}/man8/
+	@${CP} man/ru.KOI8-R/atslogd.8 man/en/atslogmaster.8 ${DESTDIR}${MAN_DIR}/ru/man8/
+	@${MKDIR} -p ${DESTDIR}${ETC_DIR}
+	@${CP} include/atslog.conf.default include/atslog.conf.default.rus ${DESTDIR}${ETC_DIR}
+	@if test ! -f ${DESTDIR}${ETC_DIR}/atslog.conf; then ${CP} ${DESTDIR}${ETC_DIR}/atslog.conf.default ${DESTDIR}${ETC_DIR}/atslog.conf;fi
+	@${MKDIR} -p ${DESTDIR}${DATA_DIR}/atslog/lang
+	@${CP} -r include/lang/* ${DESTDIR}${DATA_DIR}/atslog/lang
+	@${CP} Makefile ${DESTDIR}${DATA_DIR}/atslog/
+	@${MKDIR} -p ${DESTDIR}${LOG_DIR}/atslog ${DESTDIR}${PIDFILE_DIR}
+	@${ECHO} Install completed. You need to edit ${DESTDIR}${ETC_DIR}/atslog.conf configuration file
+
+deinstall:
+	@${RM} -rf ${WWW_ROOT}/atslog
+	@${RM} -rf ${LIBEXEC_DIR}/atslog
+	@${RM} -f ${BIN_DIR}/atslogd ${BIN_DIR}/atslogcleardb.pl ${BIN_DIR}/atslogdaily ${BIN_DIR}/atslogdb.pl ${BIN_DIR}/atslogmaster ${BIN_DIR}/atslogrotate
+	@if cmp -s ${ETC_DIR}/atslog.conf ${ETC_DIR}/atslog.conf.default; then ${RM} -f ${ETC_DIR}/atslog.conf; fi
+	@${RM} -f ${ETC_DIR}/atslog.conf.default ${ETC_DIR}/atslog.conf.default.rus
+	@${RM} -rf ${DATA_DIR}/atslog
+	@${RM} -f ${MAN_DIR}/man8/atslogd.8  ${MAN_DIR}/man8/atslogmaster.8 ${MAN_DIR}/ru/man8
+	@${ECHO} ATSlog uninstalled. You need to delete ${LOG_DIR} manually.
+
+install-sql:
+	cd data/sql;./install-sql.pl ${ETC_DIR}/atslog.conf

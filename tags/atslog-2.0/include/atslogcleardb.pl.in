@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #                                                       
 # Скрипт очищает содержимое базы одним махом
@@ -10,7 +10,8 @@ if ($ARGV[0] ne "yes"){
 use DBI;
 use POSIX qw(locale_h); # Для правильной обработки языковых настроек.
 
-$config_file="/usr/local/etc/atslog.conf";
+$prefix="@prefix@";
+$config_file="@sysconfdir@/atslog.conf";
 
 open(IN,$config_file) || die print("Can't open config file $config_file.");
 while(<IN>) {
@@ -39,8 +40,6 @@ while(<LN>) {
 }
 close(LN);
 
-print $vars{msg29}."calls: ";
-
 if($vars{sqltype} =~ /PostgreSQL/i){
     $sqltype=Pg;
 }else{
@@ -52,8 +51,9 @@ if($vars{sqlhost} ne "localhost"){
     $host = ";host=".$vars{sqlhost};
 }
 	
-$dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0});
+if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0})){
 
+print $vars{msg29}."calls: ";
 $del_query="TRUNCATE TABLE calls;";
 #print $del_query;
 
@@ -66,4 +66,8 @@ if ($sth->execute) {
     $toexit=1;
 }
 $dbh->disconnect;
+}
+else {
+    print $DBI::errstr."\n";
+}
 exit $toexit;

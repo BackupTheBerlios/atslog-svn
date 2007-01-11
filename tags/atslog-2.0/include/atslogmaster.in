@@ -1,14 +1,15 @@
 #!/bin/sh
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #                                                       
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
 NOWDATE=`LANG=en_US;date`
 BASENAME=`basename $0`
+prefix=@prefix@
 
 # Readin config file                              
-if [ -r /usr/local/etc/atslog.conf ]; then
-    . /usr/local/etc/atslog.conf
+if [ -r @sysconfdir@/atslog.conf ]; then
+    . @sysconfdir@/atslog.conf
 
 # Переменную $LANG - берём из настройки локали.
     if [ -f $sharedir/$langdir/$LANG ]; then
@@ -27,12 +28,12 @@ fi
 # Установим рабочие переменные
 PATH=$PATH:$bindir:$sharedir
 if [ -s $pidfile ];then
-    GROUPPid=`cat $pidfile`
-    if [ -z "$GROUPPid" ];then
-        GROUPPid=`ps xo pgid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
+    ATSLOGDpid=`cat $pidfile`
+    if [ -z "$ATSLOGDpid" ];then
+        ATSLOGDpid=`ps xo pid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
     fi
 else
-    GROUPPid=`ps xo pgid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
+    ATSLOGDpid=`ps xo pid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
 fi
 
 case "$debug" in
@@ -44,6 +45,12 @@ case "$debug" in
     ;;
 esac
 
+# creating log directory
+if [ ! -d $logdir ]; then
+    mkdir -p $logdir
+    chmod 700 $logdir
+fi
+
 # Проверим, используется tcp порт, или порт в /dev/
 TCPPORT=$(expr $port : ".*tcp:.*\$")
 if [ $TCPPORT = 0 ];then
@@ -54,19 +61,21 @@ fi
 #
 # Функция выводит сообщения об ошибках на консоль, в лог-файл и в syslog
 echomess(){
-    if [ ! -z "$GROUPPid"  ];then
-	ECHOGROUPPid="[${GROUPPid}]"
+    if [ ! -z "$ATSLOGDpid"  ];then
+	ECHOATSLOGDpid="[${ATSLOGDpid}]"
     else
-	ECHOGROUPPid=""
+	ECHOATSLOGDpid=""
     fi
     if [ -n "$ECHOMESSAGE" ];then
 	MESSAGE=$ECHOMESSAGE
     else
-	MESSAGE=$ERRORMESSAGE
-	logger -p $syslogfacility "${masterscript}${ECHOGROUPPid}: $MESSAGE"
+	if [ -n "$syslogfacility" ]; then
+	    MESSAGE=$ERRORMESSAGE
+	    logger -p $syslogfacility "${masterscript}${ECHOATSLOGDpid}: $MESSAGE"
+	fi
     fi
     echo "${masterscript}: $MESSAGE"
-    echo "$NOWDATE ${masterscript}${ECHOGROUPPid}: $MESSAGE" >> $logdir/$startlogfile
+    echo "$NOWDATE ${masterscript}${ECHOATSLOGDpid}: $MESSAGE" >> $logdir/$startlogfile
     ECHOMESSAGE=""
     ERRORMESSAGE=""
 }
@@ -122,11 +131,11 @@ startloging(){
 	    [Yy][Ee][Ss])
 		case "$debug" in
 		    [Yy][Ee][Ss])
-	    		$bindir/$atslogd -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $callslogfile -L $logdir/$startlogfile $port | $bindir/$atslogdb 1>> $logdir/$notwritelog 2>/dev/null &
+	    		$bindir/$atslogd $atslogd_flags -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $callslogfile -L $logdir/$startlogfile $port | $bindir/$atslogdb 1>> $logdir/$notwritelog 2>/dev/null &
 			TORETURN=$?
 		    ;;
 		    *)
-			$bindir/$atslogd -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $callslogfile -L $logdir/$startlogfile $port | $bindir/$atslogdb 1>/dev/null 2>/dev/null &
+			$bindir/$atslogd $atslogd_flags -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $callslogfile -L $logdir/$startlogfile $port | $bindir/$atslogdb 1>/dev/null 2>/dev/null &
 			TORETURN=$?
 		    ;;
 		esac
@@ -151,24 +160,24 @@ startloging(){
 # Функция останавливает основной скрипт считывания информации из мини-АТС
 stoploging(){
     if [ -s $pidfile ];then
-	KILLGROUPPid=`cat $pidfile`
+	KILLATSLOGDpid=`cat $pidfile`
     fi
 
-    if [ -z "$KILLGROUPPid" ];then
-	KILLGROUPPid="$GROUPPid"
+    if [ -z "$KILLATSLOGDpid" ];then
+	KILLATSLOGDpid="$ATSLOGDpid"
     fi
-    if [ -n "$KILLGROUPPid" ];then
+    if [ -n "$KILLATSLOGDpid" ];then
 	if [ -f $pidfile ];then
 	    rm -f $pidfile
 	fi
-	kill -- -$KILLGROUPPid 1>/dev/null 2>/dev/null
+	kill $KILLATSLOGDpid 1>/dev/null 2>/dev/null
 	RETURNKILL=$?
 	if [ $RETURNKILL -eq 0 ]
 	then
-            echo "$NOWDATE ${atslogd}[$KILLGROUPPid]: $msg2" >> $logdir/$startlogfile
+            echo "$NOWDATE ${atslogd}[$KILLATSLOGDpid]: $msg2" >> $logdir/$startlogfile
 	    return 0
 	else
-	    echo $KILLGROUPPid > $pidfile
+	    echo $KILLATSLOGDpid > $pidfile
 	    ERRORMESSAGE=$msg3
 	    echomess
 	    return $RETURNKILL
@@ -206,8 +215,8 @@ restart)
     ;;
 reload)
     # Reload
-    if [ -n "$GROUPPid" ];then
-        kill -HUP $GROUPPid
+    if [ -n "$ATSLOGDpid" ];then
+        kill -HUP $ATSLOGDpid
     fi
     ;;
 writedb)
@@ -218,7 +227,7 @@ writedb)
 	if [ -s $logdir/$curcallslogfile ];then
 	    case "$fastwrite" in
 	        [Yy][Ee][Ss])
-		    if [ -n "$GROUPPid" ];then
+		    if [ -n "$ATSLOGDpid" ];then
 			
 			echo "$msg24"
 			exit 1
@@ -230,8 +239,8 @@ writedb)
 	    mv $logdir/$curcallslogfile $logdir/$curcallslogfile.tmp
 	    # Сообщим демону, что нужно пересоздать текстовый лог-файл.
 	    TORETURN=0
-	    if [ -n "$GROUPPid" ];then
-		kill -HUP $GROUPPid
+	    if [ -n "$ATSLOGDpid" ];then
+		kill -HUP $ATSLOGDpid
 		TORETURN=$?
 	    else
 		touch $logdir/$curcallslogfile
@@ -313,13 +322,13 @@ rotate)
 		# Переименуем текущий, открытый для записи файл во временный.
 		mv $logdir/$callslogfile $logdir/$callslogfile.tmp
 		# Сообщим демону, что нужно пересоздать текстовый лог-файл.
-		if [ -n "$GROUPPid" ];then
-		    kill -HUP $GROUPPid
+		if [ -n "$ATSLOGDpid" ];then
+		    kill -HUP $ATSLOGDpid
 		else
 		    touch $logdir/$callslogfile
 		fi
 
-		echo "$NOWDATE ${masterscript}[$GROUPPid]: $callslogfile rotate" >> $logdir/$startlogfile
+		echo "$NOWDATE ${masterscript}[$ATSLOGDpid]: $callslogfile rotate" >> $logdir/$startlogfile
 		bzip2 -z $logdir/$callslogfile.tmp
 		mv $logdir/$callslogfile.tmp.bz2 $logdir/$callslogfile.1.bz2
 	        echo -n "."
@@ -328,7 +337,7 @@ rotate)
 	    for logfn in $notwritelog $startlogfile
 	    do
 		if [ -s $logdir/$logfn ];then
-		    echo "$NOWDATE ${masterscript}[$GROUPPid]: $logfn rotate" >> $logdir/$startlogfile
+		    echo "$NOWDATE ${masterscript}[$ATSLOGDpid]: $logfn rotate" >> $logdir/$startlogfile
 		    bzip2 -z $logdir/$logfn
 		    mv $logdir/$logfn.bz2 $logdir/$logfn.1.bz2
 
@@ -395,8 +404,8 @@ cleardb)
     ;;
 *)
     echo "atslogmaster version @version@ build @buildnumber@"
-    if [ -n "$GROUPPid" ];then
-	echo "$atslogd $msg26 $GROUPPid"
+    if [ -n "$ATSLOGDpid" ];then
+	echo "$atslogd $msg26 $ATSLOGDpid"
     else
 	echo "$atslogd $msg27"
 	EXITSTATUS=1

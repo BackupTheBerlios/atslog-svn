@@ -1,15 +1,16 @@
 #!/bin/sh
-# ATSlog version @version@ build @buildnumber@ www.atslog.dp.ua  
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #                                                       
 # Скрипт ежедневного вызова сбора информации из       
 # текстового лог-файла и записи её в базу SQL сервера.
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
+prefix=@prefix@
 
 # Readin config file                              
-if [ -r /usr/local/etc/atslog.conf ]; then
-    . /usr/local/etc/atslog.conf
+if [ -r @sysconfdir@/atslog.conf ]; then
+    . @sysconfdir@/atslog.conf
 # Переменная $LANG - берётся из настройки локали.
     if [ -f $sharedir/$langdir/$LANG ]; then
 	. $sharedir/$langdir/$LANG

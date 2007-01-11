@@ -42,7 +42,7 @@ $MobileCallsSuffix=".+";
 if(!isset($MobileCodes)) { // default codes for the ukrainian mobile operators
     $MobileCodes=array("050", "095", "066", "099", "067", "098", "068", "097", "096","039","063", "093", "094", "092");
 }
-$MobileCallsR=CreateMobileR($MobileCodeCodes);
+$MobileCallsR=CreateMobileR($MobileCodes);
 // Long distance codes of mobile operators.
 
 function CreateMobileR($MobileCodeCodes){
@@ -51,7 +51,7 @@ function CreateMobileR($MobileCodeCodes){
     foreach ($MobileCodeCodes as $key=>$v){
 	$MobileCodeCodes[$key]=$MobileCallsPrefix.$v.$MobileCallsSuffix;
     }
-    $query=implode("|",$v);
+    $query=implode("|",$MobileCodeCodes);
     return $query;
 }
 /*
@@ -126,9 +126,15 @@ if($sqltype == "PostgreSQL"){
 }else{
     $adodbDriver="MySQL";
 }
-$conn = &ADONewConnection($adodbDriver);   // create a connection 
+$conn = &ADONewConnection($adodbDriver);   // create a connection
 $conn->cacheSecs = $ADODB_CACHE_TTL;   // время жизни кеша SQL запроса
-$conn->PConnect($sqlhost,$sqlmasteruser,$sqlmaspasswd,$sqldatabase); // connect to SQL, agora db
+$rc=$conn->PConnect($sqlhost,$sqlmasteruser,$sqlmaspasswd,$sqldatabase); // connect to SQL, agora db
+if($rc!=true) { // database connection failed
+	echo ("Database connection failed!<br>");
+	echo $conn->ErrorMsg();
+	exit;
+}
+
 if($debug==2) $conn->debug = true;
 
 
@@ -575,6 +581,7 @@ function AddTableHeader($fname,$thname,$toprint){
 }
 
 function totalTableFooter($field,$returnType){
+	$results="";
 
 	global $conn,$from_date,$to_date,$additionalReq,$LocalCalls;
 	global $isNoCityCalls,$LongDistanceCalls,$MobileCallsR;
@@ -668,8 +675,8 @@ function totalTableFooter($field,$returnType){
 		if(!$TTFfirst) $TTFfirst=TRUE;
 	    }
 	}
-	
-	return($results);
+	if(isset($results))	return($results);
+	else return;
 
 }
 

@@ -1,0 +1,99 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
+#
+# Library for the Siemens HIPATH 3000/3750 (compresses mode format)
+#
+# (c) Alex Samorukov, samm@os2.kiev.ua, 2006
+#
+# library is based on user reports, i dont know exact format of this PBX CDR
+
+
+sub parsecurcalls() {
+	while ($str=<>)
+	{
+		$stringNumber++;
+		# regexp
+		if ($str =~ /(\d{2}\.\d{2}\.\d{2})[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|]([^|;]*)[;|](\r)?$/){
+			unitecurcalls();
+		}else{
+			if ($vars{nowrlog} =~ /yes/i){
+				if ($str !~ /^$/){
+					print $str;
+				};
+			};
+		};
+	};
+};
+
+sub unitecurcalls() {
+	$date=$1;
+	$time=$2;
+	$line=$3;
+	$ext_number=$4;
+	$ring_time=$5; # ?!?
+	$call_duration=$6;
+	$dialed_number=$7;
+	# $8 ?!?
+	$mode=$9;
+	# 10,11 ?!?
+	$dialed_number_prefix=$12;
+	# 13 Cost?
+	
+	# mandatory fields
+	#$TimeOfCall
+	#$Forwarded
+	#$Internally
+	#$CO
+	#$Way
+	#$Number
+	#$Duration
+	# bonus
+	# $Code
+	$co=$line;
+	
+	$dialed_number=$dialed_number_prefix.$dialed_number;
+	
+	if ($dialed_number=~/(\d+)/) 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+
+	if($mode==1){
+		$way='1';
+	}else{
+		$way='2';
+	};
+	
+	if ($date=~(/(\d{2})\.(\d{2})\.(\d{2})/)) {
+		$Month=$2;
+		$Day=$1;
+		$Year=$3+2000;
+		$timeofcall = "$Year-$Month-$Day $time";
+	}
+	
+	
+	$internally=$ext_number;
+	
+	if ($call_duration=~(/(\d{2}):(\d{2}):(\d{2})/)) {
+		$duration = (($1*60*60)+($2*60)+$3);
+	}
+	
+	# i dont knoe forwarding bit of this PBX
+	$forwarded =0;
+	
+	$forwarder=0;
+	
+	if ($timeofcall ne ""){
+		# We need to check that we had records for database
+		$callsCount++;
+	}
+	
+	#print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;	
+}
+
+1;

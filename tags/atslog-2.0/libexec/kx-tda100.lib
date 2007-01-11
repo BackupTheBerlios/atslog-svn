@@ -1,0 +1,257 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
+#
+#
+# KX-TDA100, KX-TDA200.
+# This library supports A, B and C fortmats
+#
+# (c) Alex Samorukov, samm@os2.kiev.ua, 2007
+#
+
+sub parsecurcalls() {
+	while ($str=<>)
+	{
+		$stringNumber++;
+		# regexp B format
+		if ($str =~ /(.{2}\/.{2}\/.{2}) (\d{2}:\d{2})   (.{4}) (\d{2}) (.{20}) (\d{2}:\d{2}\'\d{2})  (.{9}) (.{10}) (.{2}) (\r)?$/){
+			unitecurcallsB();
+		}
+		elsif($str =~ /(.{2}\/.{2}\/.{2}) (\d{2}:\d{2})    (.{4}) (\d{2}) (.{25}) (.{4}) (\d{2}:\d{2}\'\d{2}) (.{10}) (.{2}) (\r)?$/){
+			unitecurcallsA();
+		}
+		elsif($str =~ /(.{2}\/.{2}\/.{2}) (\d{2}:\d{2})    (.{4}) (\d{4}) (.{50}) (.{4}) (\d{2}:\d{2}\'\d{2}) (.{11}) (.{10}) (.{3}) (\r)?$/){
+			unitecurcallsC();
+		}
+		else{
+			if ($vars{nowrlog} =~ /yes/i){
+				if ($str !~ /^$/){
+					print $str;
+				};
+			};
+		};
+	};
+};
+
+sub unitecurcallsC() {
+	$date=$1;
+	$time=$2;
+	$ext_number=$3;
+	$line=$4;
+	$dialed_number=$5;
+	# ring = $6
+	$call_duration=$7;
+	$cost=$8;
+	$business_code=$9;
+	$mode=$10;
+	
+	# mandatory fields
+	#$TimeOfCall
+	#$Forwarded
+	#$Internally
+	#$CO
+	#$Way
+	#$Number
+	#$Duration
+	# bonus
+	# $Code
+	
+	$co=$line;
+	
+	if ($dialed_number=~/(\d+)/) 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+
+	if($dialed_number =~ /<I>/i){
+		$way='1';
+	}else{
+		$way='2';
+	};
+	
+	#replace leading " " 
+	$date =~ s/ /0/g;
+	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
+		$Month=$2;
+		$Day=$1;
+		$Year=$3+2000;
+		$timeofcall = "$Year-$Month-$Day $time:00";
+	}
+	
+	$internally=$ext_number;
+	if ($call_duration=~(/(\d{2}):(\d{2})\'(\d{2})/)) {
+		$duration = (($1*60*60)+($2*60)+$3);
+	}
+	
+	if($mode=~/TR/){
+		$forwarded=1;
+	}
+	else {
+		$forwarded =0;
+	}
+	
+	if($business_code=~/(\d+)/){
+		$code=$1;
+	}
+	else {
+		$code=0;
+	}
+	if ($timeofcall ne ""){
+		# We need to check that we had records for database
+		$callsCount++;
+	}
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;	
+}
+
+sub unitecurcallsA() {
+	$date=$1;
+	$time=$2;
+	$ext_number=$3;
+	$line=$4;
+	$dialed_number=$5;
+	# ring = $6
+	$call_duration=$7;
+	$business_code=$8;
+	$mode=$9;
+	
+	# mandatory fields
+	#$TimeOfCall
+	#$Forwarded
+	#$Internally
+	#$CO
+	#$Way
+	#$Number
+	#$Duration
+	# bonus
+	# $Code
+	
+	$co=$line;
+	
+	if ($dialed_number=~/(\d+)/) 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+
+	if($dialed_number =~ /<I>/i){
+		$way='1';
+	}else{
+		$way='2';
+	};
+	
+	#replace leading " " 
+	$date =~ s/ /0/g;
+	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
+		$Month=$2;
+		$Day=$1;
+		$Year=$3+2000;
+		$timeofcall = "$Year-$Month-$Day $time:00";
+	}
+	
+	$internally=$ext_number;
+	if ($call_duration=~(/(\d{2}):(\d{2})\'(\d{2})/)) {
+		$duration = (($1*60*60)+($2*60)+$3);
+	}
+	
+	if($mode=~/TR/){
+		$forwarded=1;
+	}
+	else {
+		$forwarded =0;
+	}
+	
+	if($business_code=~/(\d+)/){
+		$code=$1;
+	}
+	else {
+		$code=0;
+	}
+	if ($timeofcall ne ""){
+		# We need to check that we had records for database
+		$callsCount++;
+	}
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;	
+}
+
+sub unitecurcallsB() {
+	$date=$1;
+	$time=$2;
+	$ext_number=$3;
+	$line=$4;
+	$dialed_number=$5;
+	$call_duration=$6;
+	$cost=$7;
+	$business_code=$8;
+	$mode=$9;
+	
+	# mandatory fields
+	#$TimeOfCall
+	#$Forwarded
+	#$Internally
+	#$CO
+	#$Way
+	#$Number
+	#$Duration
+	# bonus
+	# $Code
+	
+	$co=$line;
+	
+	if ($dialed_number=~/(\d+)/) 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+
+	if($dialed_number =~ /<I>/i){
+		$way='1';
+	}else{
+		$way='2';
+	};
+	
+	#replace leading " " 
+	$date =~ s/ /0/g;
+	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
+		$Month=$2;
+		$Day=$1;
+		$Year=$3+2000;
+		$timeofcall = "$Year-$Month-$Day $time:00";
+	}
+	
+	$internally=$ext_number;
+	if ($call_duration=~(/(\d{2}):(\d{2})\'(\d{2})/)) {
+		$duration = (($1*60*60)+($2*60)+$3);
+	}
+	
+	if($mode=~/TR/){
+		$forwarded=1;
+	}
+	else {
+		$forwarded =0;
+	}
+	
+	if($business_code=~/(\d+)/){
+		$code=$1;
+	}
+	else {
+		$code=0;
+	}
+	if ($timeofcall ne ""){
+		# We need to check that we had records for database
+		$callsCount++;
+	}
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;	
+}
+
+1;
