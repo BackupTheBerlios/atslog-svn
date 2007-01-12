@@ -503,8 +503,8 @@ int read_string( HANDLE hCom,char *buf,int blen )
 					   my_syslog( "atelnet: Write Error!\n" );
 					iac=0;
 					continue;
-				}
-				if( *buf=='\n' || *buf=='\r' || *buf==0 ) {
+				} // 0x02 (STX) && 0x03 (ETX) used by NEC PBX as line terminator
+				if( *buf=='\n' || *buf=='\r' || *buf==0x02 ||  *buf==0x03 || *buf==0 ) {
 					if( count ) {
 						buf[0]=0;
 						if( dbg ) my_syslog( "read_string: '%s'",buf-count );
