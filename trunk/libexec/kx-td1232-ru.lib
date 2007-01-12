@@ -1,4 +1,9 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.com
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# 
+# VENDOR: Panasonic
+# MODELS: KX-TD1232-RU
+# AUTHOR: Alex Samorukov
+# COMMENTS: Russian FirmWare
 #
 # Library for the Panasonic KX-TD1232 with russian firmware support. 
 #

@@ -1,6 +1,9 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.com
-#
-#
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# 
+# VENDOR: Panasonic
+# MODELS: KX-TA616RU,KX-TA308RU,KX-TA308
+# AUTHOR: Alex Samorukov
+
 # KX-TA616RU, Panasonic KX-TA308RU,Panasonic KX-TA308
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2006
 #

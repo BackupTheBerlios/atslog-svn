@@ -1,5 +1,8 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.com  
-# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+# 
+# VENDOR: Panasonic
+# MODELS: KX-TD1232
+# AUTHOR: Denis CyxoB
 #
 # Разбираем строки текстового-лог файла для АТС Panasonic KX-TD1232
 

@@ -1,7 +1,8 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.com
-# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
-# LG LDK-100 text logfile processing Copyright
-# by Sergey K. sak17[at]mail.ru
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# 
+# VENDOR: LG
+# MODELS: LDK-100,LDK-300
+# AUTHOR: Sergey K. sak17[at]mail.ru
 #
 # Разбираем строки текстового-лог файла для АТС LG LDK-100, LDK-300
 

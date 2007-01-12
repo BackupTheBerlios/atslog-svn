@@ -1,5 +1,9 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.com  
-# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+# 
+# VENDOR: Samsung
+# MODELS: NX-820
+# AUTHOR: Mistic
+#
 # NX-820 text logfile processing Copyright by Mistic
 #
 # Разбираем строки текстового-лог файла для АТС Samsung NX-820

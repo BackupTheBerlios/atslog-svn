@@ -1,11 +1,13 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.com
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# 
+# VENDOR: Siemens
+# MODELS: HIPATH-3750
+# AUTHOR: Alex Samorukov
+# COMMENTS: compressed mode format
 #
 # Library for the Siemens HIPATH 3000/3750 (compresses mode format)
 #
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2006
-#
-# library is based on user reports, i dont know exact format of this PBX CDR
-
 
 sub parsecurcalls() {
 	while ($str=<>)

@@ -1,5 +1,8 @@
-# ATSlog version 1.4 build 48 www.atslog.com
-# Copyright (C) 2003 Denis Suhov www.yamiyam.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# 
+# VENDOR: Alcatel
+# MODELS: 4200
+# AUTHOR: Alex Samorukov <samm@os2.kiev.ua>
 #
 # Library for the Alcatel 4200
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2006

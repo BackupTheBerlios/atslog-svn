@@ -1,5 +1,8 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.com  
-# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+# 
+# VENDOR: Samsung
+# MODELS: SKP-816
+# AUTHOR: Denis CyxoB
 #
 # Разбираем строки текстового-лог файла для АТС Samsung SKP-816
 

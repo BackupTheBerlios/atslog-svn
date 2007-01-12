@@ -1,5 +1,9 @@
-# ATSlog @version@ build @buildnumber@ www.atslog.com
-# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# 
+# VENDOR: Siemens
+# MODELS: Hicom 250
+# AUTHOR: Im'jano Famil'jano <mojaschik@yandex.ru>
+#
 # For Siemens Hicom 250
 # Copyleft 2005.12.21 Im'jano Famil'jano <mojaschik@yandex.ru>
 

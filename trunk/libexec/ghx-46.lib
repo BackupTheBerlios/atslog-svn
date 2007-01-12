@@ -1,5 +1,8 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.com
-# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# 
+# VENDOR: LG
+# MODELS: GHX-46
+# AUTHOR: Denis CyxoB
 #
 # Разбираем строки текстового-лог файла для АТС LG GHX-46
 
