@@ -1,0 +1,138 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# 
+# VENDOR: NEC
+# MODELS: NEAX2000
+# AUTHOR: Alex Samorukov
+# COMMENTS: Built-in SMDR NEAX 2400 IMS Format
+#
+# (c) Alex Samorukov, samm@os2.kiev.ua, 2007
+#
+# sample:
+# 0!KE000038001206   01121205130112121023             100000000                                000080442309997       07070          
+
+use Time::Local;
+parsecurcalls();
+sub parsecurcalls() {
+	while ($str=<>)
+	{
+		$stringNumber++;
+		# regexp
+		if ($str =~ /K([EA])(\d{3})(\d{3})(\d)(\d{2})([\d ]{6})(\d{10})(\d{10})([\d ]{10}) {3}(\d{3})(\d{3})(\d{3})([\d ]{32})(\d{4})([\d ]{18})(\d{2})(\d{2})([\d ])([\d ]{4})/){
+			unitecurcalls();
+		}else{
+			if ($vars{nowrlog} =~ /yes/i){ 
+				if ($str !~ /^$/){
+					print $str;
+				};
+			};
+		};
+	};
+};
+
+sub unitecurcalls() {
+
+	#  1 direction (E - IN/ A - OUT)
+	#  2 ROUTE No
+	#  3 TRUNK No.
+	#  4 CALLING PARTY I.D. 
+	#  5 Tenant Number 01-63
+	#  6 CALLED NUMBER/CALLING NUMBER
+	#  7 TIME OF START CONVERSATION (MMDDhhmmss)
+	#  8 TIME OF CALL COMPLETION (MMDDhhmmss)
+	#  9 ACCOUNT CODE
+	# 10 CONDITION CODE (char 1 - transferred 0|1, char2 - call with ACC 0|1, 
+	#            char3 - Station originated call/Attendant assisted call)
+	# 
+	# 11 ROUTE NUMBER 1
+	# 12 ROUTE NUMBER 2
+	# 13 CALLED NUMBER (OUT ONLY)
+	# 14 CALL METERING (OUT ONLY)
+	# 15 !?!? CID NUMBER (IN ONLY)(WTF?!?).  Manual state that pos 96-113
+	#                are CALLING OFFICE,BILLING OFFICE, AUTHORIZATION CODE
+	#                but in real life there is incoming number.
+	# 16 YEAR OF START CONVERSATION
+	# 17 YEAR OF CALL COMPLETION
+
+	$date=$7;
+	$date2=$8;
+	$ext_number=int($6);
+	$dialed_number=$13;
+	$cid_number=$15;
+	$Year1=$16;
+	$Year2=$17;
+	
+	$line=$2.$3;
+	$business_code=$9;
+	$mode=$1;
+	# mandatory fields
+	#$TimeOfCall
+	#$Forwarded
+	#$Internally
+	#$CO
+	#$Way
+	#$Number
+	#$Duration
+	# bonus
+	# $Code
+	$co=int($line);
+	
+	# print "\n$date,$time,$ext_number,$cid_number\n";
+	if($mode eq "E"){
+		$way='1';
+	}elsif ($mode eq "A"){
+		$way='2';
+	};
+	
+	
+	if ($dialed_number=~/(\d+)/ && $mode eq "A") 
+	{
+		$number=$1;
+	}
+	elsif ($cid_number=~/(\d+)/ && $mode eq "E") 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+	# MMDDhhmmss
+	if ($date=~(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/)) {
+		$Month=$1;
+		$Day=$2;
+		$time=$3.":".$4.":".$5;
+		$Year=$Year1+2000;
+		$timeofcall = "$Year-$Month-$Day $time";
+		$UnixTimeStart = timelocal($5, $4, $3, $2, int($1)-1, $Year-1900);
+	}
+	
+	if ($date2=~(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/)) {
+		$Month=$1;
+		$Day=$2;
+		$time=$3.":".$4.":".$5;
+		$Year=$Year2+2000;
+		$timeofcall = "$Year-$Month-$Day $time";
+		$UnixTimeEnd = timelocal($5, $4, $3, $2, int($1)-1, $Year-1900);
+	}
+	
+	$duration=$UnixTimeEnd-$UnixTimeStart;
+	
+	$internally=$ext_number;
+	
+	if($business_code=~/(\d+)/){
+		$code=$1;
+	}
+	else {
+		$code=0;
+	}
+	if ($timeofcall ne ""){
+		# We need to check that we had records for database
+		$callsCount++;
+	}
+	
+	#print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
+	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
+	$sth = $dbh->prepare($ins_query);
+	$sth->execute;	
+}
+
+1;
