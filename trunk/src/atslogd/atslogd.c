@@ -209,11 +209,14 @@ static char *my_strdup( char *s )
 	return p;
 }
 
-static void my_fputs( char *s,FILE *fp )
+static void my_write( char *s,FILE *fp,int len )
 {
-	fputs( s,fp );
-	if( copy_to_stdout ) {
-		fputs( s,stdout );
+	int i;
+	for(i=0;i<len;i++){
+		fputc(s[i],fp);
+		if( copy_to_stdout ) {
+			fputc(s[i],stdout);
+		}
 	}
 }
 
@@ -423,9 +426,13 @@ int set_tty_params( HANDLE hCom,long speed,int data_bits,char parity,int stop_bi
 	case 'n':
 		break;
 	default:
-		my_syslog( "Invalid parity: '%c'",parity );
-		return (-1);
+	my_syslog( "Invalid parity: '%c'",parity );
+	return (-1);
 	}
+	/*
+	read() will return when VMIN bytes of input are available, or if
+	interrupted. Otherwise it will wait indefinitely.
+	*/
 	tt.c_cc[VTIME] = 0;
 	tt.c_cc[VMIN] = 1;
 	cfsetspeed( &tt,sp->wspeed );
@@ -463,63 +470,38 @@ atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
 }
 
 
-int read_string( HANDLE hCom,char *buf,int blen )
+int read_block( HANDLE hCom,char *buf )
 {
-	unsigned char *p;
 	unsigned char obuf[4];
-	DWORD dwLength;
-	int count,iac=0;
-	
-	for( count=0; count<blen; count++,buf++ ) {
-		do {
-			while( (dwLength=read( hCom,buf,1 ))>=0 ) {
-				if( dwLength==0 ) {
-					if( dbg ) {
-						my_syslog( "read returned zero length" );
-					}
-					buf[0]=0;
-					if( dbg && count ) my_syslog( "read_string: '%s'",buf-count );
-					return count;
-				}
-				p=buf;
-				/* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
-				if(tflag && *p==IAC){
-					iac=1;
-					continue;
-				}
-				if(tflag && iac){
-					obuf[0] = IAC;
-					obuf[1] = obuf[3] = '\0';
-					if ((*p == WILL) || (*p == WONT)) {
-						obuf[1] = DONT;
-					}
-					if ((*p == DO) || (*p == DONT))  {
-						obuf[1] = WONT;
-					}
-					read( hCom,buf,1 );
-					obuf[2] = *p;
-					if (atomicio((ssize_t (*)(int, void *, size_t))write,
-						hCom, obuf, 3) != 3)
-					   my_syslog( "atelnet: Write Error!\n" );
-					iac=0;
-					continue;
-				} // 0x02 (STX) && 0x03 (ETX) used by NEC PBX as line terminator
-				if( *buf=='\n' || *buf=='\r' || *buf==0x02 ||  *buf==0x03 || *buf==0 ) {
-					if( count ) {
-						buf[0]=0;
-						if( dbg ) my_syslog( "read_string: '%s'",buf-count );
-						return count;
-					} else {
-						if( dbg ) my_syslog( "empty symbol '0x%02X'",(int)*buf );
-						continue;
-					}
-				}
+	unsigned char *p, *end;
+	int count,rc;
+	count=read(hCom,buf,sizeof(count));
+	if(tflag){
+		end = buf + count;
+		obuf[0] = '\0';
+		
+		for (p = buf; p < end; p++) {
+			if (*p != IAC)
 				break;
+			
+			obuf[0] = IAC;
+			p++;
+			if ((*p == WILL) || (*p == WONT))
+				obuf[1] = DONT;
+			if ((*p == DO) || (*p == DONT))
+				obuf[1] = WONT;
+			if (obuf) {
+				p++;
+				obuf[2] = *p;
+				obuf[3] = '\0';
+				if (atomicio((ssize_t (*)(int, void *, size_t))write,
+					hCom, obuf, 3) != 3)
+					my_syslog("telnet: Write Error");
+				obuf[0] = '\0';
+				// we dont really need IAC block in our output
+				count=read_block(hCom,buf);
 			}
-			if( dwLength==(-1) ) {
-				my_syslog( "read error: %s",my_strerror() );
-			}
-		} while( dwLength<=0 );
+		}
 	}
 	return count;
 }
@@ -1021,7 +1003,7 @@ rtcp:
 		my_exit(1);
 	}
 
-	while( (rc=read_string( hCom,buf,MAXSTRINGLEN ))>=0 ) {
+	while( (rc=read_block( hCom,buf ))>=0 ) {
 		if( rc==0 ) {
 			if ((is_tcp) || (is_rtcp)) {
 				// because we read() in blocking mode so if we've got 0 ->
@@ -1054,8 +1036,8 @@ rtcp:
 			}
 			continue;
 		}
-		my_fputs( buf,cur_logfile );
-		my_fputs( "\n",cur_logfile );
+		my_write( buf,cur_logfile,rc );
+		// my_fputs( "\n",cur_logfile );
 		my_fflush( cur_logfile );
 		if( cur_logfile==NULL ) {
 			put_cdr_to_q( buf );
