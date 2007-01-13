@@ -11,7 +11,7 @@
 # 0!KE000038001206   01121205130112121023             100000000                                000080442309997       07070          
 
 use Time::Local;
-parsecurcalls();
+
 sub parsecurcalls() {
 	while ($str=<>)
 	{
