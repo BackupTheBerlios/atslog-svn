@@ -474,7 +474,9 @@ int read_block( HANDLE hCom,char *buf )
 {
 	unsigned char obuf[4];
 	unsigned char *p, *end;
-	int count,rc;
+	int count,stop;
+	do{
+	stop=1;
 	count=read(hCom,buf,sizeof(count));
 	if(tflag){
 		end = buf + count;
@@ -483,7 +485,7 @@ int read_block( HANDLE hCom,char *buf )
 		for (p = buf; p < end; p++) {
 			if (*p != IAC)
 				break;
-			
+			stop=0; // we dont really need IAC block
 			obuf[0] = IAC;
 			p++;
 			if ((*p == WILL) || (*p == WONT))
@@ -498,11 +500,10 @@ int read_block( HANDLE hCom,char *buf )
 					hCom, obuf, 3) != 3)
 					my_syslog("telnet: Write Error");
 				obuf[0] = '\0';
-				// we dont really need IAC block in our output
-				count=read_block(hCom,buf);
 			}
 		}
 	}
+	}while(!stop);
 	return count;
 }
 
