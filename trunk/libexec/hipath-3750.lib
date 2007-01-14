@@ -1,7 +1,7 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.com  
 # 
 # VENDOR: Siemens
-# MODELS: HIPATH-3750
+# MODELS: HIPATH-3750,HICOM-150
 # AUTHOR: Alex Samorukov
 # COMMENTS: compressed mode format
 #
