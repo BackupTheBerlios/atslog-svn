@@ -12,11 +12,11 @@ $config_file="@sysconfdir@/atslog.conf";
 
 open(IN,$config_file) || die print("Can't open config file $config_file.\n");
 while(<IN>) {
-    next if /^#/;
-    chomp;
-    ($key,$val) = ( /([^=]+)=(.*)/ );
-    $key = lc($key);
-    $vars{$key} = $val;
+	next if /^#/;
+	chomp;
+	($key,$val) = ( /([^=]+)=(.*)/ );
+	$key = lc($key);
+	$vars{$key} = $val;
 }
 close(IN);
 
@@ -24,16 +24,16 @@ $langfileprefix=$vars{sharedir}."/".$vars{langdir}."/";
 $langfile=$langfileprefix.setlocale(LC_CTYPE);
 
 if ( ! -f $langfile){
-    $langfile=$langfileprefix."en_US";
+	$langfile=$langfileprefix."en_US";
 }
 
 open(LN,$langfile) || die print("Can't open language file $langfile.\n");
 while(<LN>) {
-    next if /^#/;
-    chomp;
-    ($key,$val) = ( /([^=]+)=\"(.*)\"/ );
-    $key = lc($key);
-    $vars{$key} = $val;
+	next if /^#/;
+	chomp;
+	($key,$val) = ( /([^=]+)=\"(.*)\"/ );
+	$key = lc($key);
+	$vars{$key} = $val;
 }
 close(LN);
 
@@ -44,55 +44,56 @@ $toexit=0;
 
 # Разберёмся с уровнем для системного журнала
 if($vars{syslogfacility}){
-    $vars{syslogfacility} =~ /(.*)\.(.*)/;
-    $sFas1 = $1;
-    $sFas2 = $2;
+	$vars{syslogfacility} =~ /(.*)\.(.*)/;
+	$sFas1 = $1;
+	$sFas2 = $2;
 }
 
 # Опишем основные функции
 
 # Функция выводит сообщения об ошибках в системный журнал и в STDERR
 sub echoerrors(){
-if($vars{syslogfacility}){
-    syslog("$sFas2", "$ERRORMESSAGE");
-} 
- warn ("$ERRORMESSAGE\n");
- $toexit=1;
+	if($vars{syslogfacility}){
+		syslog("$sFas2", "$ERRORMESSAGE");
+	} 
+	warn ("$ERRORMESSAGE\n");
+	$toexit=1;
 }
 
 # ampto24 with russian and english language support
 sub AmPmTo24(){
-    my $hour=$_[0];
-    my $AmPm=$_[1];
-    if ($AmPm eq 'PM' || $AmPm eq '▐▐'){
-	if($hour < 12){
-	    $return24=$hour+12;
-	}elsif($hour == 12){
-	    $return24=12;
+	my $return24='';
+	my $hour=$_[0];
+	my $AmPm=$_[1];
+	if ($AmPm eq 'PM' || $AmPm eq '▐▐'){
+		if($hour < 12){
+			$return24=$hour+12;
+		}elsif($hour == 12){
+			$return24=12;
+		}
+	}elsif($AmPm eq 'AM' || $AmPm eq '└▐'){
+		if($hour < 12){
+			$return24=$hour;
+		}elsif($hour == 12){
+			$return24=0;
+		}
 	}
-    }elsif($AmPm eq 'AM' || $AmPm eq '└▐'){
-        if($hour < 12){
-            $return24=$hour;
-        }elsif($hour == 12){
-            $return24=0;
-        }
-    }
-    return $return24;
+	return $return24;
 }
 
 # Let`s go!
 if($vars{syslogfacility}){
-    setlogsock('unix'); # syslogd socket type
-    openlog("atslogdb", 'pid, ndelay, cons', "$sFas1");#Откроем сокет на syslogd
+	setlogsock('unix'); # syslogd socket type
+	openlog("atslogdb", 'pid, ndelay, cons', "$sFas1");#Откроем сокет на syslogd
 }
 if($vars{sqltype}  =~ /PostgreSQL/i){
-    $sqltype=Pg;
+	$sqltype=Pg;
 }else{
-    $sqltype=mysql;
+	$sqltype=mysql;
 }
 $host="";                           
 if($vars{sqlhost} ne "localhost"){
-    $host = ";host=".$vars{sqlhost};
+	$host = ";host=".$vars{sqlhost};
 }
 
 open(DATA,"$vars{libdir}/modules.lst") || die print("Can open module list");
@@ -108,30 +109,30 @@ if ( (-e $libname) && (-r $libname) )
         $ERRORMESSAGE="$vars{msg31}";
         echoerrors();
 	if($vars{syslogfacility}){	
-	    closelog();
+		closelog();
 	}	
 	exit $toexit;
 }
 
 if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0})){
-    if($vars{sqltype}  =~ /MySQL/i){
-        $dbh->{mysql_auto_reconnect} = 1;
-    }
-    
-    # parsing calls
-    parsecurcalls();
-
-    if($callsCount == 0){                                                           
-        $ERRORMESSAGE="\n$vars{msg32}";
-        echoerrors();
-    }
-    $dbh->disconnect;
+	if($vars{sqltype}  =~ /MySQL/i){
+		$dbh->{mysql_auto_reconnect} = 1;
+	}
+	
+	# parsing calls
+	parsecurcalls();
+	
+	if($callsCount == 0){                                                           
+		$ERRORMESSAGE="\n$vars{msg32}";
+		echoerrors();
+	}
+	$dbh->disconnect;
 }else{
- $ERRORMESSAGE="$vars{msg33}:".$DBI::errstr; 
- echoerrors();
+	$ERRORMESSAGE="$vars{msg33}:".$DBI::errstr; 
+	echoerrors();
 }
 if($vars{syslogfacility}){
-    closelog();
+	closelog();
 }    
 exit $toexit;
 
