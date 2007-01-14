@@ -5,9 +5,10 @@
 * daemon - make fast_write mode more reliable (we need to control atslogdb.pl 
   state), we need to be sure that data was transferred to sql, etc...
   Good idea is to use "tail" mode for the log files
-* add accounting code (AKA business code) support to the upcoming 2.1
+* add accounting code (AKA business code) support
 * Replace http-header based auth with form-based one. This will allow to 
   run atslog-www with php-cgi and to implement "logout" function.
+* New library loader based on index file to move away models from the sources
 
 May be, someday
 * accounting (billing)

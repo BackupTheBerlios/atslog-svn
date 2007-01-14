@@ -95,18 +95,10 @@ if($vars{sqlhost} ne "localhost"){
     $host = ";host=".$vars{sqlhost};
 }
 
-# this library support 4 different models
-if($vars{model} =~ /^(KX-TA308RU|KX-TA308|KX-TA616|KX-TEM824)$/i){
-	$vars{model}="kx-ta616-308-ru";
-}
-elsif($vars{model} =~ /^(HICOM-150)$/i){
-	$vars{model}="hipath-3750";
-}
-elsif($vars{model} =~ /^(TDA-200)$/i){
-	$vars{model}="kx-tda100";
-}
+open(DATA,"$vars{libdir}/modules.lst") || die print("Can open module list");
+$libname="$vars{libdir}/".getLibName($vars{model});
+close(DATA);
 
-$libname="$vars{libdir}/".lc($vars{model}).".lib";
 
 # load library
 if ( (-e $libname) && (-r $libname) ) 
@@ -142,3 +134,15 @@ if($vars{syslogfacility}){
     closelog();
 }    
 exit $toexit;
+
+sub getLibName{                                                                                              
+        my $model_name = $_[0];                                                                              
+        while ($string =<DATA>) {                                                                            
+		my @libarray=split(/:/,$string);                                                                 
+		my $libname=@libarray[0];                                                                        
+		my @models=split(/,/,@libarray[1]);                                                              
+		if (grep (/^${model_name}$/i, @models)) {return $libname;}                                       
+        }                                                                                                    
+	return 0;                                                                                                
+}                          
+
