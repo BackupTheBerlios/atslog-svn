@@ -2,8 +2,10 @@
  * Original - (c) Alexey V. Kuznetsov, avk@gamma.ru, 2001, 2002 CDR Reader
  * for PBXs
  * 
- * Modifications for the ATSlog project: Denis CyxoB www.yamiyam.dp.ua Andrew
- * Kornilov <akornilov@gmail.com> Alex Samorukov <samm@os2.kiev.ua> RFC 854
+ * Modifications for the ATSlog project:  Andrew
+ * Denis CyxoB www.yamiyam.dp.ua
+ * Andrew Kornilov <akornilov@gmail.com>
+ * Alex Samorukov <samm@os2.kiev.ua> RFC 854
  * WILL/WONT DO/DONT negotiation is based on the BSD netcat
  * 
  * ATSlog version @version@ build @buildnumber@ www.atslog.com
@@ -847,9 +849,8 @@ main(int argc, char *argv[])
 		}
 		/*
 		 * send keepalive packets. if remote end hangs then we'll can
-		 * know
+		 * know this ?
 		 */
-		/* this ?                                                           */
 		if (setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, (char *)&opt, sizeof(opt)) < 0) {
 			my_syslog("setsockopt() failed: %s", my_strerror());
 			my_exit(1);
