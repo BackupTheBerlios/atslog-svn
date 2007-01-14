@@ -62,8 +62,8 @@ if($vars{syslogfacility}){
 
 # ampto24 with russian and english language support
 sub AmPmTo24(){
-    $hour=$_[0];
-    $AmPm=$_[1];
+    my $hour=$_[0];
+    my $AmPm=$_[1];
     if ($AmPm eq 'PM' || $AmPm eq 'èè'){
 	if($hour < 12){
 	    $return24=$hour+12;
@@ -154,14 +154,14 @@ sub WriteRecord{
 	return 0;
 }
 
-sub getLibName{                                                                                              
-        my $model_name = $_[0];                                                                              
-        while ($string =<DATA>) {                                                                            
-		my @libarray=split(/:/,$string);                                                                 
-		my $libname=@libarray[0];                                                                        
-		my @models=split(/,/,@libarray[1]);                                                              
-		if (grep (/^${model_name}$/i, @models)) {return $libname;}                                       
-        }                                                                                                    
-	return 0;                                                                                                
-}                          
+sub getLibName{
+        my $model_name = $_[0];
+        while ($string =<DATA>) {
+		my @libarray=split(/:/,$string);
+		my $libname=@libarray[0];
+		my @models=split(/,/,@libarray[1]);
+		if (grep (/^${model_name}$/i, @models)) {return $libname;}
+        }
+	return 0;
+}
 
