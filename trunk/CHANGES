@@ -6,7 +6,12 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
-
++ (samm) New module loader based on index file
++ (samm) Added NEC NEAX2000 SMDR support
++ (samm) Added support in the atslogd for the 0x03 line terminator (NEC)
++ (samm) Changed atslogd i/o functions. Now atslogd use block reading
+         instead of character reading. This will allow to add binary formats
+         support.
 # (samm) Fix diagram's X axis values draw for more than > 30 days 
          [Patch #1799]
 
