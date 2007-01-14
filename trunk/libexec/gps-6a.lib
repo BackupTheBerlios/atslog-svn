@@ -111,10 +111,8 @@ sub unitecurcalls() {
     # записи в db.
 		$callsCount++;
 	    }
-	    print("$stringNumber $TimeOfCall $Forwarded $Internally $CO $Way $Number $Duration\n");
-	    $ins_query = "INSERT INTO `$vars{sqlcallstable}` (`TimeOfCall`, `Forwarded`,`Internally`,`CO`, `Way` , `Number`, `Duration`) VALUES  (".$TimeOfCall.", '$Forwarded', '$Internally', '$CO', '$Way', '$Number', '$Duration');";
-	    $dbh->Query($ins_query);
 
+	    WriteRecord($TimeOfCall, $Forwarded, $Internally, $CO, $Way, $Number, $Duration);
 };
 
 1;

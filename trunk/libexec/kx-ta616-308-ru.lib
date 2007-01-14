@@ -26,28 +26,15 @@ sub parsecurcalls() {
 };
 
 sub unitecurcalls() {
-	$date=$1;
-	$mode=$2;
-	$time=$3;
-	$ext_number=$4;
-	$line=$5;
-	$dialed_number=$6;
-	$call_duration=$7;
-	$business_code=$8;
-	
-	
-	# mandatory fields
-	#$TimeOfCall
-	#$Forwarded
-	#$Internally
-	#$CO
-	#$Way
-	#$Number
-	#$Duration
-	# bonus
-	# $Code
-	$co=$line;
-	
+	my $date=$1;
+	my $mode=$2;
+	my $time=$3;
+	my $ext_number=$4;
+	my $line=$5;
+	my $dialed_number=$6;
+	my $call_duration=$7;
+	my $business_code=$8;
+	my $co=$line;
 	
 	if ($dialed_number=~/(\d+)/) 
 	{
@@ -102,11 +89,7 @@ sub unitecurcalls() {
 		# We need to check that we had records for database
 		$callsCount++;
 	}
-	
-	#print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
-	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
-	$sth = $dbh->prepare($ins_query);
-	$sth->execute;	
+	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 }
 
 1;

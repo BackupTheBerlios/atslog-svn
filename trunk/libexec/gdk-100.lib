@@ -24,32 +24,20 @@ sub parsecurcalls() {
 };
 
 sub unitecurcalls() {
-
     $Month = $6;
-
     $Day=$7;
-
     $Year=$8+2000;
-
     $CallHour=$9;
-
     $CallMinute=$10;
-
     $co=$2;
-    
     $duration = (($4*60)+$5);
-
     $forIncoming=$11;
-    
     $forInternally=$1;
-
     $internally = $1;
-    
     $timeofcall = "$Year-$Month-$Day $CallHour\:$CallMinute\:00";
-
     $durationHours=$3;
-    
     $durationHours=~ s/\D+//;
+
     if ($durationHours ne ""){
 	$duration = (($durationHours*60*60)+$duration);
     }
@@ -79,10 +67,8 @@ sub unitecurcalls() {
 # записи в db.
 	$callsCount++;
     }
-#    print("$stringnumber $timeofcall $forwarded $internally $co $way $number $duration\n");
-    $ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co, way , number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
-    $sth = $dbh->prepare($ins_query);
-    $sth->execute;
+
+    WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 }
 
 1;

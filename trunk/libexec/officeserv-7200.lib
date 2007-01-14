@@ -6,7 +6,6 @@
 #
 # Samsung OfficeServ 7200 library (c) 2006 Sergey Solonina <slon@goldenpages.ua>
 #
-
 sub parsecurcalls()
 {
 	while ($str=<>)
@@ -69,9 +68,7 @@ sub unitecurcalls() {
 		$callsCount++;
 	}
 	#print("Ok: $stringnumber $timeofcall $forwarded $internally $co $way $number $duration\n");
-	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co, way , number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
-	$sth = $dbh->prepare($ins_query);
-	$sth->execute;
+	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 }
 
 1;

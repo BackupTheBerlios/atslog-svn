@@ -282,9 +282,7 @@ sub unitecurcallsTypeC() {
 	}
 	
 	#	print("INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');\n");
-	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
-	$sth = $dbh->prepare($ins_query);
-	$sth->execute;
+	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 }
 
 1;
