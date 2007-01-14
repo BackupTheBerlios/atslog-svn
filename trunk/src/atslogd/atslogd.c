@@ -597,7 +597,7 @@ void
 usage(void)
 {
 	(void)fprintf(stderr,
-		      "CDR Reader for PBXs v.%s (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002\n"
+		      "CDR Reader for PBXs (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002\n"
 		      "changed by Denis CyxoB www.yamiyam.dp.ua\n"
 		      "and Andrew Kornilov akornilov@gmail.com\n"
 		      "for the ATSlog version @version@ build @buildnumber@ www.atslog.com\n"
@@ -631,9 +631,9 @@ usage(void)
 		      "\n"
 #ifdef USE_LIBWRAP
 		      "Use libwrap for contol access to TCP/IP connections. See /etc/hosts.allow\n"
-		      "and /etc/hosts.deny\n\n", CDRR_VER);
+		      "and /etc/hosts.deny\n\n");
 #else				/* USE_LIBWRAP */
-		      ,CDRR_VER);
+		      );
 #endif				/* USE_LIBWRAP */
 
 	my_exit(1);
