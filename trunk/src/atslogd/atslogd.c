@@ -54,7 +54,7 @@ typedef long	DWORD;
 
 HANDLE		h2close = INVALID_HANDLE_VALUE;
 
-char		dbg = 0;
+char		dbg = 0,lastchar='\0';
 char		copy_to_stderr = 0;
 char		copy_to_stdout = 0;
 FILE           *errout;
@@ -239,10 +239,13 @@ my_write(char *s, FILE * fp, int len)
 		/* Some PBX do only \r as line terminators */
 		if (s[i] == 0x03 ||  s[i] == '\r')
 			s[i] = '\n';
+		if(s[i]=='\n' && lastchar=='\n') /* skip blank lines */
+			continue;
 		fputc(s[i], fp);
 		if (copy_to_stdout) {
 			fputc(s[i], stdout);
 		}
+		lastchar=s[i];
 	}
 }
 
