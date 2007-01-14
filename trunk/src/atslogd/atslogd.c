@@ -213,6 +213,10 @@ static void my_write( char *s,FILE *fp,int len )
 {
 	int i;
 	for(i=0;i<len;i++){
+		/* strip \r and 0x02 (STX) characters */
+		if(s[i]=='\r' || s[i]==0x02) continue;
+		/* replace 0x03 (ETX) with \n for the NEC PBX */
+		if(s[i]==0x03) s[i]='\n';
 		fputc(s[i],fp);
 		if( copy_to_stdout ) {
 			fputc(s[i],stdout);
