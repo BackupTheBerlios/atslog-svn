@@ -6,7 +6,6 @@ CFLAGS += -s -Wall
 RM = rm
 NAME=atslogd
 
-
 CDRR_VER_DOT = \"1.09\"
 CDRR_VER     = 109
 
@@ -20,5 +19,4 @@ $(NAME):	$(NAME).c
 clean:
 	-$(RM) $(EXES) *~
 
-diff:
-	diff -u cdr_read.orig.c atslogd.c > cdr_read.c.diff
+

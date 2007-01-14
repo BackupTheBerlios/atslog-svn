@@ -1,5 +1,6 @@
 /*
     Original - (c) Alexey V. Kuznetsov, avk@gamma.ru, 2001, 2002
+    CDR Reader for PBXs
     
     Modifications for the ATSlog project:
     	Denis CyxoB www.yamiyam.dp.ua 
