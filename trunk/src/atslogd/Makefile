@@ -6,8 +6,7 @@ CFLAGS += -s -Wall
 RM = rm
 NAME=atslogd
 
-CDRR_VER_DOT = \"1.09\"
-CDRR_VER     = 109
+CDRR_VER_DOT = \"@version@\"
 
 EXES = $(NAME)
 
