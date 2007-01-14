@@ -135,6 +135,25 @@ if($vars{syslogfacility}){
 }    
 exit $toexit;
 
+sub WriteRecord{
+	my $time_of_call = $_[0];
+	my $fwd = $_[1];
+	my $int = $_[2];
+	my $co = $_[3];
+	my $way = $_[4];
+	my $number = $_[5];
+	my $duration = $_[6];
+	my $query = "INSERT INTO calls (timeofcall, forwarded,internally,co, way,number, duration) VALUES  ('$time_of_call', '$fwd', '$int', '$co', '$way', '$number', '$duration');";                
+        my $sth = $dbh->prepare($query);                                                                    
+        $sth->execute;
+	if($sth->err){
+		$ERRORMESSAGE="\nError on sth->execute: ".$sth->errstr()."\n";
+		echoerrors();
+		return -1;
+	}
+	return 0;
+}
+
 sub getLibName{                                                                                              
         my $model_name = $_[0];                                                                              
         while ($string =<DATA>) {                                                                            

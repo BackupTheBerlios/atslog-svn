@@ -6,6 +6,7 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
++ (samm) SQL code moved away from PBX libraries. Added SQL error reporting
 + (samm) New module loader based on index file
 + (samm) Added NEC NEAX2000 SMDR support
 + (samm) Added support in the atslogd for the 0x03 line terminator (NEC)
