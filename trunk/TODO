@@ -8,7 +8,6 @@
 * add accounting code (AKA business code) support
 * Replace http-header based auth with form-based one. This will allow to 
   run atslog-www with php-cgi and to implement "logout" function.
-* New library loader based on index file to move away models from the sources
 
 May be, someday
 * accounting (billing)
