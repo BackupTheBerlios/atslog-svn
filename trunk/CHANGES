@@ -6,6 +6,7 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
+! (samm) Added --disable-libwrap configure argument. 
 + (samm) SQL code moved away from PBX libraries. Added SQL error reporting
 + (samm) New module loader based on index file
 + (samm) Added NEC NEAX2000 SMDR support
@@ -90,8 +91,8 @@
 
 2006-Jun-12: New atslog-2.0-pre2 stable snapshot released
 
-! (hiddenman) Siemens HICOM-250 supoort
-! (hiddenman) New daemon features (connect to remote PBX, etc)
++ (hiddenman) Siemens HICOM-250 supoort
++ (hiddenman) New daemon features (connect to remote PBX, etc)
 # (hiddenman) Many bugfixes and improvements
 
 Old release information:
