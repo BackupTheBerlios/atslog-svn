@@ -2,16 +2,18 @@ CC = @CC@
 DEFS = @DEFS@
 CFLAGS = @CFLAGS@
 LIBS = @LIBS@
+LDFLAGS=@LDFLAGS@
 CFLAGS += -s -Wall
 RM = rm
 NAME=atslogd
+
 
 EXES = $(NAME)
 
 all:	$(EXES)
 
 $(NAME):	$(NAME).c
-	$(CC) $(CFLAGS) $(DEFS) -o $@ $(NAME).c $(LIBS)
+	$(CC) $(CFLAGS) $(DEFS) -o $@ $(NAME).c $(LDFLAGS) $(LIBS)
 
 clean:
 	-$(RM) $(EXES) *~
