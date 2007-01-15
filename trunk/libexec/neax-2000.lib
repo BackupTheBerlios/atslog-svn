@@ -55,7 +55,7 @@ sub unitecurcalls() {
 
 	$date=$7;
 	$date2=$8;
-	$ext_number=int($6);
+	$ext_number=$6;
 	$dialed_number=$13;
 	$cid_number=$15;
 	$Year1=$16;

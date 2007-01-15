@@ -230,7 +230,7 @@ howmonth=12
 #           LDK-100
 # GoldStar  GPS-6A
 # Alcatel   4200E
-# NEC       NEAX 2000 (built-in SMDR NEAX 2400 IMS Format)
+# NEC       NEAX2000 (built-in SMDR NEAX 2400 IMS Format)
 #
 # At the $model parameter it is necessary to set only a designation of PBX model
 # without the name of the manufacturer. 
