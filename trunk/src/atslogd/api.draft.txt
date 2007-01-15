@@ -1,0 +1,19 @@
+API for the atslogd binary PBX modules.
+
+1. Why we need this?
+
+Some PBX vendors are using 2way duplex protocols for the PBX exchange.
+Also, some PBX vendors use binary data formats which cannot be parsed 
+with regular expressions. This API allow to extend atslog features to support
+such hardware. If your PBX use normal string oriented SMDR - you dont need
+this.
+
+2. Implementation
+
+If you want to support such SMDR you need to create "plugin" which contain
+
+function ReadPBXStream(hCom,). 
+
+3. Code Sample
+
+see plugins/dummy.c file.
