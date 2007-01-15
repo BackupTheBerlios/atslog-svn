@@ -228,7 +228,7 @@ my_strdup(char *s)
 }
 
 static void 
-my_write(char *s, FILE * fp, int len)
+my_write(unsigned char *s, FILE * fp, int len)
 {
 	int		i;
 	for (i = 0; i < len; i++) {
@@ -508,7 +508,7 @@ atomicio(ssize_t(*f) (int, void *, size_t), int fd, void *_s, size_t n){
 
 
 int 
-read_block(HANDLE hCom, char *buf)
+read_block(HANDLE hCom, unsigned char *buf)
 {
 	unsigned char	obuf[4];
 	unsigned char  *p, *end;
@@ -640,7 +640,7 @@ main(int argc, char *argv[])
 	int		data_bits = 8, stop_bits = 1;
 	char		parity = 0;
 	int		next_open_timeout = 5;
-	char		buf       [MAXSTRINGLEN + 1];
+	unsigned char		buf       [MAXSTRINGLEN + 1];
 	unsigned short	tcpPort = 0, rtcpPort = 0;
 	char           *hostname = NULL, *rhostname = NULL;
 	char           *token = NULL, *saveptr = NULL, *port = NULL;
