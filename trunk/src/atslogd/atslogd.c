@@ -321,20 +321,6 @@ setsighandler(int sig)
 	}
 }
 
-
-static void 
-put_cdr_to_q(char *s)
-{
-	struct String  *ss = my_malloc(sizeof(struct String), 1);
-	ss->s = my_strdup(s);
-	if (cdrs == NULL)
-		cdrs = ss;
-	if (cdrs_last != NULL) {
-		cdrs_last->next = ss;
-	}
-	cdrs_last = ss;
-}
-
 char           *
 my_strerror(void)
 {
@@ -1065,10 +1051,6 @@ rtcp:
 		}
 		my_write(buf, cur_logfile, rc);
 		my_fflush(cur_logfile);
-		if (cur_logfile == NULL) {
-			put_cdr_to_q(buf);
-			break;
-		}
 	}
 	my_exit(0);
 	return 0;
