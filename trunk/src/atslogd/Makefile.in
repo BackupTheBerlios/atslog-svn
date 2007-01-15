@@ -1,7 +1,7 @@
-# Uncomment ff you have to use libwrap
-LIBWRAP=-lwrap
-
-CC = gcc
+CC = @CC@
+DEFS = @DEFS@
+CFLAGS = @CFLAGS@
+LIBS = @LIBS@
 CFLAGS += -s -Wall
 RM = rm
 NAME=atslogd
@@ -11,7 +11,7 @@ EXES = $(NAME)
 all:	$(EXES)
 
 $(NAME):	$(NAME).c
-	$(CC) $(CFLAGS) -o $@ $(NAME).c $(LIBWRAP)
+	$(CC) $(CFLAGS) $(DEFS) -o $@ $(NAME).c $(LIBS)
 
 clean:
 	-$(RM) $(EXES) *~
