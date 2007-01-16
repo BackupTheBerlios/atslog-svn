@@ -15,5 +15,5 @@ kx-tda100.lib:KX-TDA100,KX-TDA200:Panasonic
 ldk-300.lib:LDK-100,LDK-300:LG
 neax-2000.lib:NEAX2000:NEC
 nx-820.lib:NX-820:Samsung
-officeserv-7200.lib:OFFICESERV-7200,OFFICESERV-500:Samsung
+officeserv-7200.lib:OFFICESERV-7200,OFFICESERV-500,OFFICESERV-100:Samsung
 skp-816.lib:SKP-816:Samsung

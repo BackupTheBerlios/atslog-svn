@@ -1,7 +1,7 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.com  
 # 
 # VENDOR: Samsung
-# MODELS: OFFICESERV-7200,OFFICESERV-500
+# MODELS: OFFICESERV-7200,OFFICESERV-500,OFFICESERV-100
 # AUTHOR: Sergey Solonina <slon@goldenpages.ua>
 #
 # Samsung OfficeServ 7200 library (c) 2006 Sergey Solonina <slon@goldenpages.ua>
