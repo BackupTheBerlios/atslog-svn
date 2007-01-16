@@ -9,6 +9,7 @@
 # (samm) Fixed configure on FreeBSD 4.xx. Thanks to Alexander Logvinov for
          the report.
 ! (samm) Added --disable-libwrap configure argument. 
+# (samm) Fixed compilation on some linux versions with broken libwrap
 + (samm) SQL code moved away from PBX libraries. Added SQL error reporting
 + (samm) New module loader based on index file
 + (samm) Added NEC NEAX2000 SMDR support
