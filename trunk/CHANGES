@@ -6,6 +6,7 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
++ (samm) Added support of the Samsung OfficeServ500 PBX
 # (samm) Fixed configure fail with perl 5.000. Thanks to Alexander Logvinov for
          the report.
 ! (samm) Added --disable-libwrap configure argument. 
