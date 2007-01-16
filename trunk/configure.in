@@ -3,7 +3,7 @@
 
 
 AC_PREREQ(2.59)
-AC_INIT(atslog, 2.0.3, samm@os2.kiev.ua)
+AC_INIT(atslog, @version@, samm@os2.kiev.ua)
 
 
 AC_CONFIG_SRCDIR([atslogd/atslogd.h])
@@ -17,7 +17,7 @@ AC_PATH_PROGS(CP,cp,cp)
 AC_PATH_PROGS(MKDIR,mkdir,mkdir)
 AC_PATH_PROGS(ECHO,echo,echo)
 
-AC_PROG_PERL_VERSION(5.0.0,,AC_MSG_ERROR(atslog require perl>=5.0.0))
+AC_PROG_PERL_VERSION(5,,AC_MSG_ERROR(atslog require perl>=5.0.0))
 AC_PROG_PERL_MODULES(Sys::Syslog,,AC_MSG_ERROR(atslog requires SYS:Syslog))
 AC_PROG_PERL_MODULES(DBI,,AC_MSG_ERROR(atslog requires DBI))
 AC_PROG_PERL_MODULES(POSIX,,AC_MSG_ERROR(atslog requires POSIX))
