@@ -6,7 +6,7 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
-# (samm) Fixed configure on FreeBSD 4.xx. Thanks to Alexander Logvinov for
+# (samm) Fixed configure fail with perl 5.000. Thanks to Alexander Logvinov for
          the report.
 ! (samm) Added --disable-libwrap configure argument. 
 # (samm) Fixed compilation on some linux versions with broken libwrap
