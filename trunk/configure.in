@@ -53,10 +53,6 @@ AC_SUBST(WWW_ROOT)
 #    AC_SUBST(WWW_ROOT,[$(prefix)/www])
 #fi
 			  
-# Checks for libraries.
-# FIXME: Replace `main' with a function in `-lwrap':
-AC_CHECK_LIB([wrap], [main])
-
 # Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
