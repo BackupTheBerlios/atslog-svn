@@ -1,66 +1,80 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.com  
-# 
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
+#
 # VENDOR: LG
 # MODELS: LDK-100,LDK-300
-# AUTHOR: Sergey K. sak17[at]mail.ru, Alex Samorukov samm@os2.kiev.ua
+# AUTHOR: Alex Samorukov samm@os2.kiev.ua
 #
+# First version was contributed by Sergey K. sak17[at]mail.ru,
 # Разбираем строки текстового-лог файла для АТС LG LDK-100, LDK-300
 
 sub parsecurcalls() {
     while ($str=<>)
     {
-	$stringNumber++;
-	if ($str =~ /(\d{4}) (.{5}) (\d{3}) (\d{2}:\d{2}:\d{2}) (\d{2}\/\d{2}\/\d{2}) (\d{2}:\d{2}) (.{20}) (.{2}) (.{5}) (.{11}) (.{12})/){
-	    unitecurcalls();
-	}else{
-	    #print("$stringNumber\n");
-	    if ($vars{nowrlog} =~ /yes/i){
-	        if ($str !~ /^$/){
-	    	    print $str;
-	        };                        
-	    };                            
-        };                                
+		$stringNumber++;
+		if ($str =~ /(\d{4}) (.{5}) (\d{3}) (\d{2}:\d{2}:\d{2}) (\d{2}\/\d{2}\/\d{2}) (\d{2}:\d{2}) (.{20}) (.{2}) (.{5}) (.{11}) (.{12})/){
+			unitecurcalls();
+		}else{
+			#print("$stringNumber\n");
+			if ($vars{nowrlog} =~ /yes/i){
+				if ($str !~ /^$/){
+					print $str;
+				};
+			};
+        };
     };
-};                                    
+};
 
 sub unitecurcalls() {
-	    my $no=$1;
-	    my $sta=$2;
-	    my $co=$3;
-	    my $call_duration=$4;
-	    my $start=$5;
-	    my $time=$6;
-	    my $dialed=$7;
-	    my $act=$8;
-	    my $cnt=$9;
-	    my $cost=$10;
-	    my $account_code=$11;
-
-
+	my $no=$1;
+	my $sta=$2;
+	my $co=$3;
+	my $call_duration=$4;
+	my $date=$5;
+	my $time=$6;
+	my $dialed_number=$7;
+	my $act=$8;
+	my $cnt=$9;
+	my $cost=$10;
+	my $account_code=$11;
+	
+	
 	$co=int($co);
-
+	$forwarded=0; # please, FIXME
+	
+	if ($dialed_number=~/(\d+)/)
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+	
 	if($dialed =~ /I/){
 		$way='1';
+		$number=0;
 	}else{
 		$way='2';
 	};
-
+	
 	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
 		$Month=$2;
 		$Day=$1;
 		$Year=$3+2000;
 		$timeofcall = "$Year-$Month-$Day $time:00";
 	}
-
+	
 	if ($call_duration=~(/(\d{2}):(\d{2}):(\d{2})/)) {
 		$duration = (($1*60*60)+($2*60)+$3);
 	}
-
-
-    	    if ($TimeOfCall ne ""){
+	
+	
+	if ($TimeOfCall ne ""){
 		$callsCount++;
-	    }
-	    WriteRecord($TimeOfCall, $Forwarded, $Internally, $CO, $Way, $Number, $Duration);
+	}
+	
+	my $internally=int($sta);
+	#print("$timeofcall, $forwarded, $internally, $co, $way, $number, $duration\n");
+	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 };
 
 1;
