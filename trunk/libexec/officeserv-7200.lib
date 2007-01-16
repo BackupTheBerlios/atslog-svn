@@ -1,18 +1,20 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.com  
 # 
 # VENDOR: Samsung
-# MODELS: OfficeServ-7200
+# MODELS: OFFICESERV-7200,OFFICESERV-500
 # AUTHOR: Sergey Solonina <slon@goldenpages.ua>
 #
 # Samsung OfficeServ 7200 library (c) 2006 Sergey Solonina <slon@goldenpages.ua>
+# Patched for more accurate regexp and OFFICESERV-500 support by Alex Samorukov, samm@os2.kiev.ua
 #
+
 sub parsecurcalls()
 {
 	while ($str=<>)
 	{
 		$stringnumber++;
 
-		if ($str =~ /^\s+(\d+)\s+(\d+)\s+(\d*)\s+\#(\d+)\s+(\d+)\/(\d+)\s+(\d+)\:(\d+)\:(\d+)\s+(\d+)\:(\d+)\:(\d+)\s+(\D+)\s+(\d+\#*\d*)\s+(\d*)\s+(\d+)\.(\d+)\s+(\d*)\s+(\D*)\s*$/)
+		if ($str =~ /(\d) (.{4}) (.{4}) (.{4}) (\d{2})\/(\d{2}) (\d{2})\:(\d{2})\:(\d{2}) (\d{2})\:(\d{2})\:(\d{2}) (.{2}) (.{18})/)
 
 		{
 			unitecurcalls();
@@ -29,8 +31,11 @@ sub unitecurcalls() {
 
 	$internally=$2;
 	$co=$4;
+
+
 	$Month=$5;
 	$Day=$6;
+	$dialed_number=$14;
 
 	$Year = (localtime())[5];
 	$Year += 1900;
@@ -50,15 +55,27 @@ sub unitecurcalls() {
 	}
 
 
+	if ($dialed_number=~/(\d+)/) 
+	{
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+
+	if ($co=~/(\d+)/) 
+	{
+		$co=$1;
+	}
+	else {
+		$co=0;
+	}
+
 	if ($13 =~ /[x]*T/i or $13 =~ /[x]*I/i)
 	{
 		$way='1';
-		$number=0; # Not Specified
 	}else{
 		$way='2';
-		$Outnumber = $14;
-		$Outnumber =~ s/\D+//;
-		$number=substr($Outnumber,0,100);
 	}
 
 
@@ -67,7 +84,7 @@ sub unitecurcalls() {
 	{
 		$callsCount++;
 	}
-	#print("Ok: $stringnumber $timeofcall $forwarded $internally $co $way $number $duration\n");
+	#print("Ok: '$stringnumber' '$timeofcall' '$forwarded' '$internally' '$co' '$way' '$number' '$duration'\n");
 	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 }
 
