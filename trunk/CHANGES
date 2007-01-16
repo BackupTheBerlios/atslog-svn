@@ -6,6 +6,8 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
+# (samm) Fixed configure on FreeBSD 4.xx. Thanks to Alexander Logvinov for
+         the report.
 ! (samm) Added --disable-libwrap configure argument. 
 + (samm) SQL code moved away from PBX libraries. Added SQL error reporting
 + (samm) New module loader based on index file
