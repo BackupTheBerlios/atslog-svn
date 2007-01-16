@@ -2,7 +2,7 @@
 # 
 # VENDOR: LG
 # MODELS: LDK-100,LDK-300
-# AUTHOR: Sergey K. sak17[at]mail.ru
+# AUTHOR: Sergey K. sak17[at]mail.ru, Alex Samorukov samm@os2.kiev.ua
 #
 # Разбираем строки текстового-лог файла для АТС LG LDK-100, LDK-300
 
@@ -10,8 +10,7 @@ sub parsecurcalls() {
     while ($str=<>)
     {
 	$stringNumber++;
-	if ($str =~ /(\d{4}) (.{5}) (\d{3}) (\d{2}:\d{2}:\d{2}) (\d{2}\/\d{2}\/\d{2}) (\d{2}:\d{2}) (.{20}) (.{2})
-/){
+	if ($str =~ /(\d{4}) (.{5}) (\d{3}) (\d{2}:\d{2}:\d{2}) (\d{2}\/\d{2}\/\d{2}) (\d{2}:\d{2}) (.{20}) (.{2}) (.{5}) (.{11}) (.{12})/){
 	    unitecurcalls();
 	}else{
 	    #print("$stringNumber\n");
@@ -25,84 +24,18 @@ sub parsecurcalls() {
 };                                    
 
 sub unitecurcalls() {
-
-	    $cell[6] = $6;
-	    $cell[5] = $5;
-	    $cell[4] = $4;
-	    $cell[3] = $3;
-	    $cell[2] = $2;
-	    $cell[1] = $1;
-	    
-	    $cell[4] =~ /(\d{2})\/(\d{2})\/(\d{2})/;
-		$partCell[4][0]= $1;
-		$partCell[4][1]= $2;
-		$partCell[4][2]= $3;
-	    
-	    $cell[5] =~ /(\d{2})\:(\d{2})/;
-		$partCell[5][0]= $1;
-		$partCell[5][1]= $2;
-		
-	    # Patch the problem of our ATS
-	    #
-	    # В случае присутствия предыдущей строки заменим неверные данные
-	    # текущей строки верными из предыдущей.
-	    # Если предыдущей строки нет, то заменим на данные локального
-	    # времени.
-	    if ( "$partCell[5][0]-$partCell[5][1]" =~ /00-00/ ){
-		$pRazmer = @prevDt;
-		
-		if ($pRazmer != 0){
-		    $partCell[4][0] = $prevDt[4][0];
-		    $partCell[4][1] = $prevDt[4][1];
-		    $partCell[5][0] = $prevDt[5][0];
-		    $partCell[5][1] = $prevDt[5][1];
-		    
-		}else{
-		    ($MINUTE, $HOUR, $DAY, $MONTH) = (localtime())[0, 1, 2, 3];
-		    $MONTH = $MONTH + 1;
-		    $partCell[4][1] = $MONTH;
-		    $partCell[4][0] = $DAY;
-		    $partCell[5][0] = $HOUR;
-		    $partCell[5][1] = $MINUTE;
-		    
-		}
-	    }else{
-		$prevDt[4][1]=$partCell[4][1];
-		$prevDt[4][0]=$partCell[4][0];
-		$prevDt[5][0]=$partCell[5][0];
-		$prevDt[5][1]=$partCell[5][1];
-		
-
-	    };
-		
-	    $cell[3] =~ /(\d{2})\:(\d{2})\:(\d{2})/;
-		$partCell[3][0]= $1;
-		$partCell[3][1]= $2;
-		$partCell[3][2]= $3;
-		
-		
-	    if ($cell[6] =~ /I/){
-		$Way='1';
-		$Number=0; # Not Specified
-	    }else{
-		$Way='2';
-		$Outnumber = $cell[6];
-		$Outnumber =~ s/\D+//;
-		$Number=substr($Outnumber,0,100); 
-		$Forwarded=0;
-	    }
-	    
-	    $Internally=$cell[1];
-	    
-	    $CO=$cell[2];
-
-	    $Duration=(($partCell[3][0]*60*60)+($partCell[3][1]*60)+($partCell[3][2]));
-
-    	    $TimeOfCall="'${partCell[4][2]}-${partCell[4][1]}-${partCell[4][0]} ${partCell[5][0]}:${partCell[5][1]}'";
+	    my $no=$1;
+	    my $sta=$2;
+	    my $co=$3;
+	    my $time=$4;
+	    my $start=$5;
+	    my $dialed=$6;
+	    my $act=$7;
+	    my $cnt=$8;
+	    my $cost=$9;
+	    my $account_code=$10;
 
     	    if ($TimeOfCall ne ""){
-    # Проверим, имеестя ли хоть одна запись звонков подлежащая
-    # записи в db.
 		$callsCount++;
 	    }
 	    WriteRecord($TimeOfCall, $Forwarded, $Internally, $CO, $Way, $Number, $Duration);
