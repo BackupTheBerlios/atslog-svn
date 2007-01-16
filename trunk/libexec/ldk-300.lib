@@ -27,13 +27,35 @@ sub unitecurcalls() {
 	    my $no=$1;
 	    my $sta=$2;
 	    my $co=$3;
-	    my $time=$4;
+	    my $call_duration=$4;
 	    my $start=$5;
-	    my $dialed=$6;
-	    my $act=$7;
-	    my $cnt=$8;
-	    my $cost=$9;
-	    my $account_code=$10;
+	    my $time=$6;
+	    my $dialed=$7;
+	    my $act=$8;
+	    my $cnt=$9;
+	    my $cost=$10;
+	    my $account_code=$11;
+
+
+	$co=int($co);
+
+	if($dialed =~ /I/){
+		$way='1';
+	}else{
+		$way='2';
+	};
+
+	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
+		$Month=$2;
+		$Day=$1;
+		$Year=$3+2000;
+		$timeofcall = "$Year-$Month-$Day $time:00";
+	}
+
+	if ($call_duration=~(/(\d{2}):(\d{2}):(\d{2})/)) {
+		$duration = (($1*60*60)+($2*60)+$3);
+	}
+
 
     	    if ($TimeOfCall ne ""){
 		$callsCount++;
