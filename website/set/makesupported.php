@@ -18,12 +18,17 @@ foreach($strings as $v){
 // creating "supported.php"
 $text='';
 ksort($out);
+$vendors_count=$models_count=0;
 foreach($out as $vendor=>$models){
+    $vendors_count++;
+    $models_count+=count($models);
     asort($models);
     $text.='<li><u>'.$vendor.':</u> ';
     $text.=implode(', ',$models)."\n";
 }
+$text='<?php $vendors_count='.$vendors_count.'; $models_count='.$models_count.'; $supported_text=\''.$text.'\'; ?>';
 // <li><u>Alcatel:</u> 4200E
+// echo $models_count;
 echo $text;
 // print_r($out);
 ?>

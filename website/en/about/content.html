@@ -40,9 +40,10 @@ is not supported yet, we can add this functionality.  Please claim for additiona
 <li>MySQL and PostgresSQL support. In the nearest future SQLite support implementation.
 <li>Working with PBX using serial port or TCP/IP.
 </ul>
-<li>Supported PBX:
-<ul>
 <? require("../../set/supported.php"); ?>
+<li>Supported PBX (total: <b><?=$vendors_count;?></b> vendors, <b><?=$models_count;?></b> models):
+<ul>
+<?=$supported_text;?>
 </ul>
 </li>
 </ol>
