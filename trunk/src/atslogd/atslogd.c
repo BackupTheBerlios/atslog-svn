@@ -548,17 +548,16 @@ read_block(HANDLE hCom, unsigned char *buf)
 
 #ifdef USE_LIBWRAP
 int 
-auth_libwrap(struct sockaddr_in sa_rclient)
+auth_libwrap(int socketfp)
 {
 	struct request_info req;
-	request_init(&req, RQ_DAEMON, "atslogd", RQ_CLIENT_SIN, &sa_rclient, 0);
+	request_init(&req, RQ_DAEMON, "atslogd", RQ_FILE, socketfp, 0);
 	fromhost(&req);
 	if (!hosts_access(&req)) {
-		my_syslog("Connection from host %s refused by libwrap", inet_ntoa(sa_rclient.sin_addr));
+		my_syslog("Connection refused by libwrap");
 		return 0;
 	}
 	return 1;
-
 }
 #endif				/* USE_LIBWRAP */
 
@@ -888,7 +887,7 @@ main(int argc, char *argv[])
 				my_syslog("Connection from %s:%d", inet_ntoa(sa_rclient.sin_addr), ntohs(sa_rclient.sin_port));
 #ifdef USE_LIBWRAP
 			/* using libwrap for controll access */
-			if (!auth_libwrap(sa_rclient)) {
+			if (!auth_libwrap(new_s)) {
 				h2close = INVALID_HANDLE_VALUE;
 				hCom = h2close;
 				close(new_s);
