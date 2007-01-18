@@ -35,6 +35,7 @@ sub unitecurcalls() {
 
 	$Month=$5;
 	$Day=$6;
+	my $flags=$13;
 	$dialed_number=$14;
 
 	$Year = (localtime())[5];
