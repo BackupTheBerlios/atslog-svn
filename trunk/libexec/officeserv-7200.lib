@@ -48,9 +48,9 @@ sub unitecurcalls() {
 
 	SWITCH:
 	{
-		$13 =~ /xT/i and  $forwarded=3, last SWITCH;
-		$13 =~ /T/i  and  $forwarded=1, last SWITCH;
-		$13 =~ /xI/i and  $forwarded=2, last SWITCH;
+		$flags =~ /xT/i and  $forwarded=3, last SWITCH;
+		$flags =~ /T/i  and  $forwarded=1, last SWITCH;
+		$flags =~ /xI/i and  $forwarded=2, last SWITCH;
 		$forwarded=0;
 	}
 
@@ -71,14 +71,12 @@ sub unitecurcalls() {
 		$co=0;
 	}
 
-	if ($13 =~ /[x]*T/i or $13 =~ /[x]*I/i)
+	if ($flags =~ /T/i or $flags =~ /I/i)
 	{
 		$way='1';
 	}else{
 		$way='2';
 	}
-
-
 
 	if ($timeofcall ne "")
 	{
