@@ -610,10 +610,10 @@ usage(FILE * fp)
 		      " -b               daemonize on startup\n"
 		      " -P pid-file      Specify an alternative file in which to store the process ID.\n"
 		      "                  /var/run/atslogd.pid by default\n"
-		      " tcp[:host]:port  IP-address and TCP-port to listen for the incoming\n"
+		      " tcp[:host]:port  IP address and TCP port to listen for the incoming\n"
 		      "                  connections. You may omit address and daemon will bind\n"
 		      "                  on all available IP addresses\n"
-		      " rtcp:host:port   Remote IP-address and TCP-port to connect\n"
+		      " rtcp:host:port   Remote IP address and TCP port to connect\n"
 		      " dev              serial device to use\n"
 		      "\n"
 #ifdef USE_LIBWRAP
