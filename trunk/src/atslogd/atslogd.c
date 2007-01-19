@@ -583,44 +583,42 @@ open_io(char *io_name, long speed, int data_bits, char parity, int stop_bits)
 }
 
 void 
-usage(void)
+usage(FILE * fp)
 {
-	(void)fprintf(stderr,
-		      "CDR Reader for PBXs (C) Alexey V. Kuznetsov, avk[at]gamma.ru, 2001-2002\n"
-		      "changed by Denis CyxoB www.yamiyam.dp.ua\n"
-		      "and Andrew Kornilov akornilov@gmail.com\n"
-		      "for the ATSlog version @version@ build @buildnumber@ www.atslog.com\n"
-		      "\n"
-		      "atslogd [-D dir] [-L logfile] [-F filename] [-s speed] [-c csize] [-p parity] [-f sbits] [-d] [-e] [-o]\n"
-		      "        [-x number] [-w seconds] [-b] [-P pidfile] tcp[:address]:port|rtcp:address:port|dev\n"
-		      "-D dir\t\t\tdirectory where CDR files will be put, default is current dir\n"
-		"-L logfile\t\tfile for error messages, default is stderr\n"
-		      "-F filename\t\tname of file where CDR messages will be put, default is 'raw'\n"
-		      "-s speed\t\tspeed of serial device, default 9600\n"
-	   "-c char_size\t\tlength of character; valid values from 5 to 8\n"
-		      "-p parity\t\tparity of serial device:\n"
-		   "\t\t\te - even parity, o - odd parity, n - no parity,\n"
-		"-f stop_bits\t\tnumber of stop bits; valid values 1 or 2\n"
-		      "-d\t\t\toutput additional debug messages\n"
-	 "-e\t\t\tcopy error messages to stderr (in case if -L has value)\n"
-		      "-o\t\t\twrite CDR additionally to stdout\n"
-		      "-x number\t\tmaximum number of clients for TCP connections; default is 1\n"
-		      "-t\t\t\tanswer TELNET negotiation\n"
-#ifdef USE_LIBWRAP
-		      "\t\t\tsee also /etc/hosts.allow, /etc/hosts.deny\n"
-#endif				/* USE_LIBWRAP */
-		      "-w seconds\t\ttimeout before I/O port will be opened next time after EOF;\n"
-		      "\t\t\tdefault is 5\n"
-		      "-b\t\t\tdaemonize on startup\n"
-		      "-P\t\t\tpid-file; /var/run/atslogd.pid by default\n"
-	      "tcp[:address]:port\tIP-address and TCP-port for listening.\n"
-		      "\t\t\tYou may omit address and daemon will bind\n\t\t\ton all available IP addresses\n"
-	    "rtcp:address:port\tremote IP-address and TCP-port to connect\n"
-		      "dev \t\t\tserial device to use\n"
+	(void)fprintf(fp,
+		      "ATSlog version @version@ build @buildnumber@ www.atslog.com\n"
+		      "Usage: atslogd [-D dir] [-L logfile] [-F filename] [-s speed] [-c csize]\n"
+		      "               [-p parity] [-f sbits] [-d] [-e] [-o] [-x number] [-w seconds]\n"
+		      "               [-b] [-P pidfile] tcp[:address]:port|rtcp:address:port|dev\n"
+		      "Options:\n"
+		      " -D directory     Specify  a location where atslogd should place CDR log files,\n"
+		      "                  default is current dir\n"
+		      " -L logfile       file for error messages, default is stderr\n"
+		      " -F filename      name of file where CDR messages will be put, default is 'raw'\n"
+		      " -s speed         tspeed of the serial device, default 9600\n"
+		      " -c char_size     length of the character; valid values from 5 to 8\n"
+		      " -p parity        parity of the serial device:\n"
+		      "                  e - even parity, o - odd parity, n - no parity,\n"
+		      " -f stop_bits     number of the stop bits; valid values 1 or 2\n"
+		      " -d               operate in DEBUG mode\n"
+		      " -e               copy error messages to stderr (in case if -L has value)\n"
+		      " -o               write CDR additionally to stdout\n"
+		      " -x connections   number of the allowed TCP clients. Default is 1\n"
+		      " -t               emulation of the TELNET protocol\n"
+		      " -w seconds       timeout before I/O port will be opened next time after EOF;\n"
+		      "                  default is 5\n"
+		      " -b               daemonize on startup\n"
+		      " -P pid-file      Specify an alternative file in which to store the process ID.\n"
+		      "                  /var/run/atslogd.pid by default\n"
+		      " tcp[:host]:port  IP-address and TCP-port to listen for the incoming\n"
+		      "                  connections. You may omit address and daemon will bind\n"
+		      "                  on all available IP addresses\n"
+		      " rtcp:host:port   Remote IP-address and TCP-port to connect\n"
+		      " dev              serial device to use\n"
 		      "\n"
 #ifdef USE_LIBWRAP
-		      "Use libwrap for contol access to TCP/IP connections. See /etc/hosts.allow\n"
-		      "and /etc/hosts.deny\n\n");
+		      "You can use libwrap to limit access for the tcp connections.\n"
+		      "See /etc/hosts.allow and /etc/hosts.deny\n\n");
 #else				/* USE_LIBWRAP */
 		      );
 #endif				/* USE_LIBWRAP */
@@ -729,7 +727,7 @@ main(int argc, char *argv[])
 			copy_to_stdout = 1;
 			break;
 		case 'h':
-			usage();
+			usage(stdout);
 		default:
 			(void)fprintf(stderr, "Unknown switch: %c\n", (char)rc);
 			my_exit(1);
@@ -752,7 +750,7 @@ main(int argc, char *argv[])
 
 	if (argc <= 0) {
 		my_syslog("No input TTY device given");
-		usage();
+		usage(stderr);
 	}
 	my_syslog("Starting");
 
@@ -791,7 +789,7 @@ main(int argc, char *argv[])
 			is_tcp = 1;
 			hostname = (char *)strtok_r(NULL, ":", &saveptr);
 			if (hostname == NULL)
-				usage();
+				usage(stderr);
 			port = (char *)strtok_r(NULL, ":", &saveptr);
 			if (port == NULL) {
 				port = my_strdup(hostname);
@@ -808,10 +806,10 @@ main(int argc, char *argv[])
 			is_rtcp = 1;
 			rhostname = (char *)strtok_r(NULL, ":", &saveptr);
 			if (rhostname == NULL)
-				usage();
+				usage(stderr);
 			port = (char *)strtok_r(NULL, ":", &saveptr);
 			if (port == NULL)
-				usage();
+				usage(stderr);
 			rtcpPort = atoi(port);
 		} else {
 			my_syslog("Unknown token %s", token);
