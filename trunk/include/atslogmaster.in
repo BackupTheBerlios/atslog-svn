@@ -154,6 +154,12 @@ startloging(){
 	    ;;
 	esac
     fi
+    sleep 1;
+    if [ ! -s $pidfile ];then
+	TORETURN=1; # atslogd pid is not exists
+	ERRORMESSAGE=$msg4
+	echomess
+    fi
     return $TORETURN
 }
 
