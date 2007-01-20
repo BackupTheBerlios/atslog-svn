@@ -324,7 +324,7 @@ rotate)
 	    echo -n "$msg18"
 	    
 	    # rotating calls.log
-	    if [ -s $logdir/$callslogfile || -s $logdir/$startlogfile];then
+	    if [ -s $logdir/$callslogfile ] || [-s $logdir/$startlogfile];then
 	    	if [-s $logdir/$callslogfile]; then 
 			mv $logdir/$callslogfile $logdir/$callslogfile.tmp
 		fi
@@ -337,13 +337,13 @@ rotate)
 		else
 		    touch $logdir/$callslogfile
 		fi
-		if [-s $logdir/$callslogfile.tmp]
+		if [-s $logdir/$callslogfile.tmp]; then
 			echo "$NOWDATE ${masterscript}[$ATSLOGDpid]: $callslogfile rotate" >> $logdir/$startlogfile
 			bzip2 -z $logdir/$callslogfile.tmp
 			mv $logdir/$callslogfile.tmp.bz2 $logdir/$callslogfile.1.bz2
 	        	echo -n "."
 		fi
-		if [-s $logdir/$startlogfile.tmp]
+		if [-s $logdir/$startlogfile.tmp]; then
 			echo "$NOWDATE ${masterscript}[$ATSLOGDpid]: $startlogfile rotate" >> $logdir/$startlogfile
 			bzip2 -z $logdir/$startlogfile.tmp
 			mv $logdir/$startlogfile.tmp.bz2 $logdir/$startlogfile.1.bz2
