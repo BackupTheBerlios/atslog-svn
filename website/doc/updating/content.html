@@ -12,37 +12,30 @@
 # atslogmaster stop
 </pre>
 
-  <li><p>Скачайте и распакуйте <i><a href="/get/" title="архив ATSlog версии <? echo($atslogver); ?>">atslog-<? echo($atslogver); ?>.tar.gz</a></i>:
+  <li>Скачайте и распакуйте <i><a href="/get/" title="архив ATSlog версии <? echo($atslogver); ?>">atslog-<? echo($atslogver); ?>.tar.gz</a></i>:
 <pre>$ fetch <? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?>
 
 $ tar vzxfmp atslog-<? echo($atslogver); ?>.tar.gz
 </pre>
 
-<li>Постройте новую систему с учетом обновлений. Будет автоматически 
-   произведён поиск файлов с предыдущими настройками.
+<li>Сконфигурируйте новую версию ATSLog
 <pre>
 $ cd atslog-<? echo $atslogver; ?>
 
-# make all
+# configure
 </pre>
-<li>Можно внеси изменения по желанию пользователя в новый
-конфигурационный файл <tt>./atslog.conf</tt> , который будет собран с учетом
-данных из старых конфигурационных файлов, имеющихся в системе. Обратите особое 
-внимание на такие параметры как:  <tt>$port, $speed, $fastwrite, $model</tt>
-
-  <li><p>Деинсталлировать старую версию.
+<li><p>Удалите старую версию.
   <p>Для PanaLog:
 <pre>
 # /usr/local/share/panalog/install.sh deinstall
 </pre>
 При деинсталляции текстовые лог-файлы (из /var/log/panalog) НЕ удаляются!</p>
-
    <p>Для ATSlog:
 <pre>
 # cd /usr/local/share/atslog
 # make deinstall
 </pre>
-При деинсталляции текстовые лог-файлы (из /var/log/atslog) НЕ удаляются!<br><br>
+При деинсталляции текстовые лог-файлы  (из /var/log/atslog) и конфигурационные файлы НЕ удаляются!<br><br>
 <li>Вернуться в директорию с установочными файлами и инсталлировать новую
 версию, учитывая предыдущие настройки:
 <pre>
@@ -59,8 +52,7 @@ $ cd atslog-<? echo $atslogver; ?>
 # atslogmaster cleardb # Очищаем таблицы от старой информации.
 # atslogmaster alltodb # Запишем информацию о звонках из текстовых лог-файлов.
 </pre>
-
-  <li>Запустить демона сбора логов.
+<li>Запустить демона сбора логов.
 <pre>
 # atslogmaster start
 </pre>
