@@ -11,7 +11,8 @@ work:
 
   * GCC compiler
   * MySQL (tested on 4.xx and 5.xx) or PostgreSQL
-  * Perl DBD-mysql or DBD-Pg modules  modules for the MySQL or PostgreSQL.
+  * Perl 5, Perl DBD-mysql or DBD-Pg modules  modules for the MySQL or 
+    PostgreSQL.
   * Web Server (tested with Apache HTTPD) with PHP (4.3 or later) if you
     want to use web interface.
 
@@ -40,11 +41,21 @@ Manual installation. The step-by-step instructions.
       $fastwrite
       $model
 
-5 Run your SQL server (PostgreSQL or MySQL).
+5 Start your SQL server (PostgreSQL or MySQL) and run "make install-sql"
 
-6 Run make install-sql
+7 To make ATSlog www interface available through your web site, I suggest
+  that you add something like the following to httpd.conf:
 
-7 Change web interface settings in the www/include/config.inc.php.
+    Alias /atslog/ "/usr/local/www/atslog/"
+    <Directory "/usr/local/www/atslog/">
+        Options none
+        AllowOverride Limit
+        Order Deny,Allow
+        Deny from all
+        Allow from 127.0.0.1 .example.com
+    </Directory>
+
+  Change web interface settings in the www/include/config.inc.php.
   Copy SQL settings from atslog.conf to this file
 
 8 Read USAGE file for the ATSlog PBX part.

@@ -9,6 +9,7 @@
 
 2007-JAN-11: ATSlog 2.0.0 Release
 
+# (samm) fixed libwrap support on freebsd
 ! (samm) www configuration moved from include/set/conf.inc.php to the 
          include/config.inc.php.
 ! (samm) New project domain name - atslog.com

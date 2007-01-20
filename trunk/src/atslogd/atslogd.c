@@ -756,23 +756,6 @@ main(int argc, char *argv[])
 	}
 	my_syslog("Starting");
 
-	if (do_daemonize) daemonize();
-	
-	pid = getpid();
-
-	if (do_daemonize && pid == (-1)) {
-		my_syslog("Can't become daemon, exiting");
-		my_exit(1);
-	}
-	pfd = open_pid();
-	if (pfd != NULL) {
-		(void)fprintf(pfd, "%ld\n", (long)pid);
-		fclose(pfd);
-	} else {
-		my_syslog("Can't write to '%s' PID file, exiting", pid_file);
-		my_exit(1);
-	}
-
 	sigfillset(&ss);
 	if (sigprocmask(SIG_SETMASK, &ss, NULL) == (-1)) {
 		my_syslog("Can't block all signals: %s", strerror(errno));
