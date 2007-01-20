@@ -516,6 +516,8 @@ read_block(HANDLE hCom, unsigned char *buf)
 	do {
 		stop = 1;
 		count = read(hCom, buf, sizeof(count));
+		if(dbg)
+			my_syslog("read(): %d bytes", count);
 		if (tflag) {
 			end = buf + count;
 			obuf[0] = '\0';
@@ -754,10 +756,9 @@ main(int argc, char *argv[])
 	}
 	my_syslog("Starting");
 
-	if (do_daemonize)
-		pid = daemonize();
-	else
-		pid = getpid();
+	if (do_daemonize) daemonize();
+	
+	pid = getpid();
 
 	if (do_daemonize && pid == (-1)) {
 		my_syslog("Can't become daemon, exiting");

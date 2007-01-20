@@ -6,6 +6,7 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
+# (samm) pid file in daemon mode may contain 0 instead of real PID.
 # (samm) Fixed libwrap support on FreeBSD
 ! (samm) Added Samsung OfficeServ 100 to the list of supported models
 + (samm) Added support of the Samsung OfficeServ 500 PBX
