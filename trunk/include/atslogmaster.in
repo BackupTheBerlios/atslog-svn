@@ -143,11 +143,11 @@ startloging(){
 	    *)
 		case "$debug" in
 		    [Yy][Ee][Ss])
-			$bindir/$atslogd -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $curcallslogfile -L $logdir/$startlogfile $port 1>> $logdir/$notwritelog 2>/dev/null &
+			$bindir/$atslogd -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $curcallslogfile -L $logdir/$startlogfile -b $port 1>> $logdir/$notwritelog 
 			TORETURN=$?
 		    ;;
 		    *)
-			$bindir/$atslogd -P $pidfile -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $curcallslogfile -L $logdir/$startlogfile $port 1>/dev/null 2>/dev/null &
+			$bindir/$atslogd -P $pidfile -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $curcallslogfile -L $logdir/$startlogfile -b $port 1>/dev/null
 			TORETURN=$?
 		    ;;
 		esac
