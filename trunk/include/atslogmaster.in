@@ -322,31 +322,42 @@ rotate)
 	    echo " $msg17"
 
 	    echo -n "$msg18"
-
-	    # Если файл есть, и не пустой
-	    if [ -s $logdir/$callslogfile ];then
-		# Переименуем текущий, открытый для записи файл во временный.
-		mv $logdir/$callslogfile $logdir/$callslogfile.tmp
-		# Сообщим демону, что нужно пересоздать текстовый лог-файл.
+	    
+	    # rotating calls.log
+	    if [ -s $logdir/$callslogfile || -s $logdir/$startlogfile];then
+	    	if [-s $logdir/$callslogfile]; then 
+			mv $logdir/$callslogfile $logdir/$callslogfile.tmp
+		fi
+	    	if [-s $logdir/$startlogfile]; then 
+			mv $logdir/$startlogfile $logdir/$startlogfile.tmp
+		fi
+		# sending HUP to the atslogd to recreate log files
 		if [ -n "$ATSLOGDpid" ];then
 		    kill -HUP $ATSLOGDpid
 		else
 		    touch $logdir/$callslogfile
 		fi
-
-		echo "$NOWDATE ${masterscript}[$ATSLOGDpid]: $callslogfile rotate" >> $logdir/$startlogfile
-		bzip2 -z $logdir/$callslogfile.tmp
-		mv $logdir/$callslogfile.tmp.bz2 $logdir/$callslogfile.1.bz2
-	        echo -n "."
+		if [-s $logdir/$callslogfile.tmp]
+			echo "$NOWDATE ${masterscript}[$ATSLOGDpid]: $callslogfile rotate" >> $logdir/$startlogfile
+			bzip2 -z $logdir/$callslogfile.tmp
+			mv $logdir/$callslogfile.tmp.bz2 $logdir/$callslogfile.1.bz2
+	        	echo -n "."
+		fi
+		if [-s $logdir/$startlogfile.tmp]
+			echo "$NOWDATE ${masterscript}[$ATSLOGDpid]: $startlogfile rotate" >> $logdir/$startlogfile
+			bzip2 -z $logdir/$startlogfile.tmp
+			mv $logdir/$startlogfile.tmp.bz2 $logdir/$startlogfile.1.bz2
+	        	echo -n "."
+		fi
 	    fi
 
-	    for logfn in $notwritelog $startlogfile
+	    
+	    for logfn in $notwritelog 
 	    do
 		if [ -s $logdir/$logfn ];then
 		    echo "$NOWDATE ${masterscript}[$ATSLOGDpid]: $logfn rotate" >> $logdir/$startlogfile
 		    bzip2 -z $logdir/$logfn
 		    mv $logdir/$logfn.bz2 $logdir/$logfn.1.bz2
-
 		    touch $logdir/$logfn
 		    echo -n "."
 		fi

@@ -60,6 +60,7 @@ char		copy_to_stdout = 0;
 FILE           *errout;
 FILE           *pfd = NULL;
 char           *pid_file = "/var/run/atslogd.pid";
+char           *logfile = NULL;
 char		dirname   [MAXPATHLEN + 1 + MAXFILENAMELEN + 1];
 char		filename  [MAXFILENAMELEN + 1] = "raw";
 int		dirlen = 0;
@@ -277,15 +278,27 @@ static void
 sighuphandler(int sig)
 {
 	my_syslog("Catch SIGHUP(%d), recreate logfile", sig);
+	
 	if (cur_logfile != NULL) {
 		fclose(cur_logfile);
 		cur_logfile = NULL;
 	}
+	
 	memcpy(dirname + dirlen, filename, strlen(filename));
 	if ((cur_logfile = fopen(dirname, "at")) == NULL) {
 		my_syslog("Can't open CDR file '%s': %s", dirname, strerror(errno));
 		my_exit(1);
 	}
+	
+	if (errout && errout!=stderr) {
+		fclose(errout);
+		if ((errout = fopen(logfile, "at")) == NULL) {
+			my_syslog("Can't open log file '%s': %s", logfile, strerror(errno));
+			my_exit(1);
+		}
+	}
+	
+	
 }
 
 static void 
@@ -634,7 +647,6 @@ int
 main(int argc, char *argv[])
 {
 	int		rc;
-	char           *logfile = NULL;
 	long		speed = 9600;
 	int		data_bits = 8, stop_bits = 1;
 	char		parity = 0;

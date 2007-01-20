@@ -6,6 +6,7 @@
 ! - Information
 
 === ATSLOG 2.0-DEV ===
+# (samm) Fixed rotate command. atslogd log file was lost after "rotate command"
 # (samm) now atslogmaster check for the atslogd pid after startup
 # (samm) pid file in daemon mode may contain 0 instead of real PID.
 # (samm) Fixed libwrap support on FreeBSD
