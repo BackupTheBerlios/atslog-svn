@@ -6,6 +6,7 @@
 use Sys::Syslog qw(:DEFAULT setlogsock);# logging error messages to syslog
 use DBI;# DataBase common class
 use POSIX qw(locale_h); # For language settings
+use POSIX 'setsid'; # used in daemonize
 
 $prefix="@prefix@";
 $config_file="@sysconfdir@/atslog.conf";
@@ -166,3 +167,13 @@ sub getLibName{
 	return 0;
 }
 
+sub daemonize {
+    chdir '/'		or die "Can't chdir to /: $!";
+    open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
+    open STDOUT, '>/dev/null'
+		or die "Can't write to /dev/null: $!";
+    defined(my $pid = fork)	or die "Can't fork: $!";
+    exit if $pid;
+    setsid			or die "Can't start a new session: $!";
+    open STDERR, '>&STDOUT'	or die "Can't dup stdout: $!";
+}
