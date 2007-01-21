@@ -28,31 +28,31 @@ if (isset($menu) && $menu=="doc")
 			<table cellspacing=0 cellpadding=0 border=0>
 				<tr>
 					<td nowrap valign=bottom><img src=\"/img/menu.arrowhead.right.gif\" width=6 height=10 hspace=0 vspace=0 border=0  alt=\"\"></td>
-					<td nowrap>&nbsp;<a href=\"/en/doc/\" title=\"Documentation\">документация</a></td>
+					<td nowrap>&nbsp;<a href=\"/en/doc/\" title=\"Documentation\">documentation</a></td>
 				</tr>
 				<tr>
 					<td nowrap><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/installing/\" title=\"Монтирование АТС и подключение к компьютеру\">монтирование и подключение</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/installing/\" title=\"PBX installation and switching to PC\">PBX setup</a></td>
 				</tr>
 				<tr>
 					<td nowrap><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/solder-up/\" title=\"Схемы распайки кабеля для подключения АТС к компьютеру\">схемы распайки кабеля</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/solder-up/\" title=\"PBX cable pinout\">cable pinout</a></td>
 				</tr>
 				<tr>
 					<td nowrap valign=top><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/setup/\" title=\"установка и настройка программы ATSlog\">установка и настройка программы</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/setup/\" title=\"ATSlog setup and configuration\">software setup and configuration</a></td>
 				</tr>
 				<tr>
 					<td nowrap valign=top><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/updating/\" title=\"обновление с предыдущих версий программы\">обновление предыдущих версий</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/updating/\" title=\"updating\">updating</a></td>
 				</tr>
 				<tr>
 					<td nowrap valign=top><img src=\"/img/menu.dotsCenterCorner.gif\" width=8 height=20 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/using/\" title=\"использование ATSlog\">использование ATSlog</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/using/\" title=\"Using ATSlog\">using ATSlog</a></td>
 				</tr>
 				<tr>
 					<td nowrap valign=top><img src=\"/img/menu.dotsLeftCorner.gif\" width=8 height=12 hspace=0 vspace=0 border=0 alt=\"\"></td>
-					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/deleting/\" title=\"удаление ATSlog\">удаление программы</a></td>
+					<td nowrap>&nbsp;&nbsp;<a href=\"/en/doc/deleting/\" title=\"Uninstalling ATSlog\">uninstalling</a></td>
 				</tr>
 			</table>
 ");
