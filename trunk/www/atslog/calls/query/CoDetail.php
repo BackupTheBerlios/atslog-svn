@@ -105,6 +105,7 @@
 				}
 				
 				array($InAll);
+				$InAll[0]=$InAll[1]=$InAll[2]=$InAll[3]=0;
 				if(!empty($timeOfCall)) $InAll[0] ++;
 				if(!empty($Duration)) $InAll[3] += $Duration;
 // ------------------------------------------------------------------------------------------------------
