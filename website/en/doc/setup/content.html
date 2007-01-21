@@ -1,6 +1,6 @@
-<div align="center"><font size=+2>УСТАНОВКА И НАСТРОЙКА ПРОГРАММЫ</font></div>
+<div align="center"><font size=+2>Software setup</font></div>
 <ol>
-  <li><p>Скачайте и распакуйте <i><a href="<? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?>" title="архив ATSlog версии <? echo($atslogver); ?>">atslog-<? echo($atslogver); ?>.tar.gz</a></i>:
+  <li><p>Download and unpack <i><a href="<? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?>" title="ATSlog version archive <? echo($atslogver); ?>">atslog-<? echo($atslogver); ?>.tar.gz</a></i>:
 <table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 <tr>
 	<td><pre><i>$ fetch <? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?></i>
@@ -8,21 +8,21 @@
 </pre></td></tr></table>
 </p>
 
-  <li><p>Посмотрите опции файла configure. Для этого:
+  <li><p>Check the configure script options:
 <table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 <tr>
 	<td><pre><i>$ cd atslog-<? echo($atslogver); ?></i>
 <i>$ ./configure --help</i>
 </pre></td></tr></table>
-В обычном случае не стОит менять опции по умолчанию.</p>
+Normally you need not changing the default values.</p>
 
-  <li><p>Если вы хотите умышленно пропустить обновление системы, сделав новую инсталляцию, то произведите следующее действие:
+  <li><p>If you want to skip the system updating (performing a new installation), issue:
 <table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 <tr>
 	<td><pre>
 <i>$ make disableupdate</i>
 </pre></td></tr></table>
-Делайте это только будучи полностью уверенным в своих действиях! Иначе пропустите этот пункт.</p>
+Do this only if you know what are you doing! Otherwise skip this point.</p>
 
   <li><p>Соберите пакет:
 <table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
@@ -32,23 +32,24 @@
 </pre></td></tr></table></p>
 
 
-  <li><p>Сейчас можно внеси изменения по желанию пользователя в конфигурационный файл
+  <li><p>Now it is time to make changes into the config file
 <table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 <tr>
 	<td><pre>
 <i>$ ./atslog.conf</i>
 </pre></td></tr></table>
-Обратите особое внимание на такие параметры как: <i>$port, $speed, $fastwrite, $model</i>.
+Pay special attention to the parameters: <i>$port, $speed, $fastwrite, $model</i>.
 </p>
 
-  <li><p>При установке или обновлении может понадобиться пароль пользователя root SQL сервера (не для	системного пользователя root). Его можно задать как параметр утилиты make непосредственно в момент инсталляции.
-    Для этого make выполняйте с параметром "SQLROOT=пароль". Например:
+  <li><p>Upon installing or upgrading a SQL root user password can be required  (not confused with the system root!). It can be parsed as a parameter to the make utility upon installing. In this case issue the 
+    make command with the parameter "SQLROOT=your_sql_password". For example:
 <table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 <tr>
 	<td><pre>
-<i>$ make SQLROOT=пароль install</i>
+<i>$ make SQLROOT=your_sql_password install</i>
 </pre></td></tr></table>
-В противном случае, при необходимости, пароль будет запрошен для ввода пользователем. Поэтому можно смело делать:
+
+Without this the password will be requested when necessary. Thus feel free to type
 <table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 <tr>
 	<td><pre>
@@ -56,40 +57,43 @@
 </pre></td></tr></table>
 </p>
 
-  <li><p>Инсталляция создаёт для FreeBSD систем <i>/usr/local/etc/rc.d/atslogdinit.sh</i> (<i>/etc/init.d/atslog</i> для Linux)
-	отвечающий за запуск и останов ATSlog.<br>
-	Кроме этого: скрипт <i>/usr/local/etc/periodic/daily/atslogdaily</i> (<i>/etc/cron.daily/atslogdaily</i> в Linux) -
-	занимается ежедневным внесением информации из текстового лога в базы SQL
-	сервера, скрипт <i>/usr/local/etc/periodic/monthly/atslogrotate</i> (<i>/etc/cron.monthly/atslogrotate</i> для Linux) -
-	отвечает за ежемесячную ротацию текстовых лог-файлов.
-	Отработанные логи архивируются bzip2 и сохраняются с именами в таком порядке:<br>
+  <li><p>The installation routine creates for FreeBSD system a file <i>/usr/local/etc/rc.d/atslogdinit.sh</i> (<i>/etc/init.d/atslog</i> for Linux)
+	which handles starting and stopping ATSlog.<br>
+	Besides that: the script <i>/usr/local/etc/periodic/daily/atslogdaily</i> (<i>/etc/cron.daily/atslogdaily</i> for Linux) handles daily parsing information from text logs into server SQL base, and the script
+	 <i>/usr/local/etc/periodic/monthly/atslogrotate</i> (<i>/etc/cron.monthly/atslogrotate</i> for Linux) performs montly rotation of the text logs. The processed logs are packed with bzip2 and stored as follows:<br>
 <table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 <tr>
 	<td><pre>
 $ <i>cd /var/log/atslog
 $ ls -la</i>
 
-drwxr-xr-x   3 root  wheel     512 10 май 21:47 .
-drwxr-xr-x  15 root  wheel    2560 15 май 00:04 ..
--rw-r--r--   1 root  wheel  190806 15 май 00:06 calls.log
--rw-r--r--   1 root  wheel   27933  1 май 08:00 calls.log.1.bz2
--rw-r--r--   1 root  wheel   21557  1 апр 08:00 calls.log.2.bz2
--rw-r--r--   1 root  wheel   18686  1 мар 08:00 calls.log.3.bz2
--rw-r--r--   1 root  wheel    1533 15 май 00:06 start.log
--rw-r--r--   1 root  wheel    1923  2 июн 00:05 currentcalls.log
--rw-r--r--   1 root  wheel   18686  1 мар 08:00 currentcalls.log.1.bz2
--rw-r--r--   1 root  wheel   21923  2 июн 00:04 notwrite.log
+drwxr-xr-x   3 root  wheel     512 10 May 21:47 .
+drwxr-xr-x  15 root  wheel    2560 15 May 00:04 ..
+-rw-r--r--   1 root  wheel  190806 15 May 00:06 calls.log
+-rw-r--r--   1 root  wheel   27933  1 May 08:00 calls.log.1.bz2
+-rw-r--r--   1 root  wheel   21557  1 Apr 08:00 calls.log.2.bz2
+-rw-r--r--   1 root  wheel   18686  1 May 08:00 calls.log.3.bz2
+-rw-r--r--   1 root  wheel    1533 15 May 00:06 start.log
+-rw-r--r--   1 root  wheel    1923  2 Jun 00:05 currentcalls.log
+-rw-r--r--   1 root  wheel   18686  1 Mar 08:00 currentcalls.log.1.bz2
+-rw-r--r--   1 root  wheel   21923  2 Jun 00:04 notwrite.log
 </pre></td></tr></table>
-	Где <i>currentcalls.log</i> - текущий текстовый лог-файл АТС, <i>currentcalls.log.1.bz2</i> - архив за прошлый месяц и т.д.
+	Here <i>currentcalls.log</i> isthe current PBX log file, <i>currentcalls.log.1.bz2</i> last month archive etc.
 	</p>
   </li>
-  <li><p>Данные из текстового лог-файла считываются один раз в сутки
+  <li><p>Text log data are read out daily and parsed to the SQL server database. This daily schedulling can be changed but too often invocations could result in error messages.  
+
+Данные из текстового лог-файла считываются один раз в сутки
 		и записываются в базы SQL сервера. Система позволяет производить эту
 		операцию чаще чем один раз в сутки, но учтите что частый вызов может
 		привести к появлению сообщений об ошибках. Причина кроется в том, что
 		с момента последнего переноса данных из текстового лога
 		в базы SQL сервера не поступило ни одного звонка в
-		обновлённый лог-файл $curcallslogfile. С другой стороны, отключение
+		обновлённый лог-файл $curcallslogfile. 
+
+Switching these messages off 
+
+С другой стороны, отключение
 		вывода таких сообщений может привести к тому, что в случае разрыва
 		связи с мини-АТС системный администратор не получит сообщения
 		о возникшей проблеме, что чревато потерей информации.
@@ -97,40 +101,36 @@ drwxr-xr-x  15 root  wheel    2560 15 май 00:04 ..
 		с АТС. Одним из его уровней как раз и есть контроль количества
 		перенесённых строк из текстового лог-файла $curcallslogfile в базу
 		SQL сервера.
-		<p>Ко всему прочему можно добавить, что частый вызов функции записи
+		<p> Besides that, too intensive invocation of the writing function increases server load with Perl scripts.
+
+Ко всему прочему можно добавить, что частый вызов функции записи
 		скажется на увеличении загрузки маломощных серверов из-за задействования Perl скриптов.
 		<p>Для поточного добавления поступающих из АТС звонков в базы SQL сервера
 	смотрите параметр $fastwrite конфигурационного файла.</p>
 		
-  <li><p>Если в системе имеются снятые с АТС текстовые лог-файлы со
-	списками звонков, то после установки программы их можно быстро
-	преобразовать в формат таблиц ATSlog. До преобразования убедитесь,
-	что исходные лог-файлы (в том числе архивированные bzip2)
-	находится в месте, описанном
-	параметром $callslogfile конфигурационного файла. Запустите master-скрипт
-	с опцией alltodb:<br>
+  <li><p>If there already exist some PBX text logs you can quickly transform them into internal table format of the ATSlog. Make sure that the original logs (included those packed with bzip2) are located in the place pointed by the variable $callslogfile of the config file.  Launch the master-script
+	with option alltodb:<br>
 <table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 <tr>
 <td><pre><i>$ atslogmaster alltodb</i>
 </pre></td></tr></table>
-	Будьте осторожны с использованием этой функции, т.к. в результате её случайной
-	активизации записи в базе данных могут быть продублированы.
-	<li><p>Образец полученного протокола вызовов (текстовый лог-файл):<br>
-    <img src="/img/installing.5.jpg" width=622  height=360 title="Образец распчатанного протокола вызовов"
- alt="Образец распчатанного протокола вызовов" align="middle" vspace="5"
+        Be careful with this function since once activated by accident, it could produce double entries in the database.
+	<li><p>This is a sample of the call accounting protocol (text log):<br>
+    <img src="/img/installing.5.jpg" width=622  height=360 title="sample of the call log"
+ alt="sample of the call log" align="middle" vspace="5"
  hspace="5"><br>
-	(1) Date: дата вызова день/месяц/год.<br>
-	(2) Time: время вызова. "*" - означает пересланный вызов.<br>
-	(3) Ext.: внутренний номер.<br>
-	(4) CO: номер внешней линии использованной для вызова.<br>
-	(5) Dial number: набранный номер.<br>
-	(6) Duration: длительность переговоров.<br>
+	(1) Date: call date DD/MM/YY.<br>
+	(2) Time: call time. "*" stands for transferred call.<br>
+	(3) Ext.: internal number.<br>
+	(4) CO: external line umber used for a call.<br>
+	(5) Dial number: dialed number.<br>
+	(6) Duration: call duration.<br>
   </li>
 </ol>
-<h3><a name="b77"></a>Установка web-интерфейса</h3>
+<h3><a name="b77"></a>Web-interface setup</h3>
 <ol>
-	<li><p>Начнем с настройки сервера Apache и создания виртуального домена.</p>
-	<p>Нужно добавить в конец конфигурационного файла <i>httpd.conf</i> следующее:
+	<li><p> Apache setup and creation of the virtual domain.</p>
+	<p>Add to the end of the config filr <i>httpd.conf</i> following lines:
 		<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 			<tr>
 				<td><pre>
@@ -150,29 +150,29 @@ NameVirtualHost 192.168.0.1
    &lt;/Directory&gt;
 &lt;/VirtualHost&gt;
 </pre></td></tr></table><br>
-В параметре NameVirtualHost 192.168.0.1&nbsp;&#151;  укажите IP адрес сервера. В ServerName имя сервера, которое может быть преобразовано системой (man 8 nslookup) в указанный IP адрес.
+In the parameter NameVirtualHost 192.168.0.1&nbsp;&#151;  indicate IP address of the server. The ServerName variable is the server name to be translated by a system  (man 8 nslookup) into indicaed IP address.
 		</p>
 	</li>
-	<li><p>После инсталляции все файлы web-интерфейса уже находятся в /usr/local/www/atslog Вам нужно только перезапустить httpd сервер.
+	<li><p>After installation all files pertaining to the web-interface are already located in /usr/local/www/atslog. All you need is to restart the  httpd server.
 		<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
 			<tr>
 				<td><pre>$ apachectl restart
 </pre></td></tr></table>
 	</li>
-	<li><p>Параметры подключения web-интерфейса к SQL серверу задаются в файле <i>/usr/local/www/atslog/set/conf.inc.php</i> Как правило, после инсталляции они уже записаны верно.
+	<li><p>Parameters of the web-interface connection to SQL server are given in <i>/usr/local/www/atslog/set/conf.inc.php</i> As a rule, after installation they are already set correctly.
 	</p>
-	<li><p>Доступ к статистике осуществляется по адресу <i>http://atslog.server.com/atslog/</i> Для входа используйте имя пользователя: <i>atslog</i>, пароль: <i>atslog</i> Для изменения пароля/пользователя зайдите в <i>&quot;Управление абонентами&quot;</i></li>
+	<li><p>The statistics can be acessed on the address  <i>http://atslog.server.com/atslog/</i>. Use the username: <i>atslog</i>, password: <i>atslog</i> To change the password visit the section <i>&quot;Subscriber management &quot;</i></li>
 </ol>
 <HR ALIGN="center">
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
 <TR>
-	<TD WIDTH="33%" ALIGN="left" VALIGN="top"><a href="/doc/solder-up/" title="Схемы распайки кабеля для подключения АТС к компьютеру" ACCESSKEY="P">Предыдущий</a></TD>
-	<TD WIDTH="34%" ALIGN="center" VALIGN="top"><A HREF="/doc/" ACCESSKEY="H">Разделы</A></TD>
-	<TD WIDTH="33%" ALIGN="right" VALIGN="top"><a href="/doc/updating/" title="обновление с предыдущих версий программы" ACCESSKEY="N">Следующий</a></TD>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top"><a href="/doc/solder-up/" title="cable pinouts" ACCESSKEY="P">Previous</a></TD>
+	<TD WIDTH="34%" ALIGN="center" VALIGN="top"><A HREF="/doc/" ACCESSKEY="H">Sections</A></TD>
+	<TD WIDTH="33%" ALIGN="right" VALIGN="top"><a href="/doc/updating/" title="updating from previous versions" ACCESSKEY="N">Next</a></TD>
 </TR>
 <TR>
-	<TD WIDTH="33%" ALIGN="left" VALIGN="top">схемы распайки кабеля</TD>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top">cable pinouts</TD>
 	<TD WIDTH="34%" ALIGN="center" VALIGN="top">&nbsp;</TD>
-	<TD WIDTH="33%" ALIGN="right" VALIGN="top">обновление предыдущих версий</TD>
+	<TD WIDTH="33%" ALIGN="right" VALIGN="top">updating from previous versions</TD>
 </TR>
 </TABLE>

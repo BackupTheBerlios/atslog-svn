@@ -1,44 +1,47 @@
-<div align="center"><font size=+2>УДАЛЕНИЕ ПРОГРАММЫ</font></div>
-Деинсталляция ATSlog. Пошаговая инструкция.                                    
+<div align="center"><font size=+2>Uninstalling</font></div>
+Uninstalling ATSlog. Step-by-step guide.
 
 <ol>
-<li>Остановите ATSlog:<br>
+<li>Stop ATSlog:<br>
    <i>atslogmaster stop</i>
 <br>
 <br>
 </li>
-                                                                               
-<li>Перейдите в каталог, описанный параметром $sharedir конфигурационного файла  
-   (по умолчанию это директория /usr/local/share/atslog) и выполните команду:<br>
+
+<li>Change to the catalog indicated by the parameter <tt>$sharedir</tt> of the 
+config file (by default /usr/local/share/atslog) and issue:<br>
    <i>make deinstall</i>
 <br>
 <br>
-   При деинсталляции скрипт проверит наличие файлов с рабочей информацией для того, 
-   чтобы ничего лишнего не удалить.                                            
+Upon deinstaling the script checks the files with working information in order 
+not to delete something which it has not to
+
 <br>
 <br>
-   Текстовые лог-файлы не удаляются ( всё содержимое каталога                   
-   описанного параметром $logdir в конфигурационном файле; по умолчанию
-   это директория /var/log/atslog ). Не удаляются директории, если они содержат 
-   любые файлы, не принадлежащие программе ATSlog.
+  Text log-files are not deleted (all contents of the catalog indicated by the par
+ameter <tt>$logdir</tt> in the config file; by default this is /var/log/atslog )
+. The directories containing any files not belonging to ATSlog are kept.
+ 
 <br>
 <br>
-	Данные, содержащиеся в таблицах SQL сервера, не удаляются.
+	Data from SQL server tables are kept.
 <br>
 <br>
-   Обратите внимание, что при деинсталляции программы PID-файл ( /var/run/atslog.pid ) не удаляется.
+Upon deinstalling the PID file ( /var/run/atslog.pid ) is kept.
+   
+
 <br>
 <br>
 </li>
 <HR ALIGN="center">
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
 <TR>
-	<TD WIDTH="33%" ALIGN="left" VALIGN="top"><a href="/doc/using/" title="использование ATSlog" ACCESSKEY="P">Предыдущий</a></TD>
-	<TD WIDTH="34%" ALIGN="center" VALIGN="top"><A HREF="/doc/" ACCESSKEY="H">Разделы</A></TD>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top"><a href="/doc/using/" title="использование ATSlog" ACCESSKEY="P">Previous</a></TD>
+	<TD WIDTH="34%" ALIGN="center" VALIGN="top"><A HREF="/doc/" ACCESSKEY="H">Sections</A></TD>
 	<TD WIDTH="33%" ALIGN="right" VALIGN="top">&nbsp;</TD>
 </TR>
 <TR>
-	<TD WIDTH="33%" ALIGN="left" VALIGN="top">обновление предыдущих версий</TD>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top">Upgrade from previous versions</TD>
 	<TD WIDTH="34%" ALIGN="center" VALIGN="top">&nbsp;</TD>
 	<TD WIDTH="33%" ALIGN="right" VALIGN="top">&nbsp;</TD>
 </TR>
