@@ -129,16 +129,8 @@ startloging(){
 	# Запустим считывание
 	case "$fastwrite" in
 	    [Yy][Ee][Ss])
-		case "$debug" in
-		    [Yy][Ee][Ss])
-	    		$bindir/$atslogd $atslogd_flags -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $callslogfile -L $logdir/$startlogfile $port | $bindir/$atslogdb 1>> $logdir/$notwritelog 2>/dev/null &
-			TORETURN=$?
-		    ;;
-		    *)
-			$bindir/$atslogd $atslogd_flags -P $pidfile -o -f $stopbits -p $parity -c $charsize -s $speed -D $logdir -F $callslogfile -L $logdir/$startlogfile $port | $bindir/$atslogdb 1>/dev/null 2>/dev/null &
-			TORETURN=$?
-		    ;;
-		esac
+		$bindir/$atslogdb --fastwrite
+		TORETURN=$?
 	    ;;
 	    *)
 		case "$debug" in

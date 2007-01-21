@@ -10,6 +10,11 @@ use POSIX 'setsid'; # used in daemonize
 
 $prefix="@prefix@";
 $config_file="@sysconfdir@/atslog.conf";
+if(@ARGV[0] eq "--fastwrite"){
+	$fastwrite=1;
+} else{
+	$fastwrite=0;
+}
 
 open(IN,$config_file) || die print("Can't open config file $config_file.\n");
 while(<IN>) {
@@ -121,9 +126,30 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
 	}
 	
 	# parsing calls
-	parsecurcalls();
+	if(!$fastwrite){
+		open(PBX_DATA,"-");
+		parsecurcalls();
+	}
+	else {
+		&daemonize;
+		$pid = open(PBX_DATA, "-|");
+		
+		if ($pid) {   # parent
+			parsecurcalls();
+			if(!close(PBX_DATA))  {
+				# warn "atslogd exited $?"
+				$ERRORMESSAGE="\n$vars{atslogd} error code: $?";
+				echoerrors();
+			};
+			
+		} else {      # child
+			exec("$vars{bindir}/$vars{atslogd} $vars{atslogd_flags} -P $vars{pidfile} -o -f $vars{stopbits} -p $vars{parity} -c $vars{charsize} -s $vars{speed} -D $vars{logdir} -F $vars{callslogfile} -L $vars{logdir}/$vars{startlogfile} $vars{port}")
+			|| die "can't exec program: $!";
+			# NOTREACHED
+		}
+	}
 	
-	if($callsCount == 0){                                                           
+	if($callsCount == 0){                                                          
 		$ERRORMESSAGE="\n$vars{msg32}";
 		echoerrors();
 	}
