@@ -1,5 +1,6 @@
 <?
 error_reporting(E_ALL);
 $lang="en";
-require("../../set/index.html");
+if(!isset($menu) || $menu!="doc") require("../../set/index.html");
+else require("../../../set/index.html");
 ?>
