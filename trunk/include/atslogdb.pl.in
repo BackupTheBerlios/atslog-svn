@@ -127,6 +127,7 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
 	
 	# parsing calls
 	if(!$fastwrite){
+		# pass stdin to the library
 		open(PBX_DATA,"-");
 		parsecurcalls();
 	}
