@@ -108,9 +108,7 @@ sub unitecurcallsC() {
 		# We need to check that we had records for database
 		$callsCount++;
 	}
-	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
-	$sth = $dbh->prepare($ins_query);
-	$sth->execute;	
+	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 }
 
 sub unitecurcallsA() {
@@ -182,9 +180,7 @@ sub unitecurcallsA() {
 		# We need to check that we had records for database
 		$callsCount++;
 	}
-	$ins_query = "INSERT INTO calls (timeofcall, forwarded,internally,co,way,number, duration) VALUES  ('$timeofcall', '$forwarded', '$internally', '$co', '$way', '$number', '$duration');";
-	$sth = $dbh->prepare($ins_query);
-	$sth->execute;	
+	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 }
 
 sub unitecurcallsB() {
