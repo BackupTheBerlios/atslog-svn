@@ -135,7 +135,7 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
 		$pid = open(PBX_DATA, "-|");
 		if ($pid) {   # parent
 			if($vars{debug} =~ /yes/i){
-				open(STDOUT, ">$vars{logdir}/$vars{notwritelog}") || die "Can't redirect stdout";
+				open(STDOUT, ">>$vars{logdir}/$vars{notwritelog}") || die "Can't redirect stdout";
 				select(STDOUT); $| = 1;     # make unbuffered
 			}
 			parsecurcalls();
