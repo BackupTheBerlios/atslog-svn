@@ -11,7 +11,9 @@
 + (samm) Added NEC NEAX2000 SMDR support
 + (samm) Added support of the Samsung OfficeServ 500 PBX
 + (samm) New fastwrite method. Now atslogd is controlled from atslogdb.pl
-+ (samm) SQL code moved away from PBX libraries. Added SQL error reporting
++ (samm) SQL code moved away from PBX libraries. Added SQL error reporting 
+         code. If line was failed on transfer to SQL server it will be stored
+         in the log/atslog/sqlfail.log file.
 + (samm) New module loader based on index file
 + (samm) Added support in the atslogd for the 0x03 line terminator (NEC)
 + (samm) Changed atslogd i/o functions. Now atslogd use block reading

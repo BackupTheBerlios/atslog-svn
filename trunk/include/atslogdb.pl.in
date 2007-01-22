@@ -178,8 +178,13 @@ sub WriteRecord{
         my $sth = $dbh->prepare($query);                                                                    
         $sth->execute;
 	if($sth->err){
+		# error on SQL query. We need to record sql server message to 
+		# the syslog and failed record to the special file
+		open(SQLFAIL,">>$vars{logdir}/sqlfail.log");
 		$ERRORMESSAGE="\nError on sth->execute: ".$sth->errstr()."\n";
+		print SQLFAIL $str;
 		echoerrors();
+		close(SQLFAIL); # we dont want to keek this file open
 		return -1;
 	}
 	return 0;
