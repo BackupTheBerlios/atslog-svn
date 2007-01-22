@@ -19,7 +19,6 @@ sub parsecurcalls() {
 	if ($str =~ /^\s*[0-9]+\s+([[0-9]+|\S]*)\s+([[0-9]+|\S]*)\s+([[0-9\:]+|\S]*)\s+([[0-9\/]+|\S]*)\s+([[0-9\:]+|\S]*)\s+([.|\S]*)\s*/){
 	    unitecurcalls();
 	}else{
-	    print("string #: $stringNumber\n");
 	    if ($vars{debug} =~ /yes/i){
 	        if ($str !~ /^$/){
 	    	    print $str;
@@ -85,10 +84,10 @@ sub unitecurcalls() {
 		$partCell[5][1]= $2;
 		
 	    if ($cell[6] =~ /TRANSFER/ or $cell[6] =~ /INCOMING/){
-		$Way='in';
+		$Way='1';
 		$Number=0; # Not Specified
 	    }else{
-		$Way='out';
+		$Way='2';
 		$Outnumber = $cell[6];
 		$Outnumber =~ s/\D+//g;
 		$Number=substr($Outnumber,0,100);
