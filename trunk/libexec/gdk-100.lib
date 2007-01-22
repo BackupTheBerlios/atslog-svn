@@ -1,8 +1,11 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.com  
 # 
 # VENDOR: LG
-# MODELS: GDK-100
+# MODELS: GDK-100,GDK-162
 # AUTHOR: Denis CyxoB
+#
+# TESTLOG: LG GDK-100.txt
+# TESTLOG: LG GDK-162.txt
 #
 # Разбираем строки текстового-лог файла для АТС LG GDK-100
 

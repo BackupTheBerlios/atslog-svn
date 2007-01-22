@@ -5,6 +5,8 @@
 # AUTHOR: Alex Samorukov
 # COMMENTS: Russian FirmWare
 #
+# TESTLOG: Panasonic KX-T1232-RU.txt
+#
 # Library for the Panasonic KX-TD1232 with russian firmware support. 
 #
 #

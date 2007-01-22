@@ -4,6 +4,10 @@
 # MODELS: KX-TDA100,KX-TDA200
 # AUTHOR: Alex Samorukov
 # COMMENTS: A,B and C log formats
+# 
+# TESTLOG: Panasonic KX-TDA100 A.txt
+# TESTLOG: Panasonic KX-TDA100 B.txt
+# TESTLOG: Panasonic KX-TDA100 C.txt
 #
 # This library supports A, B and C fortmats
 #

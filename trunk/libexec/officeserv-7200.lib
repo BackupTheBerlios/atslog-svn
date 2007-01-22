@@ -4,6 +4,9 @@
 # MODELS: OFFICESERV-7200,OFFICESERV-500,OFFICESERV-100
 # AUTHOR: Sergey Solonina <slon@goldenpages.ua>
 #
+# TESTLOG: Samsung OfficeServ 7200.txt
+# TESTLOG: Samsung OfficeServ 500.txt
+#
 # Samsung OfficeServ 7200 library (c) 2006 Sergey Solonina <slon@goldenpages.ua>
 # Patched for more accurate regexp and OFFICESERV-500 support by Alex Samorukov, samm@os2.kiev.ua
 #

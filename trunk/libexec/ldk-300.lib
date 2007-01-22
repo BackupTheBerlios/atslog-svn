@@ -4,6 +4,8 @@
 # MODELS: LDK-100,LDK-300
 # AUTHOR: Alex Samorukov samm@os2.kiev.ua
 #
+# TESTLOG: LG LDK-300.txt
+#
 # First version was contributed by Sergey K. sak17[at]mail.ru,
 # Разбираем строки текстового-лог файла для АТС LG LDK-100, LDK-300
 

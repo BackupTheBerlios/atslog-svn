@@ -1,6 +1,6 @@
 4200e.lib:4200E:Alcatel
 gd-320.lib:GD-320:Hybrex
-gdk-100.lib:GDK-100:LG
+gdk-100.lib:GDK-100,GDK-162:LG
 ghx-46.lib:GHX-46:LG
 gps-6a.lib:GPS-6A:Goldstar
 hicom-250.lib:Hicom 250:Siemens

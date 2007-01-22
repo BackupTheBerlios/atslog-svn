@@ -2,8 +2,10 @@
 # 
 # VENDOR: Panasonic
 # MODELS: KX-TD816RU
-# AUTHOR: Alex Samorukov
-
+# AUTHOR: Denis CyxoB
+#
+# TESTLOG: Panasonic KX-TD816RU.txt
+#
 # Разбираем строки текстового-лог файла для АТС Panasonic KX-TD816RU
 
 sub parsecurcalls() {

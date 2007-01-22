@@ -4,6 +4,10 @@
 # MODELS: GHX-46
 # AUTHOR: Denis CyxoB
 #
+# TESTLOG: LG GHX-46 (variant 1).txt
+# TESTLOG: LG GHX-46 (variant 2).txt
+#
+#
 # Разбираем строки текстового-лог файла для АТС LG GHX-46
 
 sub parsecurcalls() {

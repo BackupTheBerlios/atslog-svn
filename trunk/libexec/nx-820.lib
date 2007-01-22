@@ -4,6 +4,9 @@
 # MODELS: NX-820
 # AUTHOR: Mistic
 #
+# TESTLOG: Samsung NX-820(variant 1).txt
+# TESTLOG: Samsung NX-820(variant 2).txt
+#
 # NX-820 text logfile processing Copyright by Mistic
 #
 # Разбираем строки текстового-лог файла для АТС Samsung NX-820

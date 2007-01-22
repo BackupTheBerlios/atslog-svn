@@ -4,6 +4,8 @@
 # MODELS: SKP-816
 # AUTHOR: Denis CyxoB
 #
+# TEXTLOG: Samsung SKP-816.txt
+#
 # Разбираем строки текстового-лог файла для АТС Samsung SKP-816
 
 sub parsecurcalls() {

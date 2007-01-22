@@ -5,6 +5,11 @@
 # AUTHOR: Alex Samorukov
 # COMMENTS: A,B,C,D log formats
 #
+# TESTLOG: Panasonic KX-TD500 Type A.txt
+# TESTLOG: Panasonic KX-TD500 Type B.txt
+# TESTLOG: Panasonic KX-TD500 Type C.txt
+# TESTLOG: Panasonic KX-TD500 Type D.txt
+#
 # Library for the Panasonic KX-TD500. 
 #
 # This PBX have 4 different log formats (A,B,C,D)!

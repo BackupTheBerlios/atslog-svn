@@ -5,6 +5,8 @@
 # AUTHOR: Alex Samorukov
 # COMMENTS: Built-in SMDR NEAX 2400 IMS Format
 #
+# TESTLOG: NEC NEAX2000 IPS.txt
+#
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2007
 #
 # sample:

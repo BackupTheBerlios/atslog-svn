@@ -4,6 +4,8 @@
 # MODELS: KX-TD1232
 # AUTHOR: Denis CyxoB
 #
+# TESTLOG: Panasonic KX-T1232.txt
+#
 # Разбираем строки текстового-лог файла для АТС Panasonic KX-TD1232
 
 sub parsecurcalls() {

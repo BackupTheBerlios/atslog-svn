@@ -3,7 +3,12 @@
 # VENDOR: Panasonic
 # MODELS: KX-TA616RU,KX-TA308RU,KX-TA308,KX-TA616,KX-TEM824
 # AUTHOR: Alex Samorukov
-
+#
+# TESTLOG: Panasonic KX-TA308.txt
+# TESTLOG: Panasonic KX-TA308RU 2.txt
+# TESTLOG: Panasonic KX-TA616.txt
+# TESTLOG: Panasonic KX-TEM824.txt
+#
 # KX-TA616RU, Panasonic KX-TA308RU,Panasonic KX-TA308
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2006
 #

@@ -4,6 +4,8 @@
 # MODELS: 4200E
 # AUTHOR: Alex Samorukov <samm@os2.kiev.ua>
 #
+# TESTLOG: Alcatel 4200.txt
+#
 # Library for the Alcatel 4200
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2006
 
