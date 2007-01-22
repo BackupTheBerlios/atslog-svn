@@ -146,6 +146,10 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
 			};
 			
 		} else {      # child
+			if($vars{port} !~ /r?tcp\:/i){
+				$vars{port}='/dev/'.$vars{port};
+			}
+			# correcting port variable
 			exec("$vars{bindir}/$vars{atslogd} $vars{atslogd_flags} -P $vars{pidfile} -o -f $vars{stopbits} -p $vars{parity} -c $vars{charsize} -s $vars{speed} -D $vars{logdir} -F $vars{callslogfile} -L $vars{logdir}/$vars{startlogfile} $vars{port}")
 			|| die "can't exec program: $!";
 			# NOTREACHED
@@ -184,7 +188,7 @@ sub WriteRecord{
 		$ERRORMESSAGE="\nError on sth->execute: ".$sth->errstr()."\n";
 		print SQLFAIL $str;
 		echoerrors();
-		close(SQLFAIL); # we dont want to keek this file open
+		close(SQLFAIL); # we dont want to keep this file open
 		return -1;
 	}
 	return 0;
