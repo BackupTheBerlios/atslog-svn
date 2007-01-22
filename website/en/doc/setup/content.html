@@ -1,178 +1,92 @@
-<div align="center"><font size=+2>Software setup</font></div>
+<div class="header">Software setup</div>
+<p>
+<b>The ATSLog updating information is located in the file UPDATING.</b></p> 
+<h4>Requirements</h4>
+Your system should meet following requirements
+<ul>
+<li>POSIX compatible *nix. Checked for Linux and FreeBSD. Most probably will work with other UNIX OS as well.</li>
+<li>GCC compiler</li>
+<li>MySQL (checked for 4.xx and 5.xx) or PostgreSQL</li>
+<li>Perl 5, Perl modules DBD-mysql or DBD-Pg modules for MySQL or PostgreSQL.</li>
+<li>If you plan to use the web interface - http server (checked for Apache HTTPD) with PHP support installed 
+(4.3 +).</li>
+</ul>
+<h4>Installation</h4>
+The FreeBSD port of atslog is available from
+<a href="http://www.freshports.org/comms/atslog/" target="_blank">www.freshports.org</a>.
+
+<ul>
 <ol>
-  <li><p>Download and unpack <i><a href="<? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?>" title="ATSlog version archive <? echo($atslogver); ?>">atslog-<? echo($atslogver); ?>.tar.gz</a></i>:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre><i>$ fetch <? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?></i>
-<i>$ tar vzxfmp atslog-<? echo($atslogver); ?>.tar.gz</i>
-</pre></td></tr></table>
-</p>
+  <li>Download and unpack <i><a href="/get/" title="ATSlog archiv version <? echo($atslogver); ?>">atslog-<? echo($atslogver); ?>.tar.gz</a></i>:
+ <pre>
+$ fetch <? echo("http://".$_SERVER["SERVER_NAME"]."/download/atslog-$atslogver.tar.gz"); ?>
 
-  <li><p>Check the configure script options:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre><i>$ cd atslog-<? echo($atslogver); ?></i>
-<i>$ ./configure --help</i>
-</pre></td></tr></table>
-Normally you need not changing the default values.</p>
+$ tar vzxfmp atslog-<? echo($atslogver); ?>.tar.gz
+</pre>
+</li>
+<li>Check the options of the configure script. 
+<pre>
+$ ./configure --help
+</pre>
+Run the configure script either without parameters or with parameters of your choice.
+<pre>
+$ ./configure 
+</pre>
 
-  <li><p>If you want to skip the system updating (performing a new installation), issue:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>$ make disableupdate</i>
-</pre></td></tr></table>
-Do this only if you know what are you doing! Otherwise skip this point.</p>
+</li>
 
-  <li><p>Соберите пакет:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>$ make all</i>
-</pre></td></tr></table></p>
+<li>Install the program issueing <tt>make install</tt>
+<pre>
+# make install
+</pre>
+</li>
+<li>
+Edit the program config file $PREFIX/atslog.conf  (for example, <tt>/usr/local/etc/atslog.conf</tt>).
+Pay special attention to the parameters <tt>$port, $speed, $fastwrite, $model</tt>.
+<pre>
+# $EDITOR /usr/local/etc/atslog.conf
+</pre>
+</li>
+<li>
+Launch your SQL server (PostgreSQL or MySQL). Create the atslog database with 
+<pre>
+$ make install-sql
+</pre>
+This prompt automatically creates the  <tt>atslog</tt> database with all necessary tables.
+<br><br>
+</li>
+<li>
+To enable the web interface add corresponding lines into 
+  httpd.conf, for example:
+<pre>
+    Alias /atslog/ "/usr/local/www/atslog/"
+    &lt;Directory "/usr/local/www/atslog/"&gt;
+        Options none
+        AllowOverride Limit
+        Order Deny,Allow
+        Deny from all
+        Allow from 127.0.0.1 .example.com
+    &lt;/Directory&gt;
+</pre>
 
-
-  <li><p>Now it is time to make changes into the config file
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>$ ./atslog.conf</i>
-</pre></td></tr></table>
-Pay special attention to the parameters: <i>$port, $speed, $fastwrite, $model</i>.
-</p>
-
-  <li><p>Upon installing or upgrading a SQL root user password can be required  (not confused with the system root!). It can be parsed as a parameter to the make utility upon installing. In this case issue the 
-    make command with the parameter "SQLROOT=your_sql_password". For example:
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>$ make SQLROOT=your_sql_password install</i>
-</pre></td></tr></table>
-
-Without this the password will be requested when necessary. Thus feel free to type
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-<i>$ make install</i>
-</pre></td></tr></table>
-</p>
-
-  <li><p>The installation routine creates for FreeBSD system a file <i>/usr/local/etc/rc.d/atslogdinit.sh</i> (<i>/etc/init.d/atslog</i> for Linux)
-	which handles starting and stopping ATSlog.<br>
-	Besides that: the script <i>/usr/local/etc/periodic/daily/atslogdaily</i> (<i>/etc/cron.daily/atslogdaily</i> for Linux) handles daily parsing information from text logs into server SQL base, and the script
-	 <i>/usr/local/etc/periodic/monthly/atslogrotate</i> (<i>/etc/cron.monthly/atslogrotate</i> for Linux) performs montly rotation of the text logs. The processed logs are packed with bzip2 and stored as follows:<br>
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-	<td><pre>
-$ <i>cd /var/log/atslog
-$ ls -la</i>
-
-drwxr-xr-x   3 root  wheel     512 10 May 21:47 .
-drwxr-xr-x  15 root  wheel    2560 15 May 00:04 ..
--rw-r--r--   1 root  wheel  190806 15 May 00:06 calls.log
--rw-r--r--   1 root  wheel   27933  1 May 08:00 calls.log.1.bz2
--rw-r--r--   1 root  wheel   21557  1 Apr 08:00 calls.log.2.bz2
--rw-r--r--   1 root  wheel   18686  1 May 08:00 calls.log.3.bz2
--rw-r--r--   1 root  wheel    1533 15 May 00:06 start.log
--rw-r--r--   1 root  wheel    1923  2 Jun 00:05 currentcalls.log
--rw-r--r--   1 root  wheel   18686  1 Mar 08:00 currentcalls.log.1.bz2
--rw-r--r--   1 root  wheel   21923  2 Jun 00:04 notwrite.log
-</pre></td></tr></table>
-	Here <i>currentcalls.log</i> isthe current PBX log file, <i>currentcalls.log.1.bz2</i> last month archive etc.
-	</p>
-  </li>
-  <li><p>Text log data are read out daily and parsed to the SQL server database. This daily schedulling can be changed but too often invocations could result in error messages.  
-
-Данные из текстового лог-файла считываются один раз в сутки
-		и записываются в базы SQL сервера. Система позволяет производить эту
-		операцию чаще чем один раз в сутки, но учтите что частый вызов может
-		привести к появлению сообщений об ошибках. Причина кроется в том, что
-		с момента последнего переноса данных из текстового лога
-		в базы SQL сервера не поступило ни одного звонка в
-		обновлённый лог-файл $curcallslogfile. 
-
-Switching these messages off 
-
-С другой стороны, отключение
-		вывода таких сообщений может привести к тому, что в случае разрыва
-		связи с мини-АТС системный администратор не получит сообщения
-		о возникшей проблеме, что чревато потерей информации.
-		В текущей системе реализован разносторонний контроль наличия связи
-		с АТС. Одним из его уровней как раз и есть контроль количества
-		перенесённых строк из текстового лог-файла $curcallslogfile в базу
-		SQL сервера.
-		<p> Besides that, too intensive invocation of the writing function increases server load with Perl scripts.
-
-Ко всему прочему можно добавить, что частый вызов функции записи
-		скажется на увеличении загрузки маломощных серверов из-за задействования Perl скриптов.
-		<p>Для поточного добавления поступающих из АТС звонков в базы SQL сервера
-	смотрите параметр $fastwrite конфигурационного файла.</p>
-		
-  <li><p>If there already exist some PBX text logs you can quickly transform them into internal table format of the ATSlog. Make sure that the original logs (included those packed with bzip2) are located in the place pointed by the variable $callslogfile of the config file.  Launch the master-script
-	with option alltodb:<br>
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-<tr>
-<td><pre><i>$ atslogmaster alltodb</i>
-</pre></td></tr></table>
-        Be careful with this function since once activated by accident, it could produce double entries in the database.
-	<li><p>This is a sample of the call accounting protocol (text log):<br>
-    <img src="/img/installing.5.jpg" width=622  height=360 title="sample of the call log"
- alt="sample of the call log" align="middle" vspace="5"
- hspace="5"><br>
-	(1) Date: call date DD/MM/YY.<br>
-	(2) Time: call time. "*" stands for transferred call.<br>
-	(3) Ext.: internal number.<br>
-	(4) CO: external line umber used for a call.<br>
-	(5) Dial number: dialed number.<br>
-	(6) Duration: call duration.<br>
-  </li>
+Web interfe settings are located in the file
+ <tt>www/include/config.inc.php</tt>.
+Copy the SQL password from atslog.conf into this file.
+</li>
+<li>
+Read carefully the section <a href="/en/doc/using/">Using atslog ATSlog</a> and launch atslog with <tt>atslogmaster start</tt>.
+</li>
 </ol>
-<h3><a name="b77"></a>Web-interface setup</h3>
-<ol>
-	<li><p> Apache setup and creation of the virtual domain.</p>
-	<p>Add to the end of the config filr <i>httpd.conf</i> following lines:
-		<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-			<tr>
-				<td><pre>
-NameVirtualHost 192.168.0.1
-
-&lt;VirtualHost *&gt;
-   DocumentRoot /usr/local/www
-   ServerName atslog.server.com
-   ErrorLog /var/log/atslog.server.com-error
-   CustomLog /var/log/atslog.server.com-access common
-   DirectoryIndex index.html index.php
-   AddDefaultCharset WINDOWS-1251
-   &lt;Directory /usr/local/www&gt;
-     Options Indexes
-     AllowOverride All
-     AddHandler application/x-httpd-php html php
-   &lt;/Directory&gt;
-&lt;/VirtualHost&gt;
-</pre></td></tr></table><br>
-In the parameter NameVirtualHost 192.168.0.1&nbsp;&#151;  indicate IP address of the server. The ServerName variable is the server name to be translated by a system  (man 8 nslookup) into indicaed IP address.
-		</p>
-	</li>
-	<li><p>After installation all files pertaining to the web-interface are already located in /usr/local/www/atslog. All you need is to restart the  httpd server.
-		<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor=#F0F0F0>
-			<tr>
-				<td><pre>$ apachectl restart
-</pre></td></tr></table>
-	</li>
-	<li><p>Parameters of the web-interface connection to SQL server are given in <i>/usr/local/www/atslog/set/conf.inc.php</i> As a rule, after installation they are already set correctly.
-	</p>
-	<li><p>The statistics can be acessed on the address  <i>http://atslog.server.com/atslog/</i>. Use the username: <i>atslog</i>, password: <i>atslog</i> To change the password visit the section <i>&quot;Subscriber management &quot;</i></li>
-</ol>
-<HR ALIGN="center">
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<hr>
+<TABLE width="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
 <TR>
-	<TD WIDTH="33%" ALIGN="left" VALIGN="top"><a href="/doc/solder-up/" title="cable pinouts" ACCESSKEY="P">Previous</a></TD>
-	<TD WIDTH="34%" ALIGN="center" VALIGN="top"><A HREF="/doc/" ACCESSKEY="H">Sections</A></TD>
-	<TD WIDTH="33%" ALIGN="right" VALIGN="top"><a href="/doc/updating/" title="updating from previous versions" ACCESSKEY="N">Next</a></TD>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top"><a href="/en/doc/solder-up/" title="cable pinout" ACCESSKEY="P">Previous</a></TD>
+	<TD WIDTH="34%" ALIGN="center" VALIGN="top"><A HREF="/en/doc/" ACCESSKEY="H">Sections</A></TD>
+	<TD WIDTH="33%" ALIGN="right" VALIGN="top"><a href="/en/doc/updating/" title="upgrading from previous versions" ACCESSKEY="N">Next</a></TD>
 </TR>
 <TR>
-	<TD WIDTH="33%" ALIGN="left" VALIGN="top">cable pinouts</TD>
+	<TD WIDTH="33%" ALIGN="left" VALIGN="top">cable pin-outs</TD>
 	<TD WIDTH="34%" ALIGN="center" VALIGN="top">&nbsp;</TD>
-	<TD WIDTH="33%" ALIGN="right" VALIGN="top">updating from previous versions</TD>
+	<TD WIDTH="33%" ALIGN="right" VALIGN="top">Upgrading from previous versions</TD>
 </TR>
 </TABLE>
