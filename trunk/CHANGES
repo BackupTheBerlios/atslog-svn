@@ -30,6 +30,7 @@
 # (samm) Fixed compilation on some linux versions with broken libwrap
 # (samm) Fix diagram's X axis values draw for more than > 30 days 
          [Patch #1799]
+# (samm) Some PHP warnings fixed
 
 2007-JAN-11: ATSlog 2.0.0 Release
 
