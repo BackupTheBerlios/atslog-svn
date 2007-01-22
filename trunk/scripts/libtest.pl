@@ -15,5 +15,5 @@ sub WriteRecord{
     my $way = $_[4];
     my $number = $_[5];
     my $duration = $_[6];
-print("LOG: ".$str."OUT: $time_of_call,$fwd,$int,$co,$way,$number,$duration\n\n");
+print("LOG: ".$str."OUT: `$time_of_call`,`$fwd`,`$int`,`$co`,`$way`,`$number`,`$duration`\n\n");
 }
