@@ -133,9 +133,12 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
 	else {
 		&daemonize;
 		$pid = open(PBX_DATA, "-|");
-		
 		if ($pid) {   # parent
 			parsecurcalls();
+			if($vars{debug} =~ /yes/i){
+				open(STDOUT, ">$vars{logdir}/$vars{notwritelog}") || die "Can't redirect stdout";
+				select(STDOUT); $| = 1;     # make unbuffered
+			}
 			if(!close(PBX_DATA))  {
 				# warn "atslogd exited $?"
 				$ERRORMESSAGE="\n$vars{atslogd} error code: $?";
