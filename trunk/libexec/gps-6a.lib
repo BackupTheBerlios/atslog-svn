@@ -11,14 +11,14 @@
 
 
 sub parsecurcalls() {
-    while ($str=<STDIN>)
+    while ($str=<PBX_DATA>)
     {
 	$stringNumber++;
 	if ($str =~ /^\s*[0-9]+\s+([[0-9]+|\S]*)\s+([[0-9]+|\S]*)\s+([[0-9\:]+|\S]*)\s+([[0-9\/]+|\S]*)\s+([[0-9\:]+|\S]*)\s+([.|\S]*)\s*/){
 	    unitecurcalls();
 	}else{
 	    print("string #: $stringNumber\n");
-	    if ($vars{nowrlog} =~ /yes/i){
+	    if ($vars{debug} =~ /yes/i){
 	        if ($str !~ /^$/){
 	    	    print $str;
 	        };                        

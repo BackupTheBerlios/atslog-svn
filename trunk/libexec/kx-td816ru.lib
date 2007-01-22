@@ -7,7 +7,7 @@
 # Разбираем строки текстового-лог файла для АТС Panasonic KX-TD816RU
 
 sub parsecurcalls() {
-    while ($str=<>)
+    while ($str=<PBX_DATA>)
     {
         $stringnumber++;
         if ($str =~ /^.*?(\d+)\/\s??(\d+)\/\s??(\d+)\s+(\d+)\:(\d+)([A|P]M)\s+(\d+)\s+(\d+)\s+(.*?)\s+(\d+)\:(\d+)\'(\d+).+$/){

@@ -13,14 +13,14 @@
 use Time::Local;
 
 sub parsecurcalls() {
-	while ($str=<>)
+	while ($str=<PBX_DATA>)
 	{
 		$stringNumber++;
 		# regexp
 		if ($str =~ /K([EA])(\d{3})(\d{3})(\d)(\d{2})([\d ]{6})(\d{10})(\d{10})([\d ]{10}) {3}(\d{3})(\d{3})(\d{3})([\d ]{32})(\d{4})([\d ]{18})(\d{2})(\d{2})([\d ])([\d ]{4})/){
 			unitecurcalls();
 		}else{
-			if ($vars{nowrlog} =~ /yes/i){ 
+			if ($vars{debug} =~ /yes/i){ 
 				if ($str !~ /^$/){
 					print $str;
 				};

@@ -8,14 +8,14 @@
 # Разбираем строки текстового-лог файла для АТС LG LDK-100, LDK-300
 
 sub parsecurcalls() {
-    while ($str=<>)
+    while ($str=<PBX_DATA>)
     {
 		$stringNumber++;
 		if ($str =~ /(\d{4}) (.{5}) (\d{3}) (\d{2}:\d{2}:\d{2}) (\d{2}\/\d{2}\/\d{2}) (\d{2}:\d{2}) (.{20}) (.{2}) (.{5}) (.{11}) (.{12})/){
 			unitecurcalls();
 		}else{
 			#print("$stringNumber\n");
-			if ($vars{nowrlog} =~ /yes/i){
+			if ($vars{debug} =~ /yes/i){
 				if ($str !~ /^$/){
 					print $str;
 				};

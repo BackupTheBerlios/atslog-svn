@@ -9,7 +9,7 @@
 # parsecurcalls();
 
 sub parsecurcalls() {
-    while ($str=<>)
+    while ($str=<PBX_DATA>)
     {
 	$stringnumber++;
 	if ($str =~ /^\$(\d{2})\/(\d{2})\/(\d{2})(\d{2}):(\d{2}):(\d{2})(\d{2}):(\d{2}):(\d{2})(\d{3})[\d|\s]{2}([\d|\s]{1,20})(\d{4})[\d|\w|\s]{3}[\d|\w|\s]{10}$/){
@@ -17,7 +17,7 @@ sub parsecurcalls() {
 	}else{
 	    #print("$stringnumber\n");
 	    #print("$str\n");
-	    if ($vars{nowrlog} =~ /yes/i){
+	    if ($vars{debug} =~ /yes/i){
 	        if ($str !~ /^$/){
 	    	    print $str;
 	        };

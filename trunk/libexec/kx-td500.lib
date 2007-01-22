@@ -15,7 +15,7 @@
 
 
 sub parsecurcalls() {
-	while ($str=<>)
+	while ($str=<PBX_DATA>)
 	{
 		$stringNumber++;
 		# type C regexp
@@ -30,7 +30,7 @@ sub parsecurcalls() {
 		elsif ($str =~ /(\d{2}\/\d{2}\/\d{2}) (.{2}:\d{2}) (.{3}) (.{6}) (.{6}) (.{4}) (.{44}) (.{5}) (.{8}) (.{5})    (.{10}) (.{2})(\r)?$/){
 			unitecurcallsTypeD();
 		}else{
-			if ($vars{nowrlog} =~ /yes/i){
+			if ($vars{debug} =~ /yes/i){
 				if ($str !~ /^$/){
 					print $str;
 				};

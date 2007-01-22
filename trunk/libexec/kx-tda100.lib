@@ -11,7 +11,7 @@
 #
 
 sub parsecurcalls() {
-	while ($str=<>)
+	while ($str=<PBX_DATA>)
 	{
 		$stringNumber++;
 		# regexp B format
@@ -25,7 +25,7 @@ sub parsecurcalls() {
 			unitecurcallsC();
 		}
 		else{
-			if ($vars{nowrlog} =~ /yes/i){
+			if ($vars{debug} =~ /yes/i){
 				if ($str !~ /^$/){
 					print $str;
 				};

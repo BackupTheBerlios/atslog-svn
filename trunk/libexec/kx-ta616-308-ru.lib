@@ -9,14 +9,14 @@
 #
 
 sub parsecurcalls() {
-	while ($str=<>)
+	while ($str=<PBX_DATA>)
 	{
 		$stringNumber++;
 		# regexp
 		if ($str =~ /(.{2}\/.{2}\/.{2}) (.)(.{2}:\d{2}.{2}) (.\d{2})  (\d{2}) (.{37}) (.{8})\" (.{4})  (\r)?$/){
 			unitecurcalls();
 		}else{
-			if ($vars{nowrlog} =~ /yes/i){
+			if ($vars{debug} =~ /yes/i){
 				if ($str !~ /^$/){
 					print $str;
 				};

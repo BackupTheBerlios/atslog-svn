@@ -8,13 +8,13 @@
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2006
 
 sub parsecurcalls() {
-	while ($str=<>)
+	while ($str=<PBX_DATA>)
 	{
 		$stringNumber++;
 		if ($str =~ /\s(.{5}) (.{5}) (.{3}) (.{3}) (.{8}) (.{5}) (.{8}) (.{5})(.{2}) (.{6}) (.{26}) (.{1}) (.{5}) (.{10}) (.{16}) (.{16}).*$/){
 			unitecurcalls();
 		}else{
-			if ($vars{nowrlog} =~ /yes/i){
+			if ($vars{debug} =~ /yes/i){
 				if ($str !~ /^$/){
 					print $str;
 				};

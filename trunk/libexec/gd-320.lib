@@ -10,7 +10,7 @@
 
 sub parsecurcalls() {
 #    print("ParceCurCalls\n");
-    while ($str=<>)
+    while ($str=<PBX_DATA>)
     {
 	$stringnumber++;
 	if ($str =~ /^\D*([0-9]+)\s+([0-9]+)\s+\**\#*\s*([[0-9]+|CLI Num: [0-9]+|Incoming]*)\s+([0-9\/]+)\s+([0-9\:\'\"]+)\s+([0-9\:\'\"]+)/){

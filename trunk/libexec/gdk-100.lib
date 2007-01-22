@@ -7,7 +7,7 @@
 # Разбираем строки текстового-лог файла для АТС LG GDK-100
 
 sub parsecurcalls() {
-    while ($str=<>)
+    while ($str=<PBX_DATA>)
     {
         $stringnumber++;
         if ($str =~ /^\d+\s+(\d+|\w+)\s+(\d+)\s+(\d*\:*)\s*(\d+)\:(\d+)\s+(\d+)\/(\d+)\/(\d+)\s+(\d+)\:(\d+)\s+(.*?\s*)\s+.*$/){

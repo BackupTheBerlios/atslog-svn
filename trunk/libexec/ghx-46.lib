@@ -7,7 +7,7 @@
 # Разбираем строки текстового-лог файла для АТС LG GHX-46
 
 sub parsecurcalls() {
-	while ($str=<>)
+	while ($str=<PBX_DATA>)
 	{
 		$stringnumber++;
 		if ($str =~ /^(\d+)\s+(\d+)\s+(\d*\:*)\s*(\d+)\:(\d+)\s+(\d+)\:(\d+)\s+(\d+)\/(\d+)\/(\d+)\s+([\w|\d|\s]+).*$/){
