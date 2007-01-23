@@ -175,6 +175,7 @@ stoploging(){
 	if [ $RETURNKILL -eq 0 ]
 	then
             echo "$NOWDATE ${atslogd}[$ATSLOGDpid]: $msg2" >> $logdir/$startlogfile
+	    ATSLOGDpid=""
 	    return 0
 	else
 	    echo $ATSLOGDpid > $pidfile
