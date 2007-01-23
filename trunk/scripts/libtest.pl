@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 
 if (@ARGV[0] eq ''){
     die("USAGE: libtest <libname>\n");
