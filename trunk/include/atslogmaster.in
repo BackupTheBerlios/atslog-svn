@@ -25,15 +25,23 @@ else
     exit 1
 fi                                                
 
+checkstatus(){
+    if [ -f $pidfile ] ; then
+        PID=`cat $pidfile`
+        if [ "x$PID" != "x" ] && kill -0 $PID 2>/dev/null ; then
+            return $PID
+        fi
+    fi
+    return 0
+}
+						
 # Установим рабочие переменные
 PATH=$PATH:$bindir:$sharedir
-if [ -s $pidfile ];then
-    ATSLOGDpid=`cat $pidfile`
-    if [ -z "$ATSLOGDpid" ];then
-        ATSLOGDpid=`ps xo pid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
-    fi
-else
-    ATSLOGDpid=`ps xo pid,command | grep "$bindir/$atslogd" | grep --invert-match grep | head -1 | awk '{print $1}'`
+
+checkstatus
+ATSLOGDpid=$?
+if [ $ATSLOGDpid -eq 0 ]; then
+    ATSLOGDpid=""
 fi
 
 case "$debug" in
@@ -102,10 +110,10 @@ func_restart(){
 
 # Функция запускает основной скрипт считывания информации из мини-АТС
 startloging(){
-    if [ -s $pidfile ];then
+    if [ -n "$ATSLOGDpid" ];then
     	ECHOMESSAGE=$msg1
 	echomess
-	TORETURN=1
+	return 1
     else
 	# Проверим, заканчивается ли наши текстовые лог-файлы пустой строкой.
 	# Нужно для того, чтобы последние строки не слились в одну.
@@ -147,8 +155,9 @@ startloging(){
 	esac
     fi
     sleep 1;
-    if [ ! -s $pidfile ];then
-	TORETURN=1; # atslogd pid is not exists
+    checkstatus
+    if [ $? -eq 0 ];then
+	TORETURN=1; # atslogd not started
 	ERRORMESSAGE=$msg4
 	echomess
     fi
@@ -157,25 +166,18 @@ startloging(){
 
 # Функция останавливает основной скрипт считывания информации из мини-АТС
 stoploging(){
-    if [ -s $pidfile ];then
-	KILLATSLOGDpid=`cat $pidfile`
-    fi
-
-    if [ -z "$KILLATSLOGDpid" ];then
-	KILLATSLOGDpid="$ATSLOGDpid"
-    fi
-    if [ -n "$KILLATSLOGDpid" ];then
+    if [ -n "$ATSLOGDpid" ];then
 	if [ -f $pidfile ];then
 	    rm -f $pidfile
 	fi
-	kill $KILLATSLOGDpid 1>/dev/null 2>/dev/null
+	kill $ATSLOGDpid 1>/dev/null 2>/dev/null
 	RETURNKILL=$?
 	if [ $RETURNKILL -eq 0 ]
 	then
-            echo "$NOWDATE ${atslogd}[$KILLATSLOGDpid]: $msg2" >> $logdir/$startlogfile
+            echo "$NOWDATE ${atslogd}[$ATSLOGDpid]: $msg2" >> $logdir/$startlogfile
 	    return 0
 	else
-	    echo $KILLATSLOGDpid > $pidfile
+	    echo $ATSLOGDpid > $pidfile
 	    ERRORMESSAGE=$msg3
 	    echomess
 	    return $RETURNKILL
@@ -226,7 +228,6 @@ writedb)
 	    case "$fastwrite" in
 	        [Yy][Ee][Ss])
 		    if [ -n "$ATSLOGDpid" ];then
-			
 			echo "$msg24"
 			exit 1
 		    fi
@@ -411,6 +412,13 @@ cleardb)
     #
     $bindir/$cleardb yes
     ;;
+status)
+    if [ -n "$ATSLOGDpid" ];then
+	echo "$atslogd $msg26 $ATSLOGDpid"
+    else
+	echo "$atslogd $msg27"
+    fi
+        ;;    
 *)
     echo "atslogmaster version @version@ build @buildnumber@"
     if [ -n "$ATSLOGDpid" ];then
@@ -419,7 +427,7 @@ cleardb)
 	echo "$atslogd $msg27"
 	EXITSTATUS=1
     fi
-    echo "Usage: $BASENAME {start|stop|restart|reload|writedb|rotate|alltodb|cleardb}"
+    echo "Usage: $BASENAME {start|stop|restart|reload|status|writedb|rotate|alltodb|cleardb}"
     ;;
 esac
 exit $EXITSTATUS

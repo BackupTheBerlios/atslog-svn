@@ -6,6 +6,8 @@
 ! - Information
 
 === ATSLOG 2.1-DEV ===
++ (samm) Added "status" command to the atslogmaster. Added more "clever"
+         pid detection. Putch submitted by Alexander Logvinov.
 ! (samm) Added Samsung OfficeServ 100 to the list of supported models
 ! (samm) Added --disable-libwrap configure argument. 
 + (samm) Added NEC NEAX2000 SMDR support
@@ -31,6 +33,7 @@
 # (samm) Fix diagram's X axis values draw for more than > 30 days 
          [Patch #1799]
 # (samm) Some PHP warnings fixed
+# (samm) Created tester for the libraries which allow to found & fix many bugs
 
 2007-JAN-11: ATSlog 2.0.0 Release
 
