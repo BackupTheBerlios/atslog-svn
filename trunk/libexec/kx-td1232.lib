@@ -4,18 +4,17 @@
 # MODELS: KX-TD1232
 # AUTHOR: Denis CyxoB
 #
-# TESTLOG: Panasonic KX-T1232.txt
+# TESTLOG: Panasonic KX-TD1232.txt
+# TESTLOG: Panasonic KX-TD1232 (P271F).txt
+# TESTLOG: Panasonic KX-TD1232 (P271F)_2.txt
 #
-# Разбираем строки текстового-лог файла для АТС Panasonic KX-TD1232
-
 sub parsecurcalls() {
     while ($str=<PBX_DATA>)
     {
         $stringnumber++;
-        if ($str =~ /^.*?(\d+)\/\s??(\d+)\/\s??(\d+)\s+(\d+)\:(\d+)([A|P]M)\s+(\d+)\s+(\d+)\s+(.*?)\s+(\d*)\s+(\d+)\:(\d+)\'(\d+)\s+(\w*).+$/){
+        if ($str =~ /(\d{2})\/(\d{2})\/(\d{2}) (\d{2})\:(\d{2})(.{2}) (.{5}) (\d{2}) (.{25}).{5} (\d{2}):(\d{2})\'(\d{2}) (.{10}) (.{2})/){
 	    unitecurcalls();
         }else{
-	    #print("$stringnumber\n");
 	    if ($vars{debug} =~ /yes/i){
 		if ($str !~ /^\s*$/){
 		    print $str;
@@ -27,13 +26,12 @@ sub parsecurcalls() {
 
 sub unitecurcalls() {
 
-    $Month = $1;
+    my $Month = $1;
+    my $Day=$2;
+    my $Year=$3+2000;
+    my $code=$13;
 
-    $Day=$2;
-
-    $Year=$3+2000;
-
-    $CallHour=&AmPmTo24($4,$6);
+    my $CallHour=&AmPmTo24($4,$6);
 
     if($14 eq 'FW' or $14 eq 'TR'){
 	$forwarded =1;
@@ -47,15 +45,14 @@ sub unitecurcalls() {
 
     $co=$8;
     
-    $duration = (($11*60*60)+($12*60)+$13);
-
+    $duration = (($10*60*60)+($11*60)+$12);
     $forIncoming=$9;
 
     $earlyIncoming=$10;
 
     $timeofcall = "$Year-$Month-$Day $CallHour\:$CallMinute\:00";
 
-    if($forIncoming =~ /<INCOMING>\s*/i){
+    if($forIncoming =~ /<I(NCOMING)?>\s*/i){
 	$way='1';
 # Если АОН на АТС может определять номер входящего звонка.
 	$number=$earlyIncoming;
@@ -71,8 +68,6 @@ sub unitecurcalls() {
     };
 
     if ($timeofcall ne ""){
-# Для проверки наличия хоть одной запись звонков подлежащей
-# записи в db.
 	$callsCount++;
     }
     #print("$stringnumber $timeofcall $forwarded $internally $co $way $number $duration\n");
