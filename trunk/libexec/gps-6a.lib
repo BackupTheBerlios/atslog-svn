@@ -105,7 +105,7 @@ sub unitecurcalls() {
 
 	    $Duration=(($partCell[5][0]*60)+$partCell[5][1]);
 
-    	    $TimeOfCall="'${partCell[3][0]}-${partCell[3][1]}-${partCell[3][2]} ${partCell[4][0]}:${partCell[4][1]}:${partCell[4][2]}'";
+    	    $TimeOfCall="${partCell[3][0]}-${partCell[3][1]}-${partCell[3][2]} ${partCell[4][0]}:${partCell[4][1]}:${partCell[4][2]}";
 
     	    if ($TimeOfCall ne ""){
     # Проверим, имеестя ли хоть одна запись звонков подлежащая
