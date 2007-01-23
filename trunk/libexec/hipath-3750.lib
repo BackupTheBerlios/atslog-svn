@@ -5,9 +5,9 @@
 # AUTHOR: Alex Samorukov
 # COMMENTS: compressed mode format
 #
-# TESTLOG: Siemens Hicom 150 OfficeCom (Wide).txt
+# TESTLOG: Siemens HIPATH-3750.txt
 #
-# Library for the Siemens HIPATH 3000/3750 (compresses mode format)
+# Library for the Siemens HIPATH 3000/3750 (compressed mode format)
 #
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2006
 

@@ -19,8 +19,9 @@ sub readlog{
     $incoming_total=0;
     $outgoing_total=0;
     $duration_total=0;
+    $total_errors=0;
     parsecurcalls();
-    print("total: out: $incoming_total, in: $outgoing_total, dur.: $duration_total\n\n");
+    print("total: out: $incoming_total, in: $outgoing_total, dur.: $duration_total, err: $total_errors\n\n");
 }
 
 sub WriteRecord{
@@ -31,8 +32,14 @@ sub WriteRecord{
     my $way = $_[4];
     my $number = $_[5];
     my $duration = $_[6];
+
     $duration_total+=$duration;
-    # print("LOG: ".$str."OUT: `$time_of_call`,`$fwd`,`$int`,`$co`,`$way`,`$number`,`$duration`\n\n");
+    #print("LOG: ".$str."OUT: `$time_of_call`,`$fwd`,`$int`,`$co`,`$way`,`$number`,`$duration`\n\n");
+
+    if($duration !~ /^\d+$/|| $co !~ /^\d+$/ || $way !~ /^[12]$/ || $time_of_call !~ /^[12]\d\d\d-[01]\d-[0123]\d [012]\d:\d\d:\d\d$/){
+	$total_errors++;
+    }
+
     if($way==2) {$incoming_total++;}
     elsif($way==1) {$outgoing_total++;}
 }
