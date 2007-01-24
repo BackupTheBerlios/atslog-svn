@@ -4,6 +4,7 @@ if (@ARGV[0] eq ''){
     die("USAGE: libtest <libname>\n");
 }
 
+open(DUMP,">>parser.log") || warn ("cannot open dump");
 open(IN,@ARGV[0]) || die print("Can't open library.\n");
 while($line=<IN>) {
     if($line=~/# TESTLOG: (.+)\n?/){
@@ -13,6 +14,7 @@ while($line=<IN>) {
     }
 }
 close(IN);
+close(DUMP);
 
 sub readlog{
     require $_[0];
@@ -34,7 +36,7 @@ sub WriteRecord{
     my $duration = $_[6];
 
     $duration_total+=$duration;
-    #print("LOG: ".$str."OUT: `$time_of_call`,`$fwd`,`$int`,`$co`,`$way`,`$number`,`$duration`\n\n");
+    print(DUMP "LOG: ".$str."OUT: `$time_of_call`,`$fwd`,`$int`,`$co`,`$way`,`$number`,`$duration`\n\n");
 
     if($duration !~ /^\d+$/|| $co !~ /^\d+$/ || $way !~ /^[12]$/ || $time_of_call !~ /^[12]\d\d\d-[01]\d-[0123]\d [012]\d:\d\d:\d\d$/){
 	$total_errors++;
