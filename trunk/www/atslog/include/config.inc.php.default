@@ -24,8 +24,12 @@ $debugMode=FALSE; // Debug mode.
 $demoMode=FALSE; // Demo mode.
 
 // Here you can define codes of your local mobile operators.
-// here is example for the ukrainian mobile networks.
 // Simply put your local operator codes to this array and uncomment this string
+
+// here is example for the ukrainian mobile networks.
 // $MobileCodes=array("050", "095", "066", "099", "067", "098", "068", "097", "096","039","063", "093", "094", "092");
+
+// here is example for the russian mobile networks.
+// $MobileCodes=array("901", "902", "903", "904", "905", "906", "908", "909", "910", "911", "912", "913", "914", "915", "916", "917", "918", "919", "920", "921", "923", "924", "925", "926", "927", "928", "929", "950", "951", "952", "960", "961", "962", "963", "985", "987", "988", "997", "501", "503", "478", "502", "5040", "5041", "5042", "5043", "5044", "5045", "5046", "5047", "5048", "5049", "505", "506", "50921", "50931", "50985", "50995", "51101", "51110", "51111", "51111", "51121", "51130", "51140", "51205", "51211", "51230", "51285", "51295", "513", "517", "954", "700"); 
 
 ?>
