@@ -6,8 +6,8 @@
 ! - Information
 
 === ATSLOG 2.1-DEV ===
-+ (samm) Added "status" command to the atslogmaster. Added more "clever"
-         pid detection. Putch submitted by Alexander Logvinov.
++ (samm) Added "status" command to the atslogmaster. Added more accurate
+         pid detection, fixed restart. Patch submitted by Alexander Logvinov.
 ! (samm) Added Samsung OfficeServ 100 to the list of supported models
 ! (samm) Added --disable-libwrap configure argument. 
 + (samm) Added NEC NEAX2000 SMDR support
