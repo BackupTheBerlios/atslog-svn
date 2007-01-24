@@ -8,7 +8,7 @@
 # TESTLOG: LG LDK-300 with CID.txt
 #
 # First version was contributed by Sergey K. sak17[at]mail.ru,
-# Разбираем строки текстового-лог файла для АТС LG LDK-100, LDK-300
+
 
 sub parsecurcalls() {
     while ($str=<PBX_DATA>)
