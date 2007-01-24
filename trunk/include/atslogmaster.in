@@ -90,21 +90,24 @@ echomess(){
 
 func_restart(){
 # Останавливаем.
-    stoploging 
+    stoploging
     if [ $? -eq 0 ]
     then
-# Если удалось успешно остановить, то запускаем заново.
-        startloging
-        if [ $? -eq 0 ]
-	then
-	    echo "$msg9"
-	else
-	    echo "$msg23"
-	    exit 1
-	fi
+	echo "$msg7"
     else
 	echo "$msg8"
-	exit 1
+    fi
+    checkstatus
+    ATSLOGDpid=$?
+    if [ $ATSLOGDpid -eq 0 ]; then
+	ATSLOGDpid=""
+    fi
+    startloging
+    if [ $? -eq 0 ]
+    then
+	echo "$msg5"
+    else
+	echo "$msg23"
     fi
 }
 
