@@ -5,6 +5,7 @@
 # AUTHOR: Alex Samorukov samm@os2.kiev.ua
 #
 # TESTLOG: LG LDK-300.txt
+# TESTLOG: LG LDK-300 with CID.txt
 #
 # First version was contributed by Sergey K. sak17[at]mail.ru,
 # Разбираем строки текстового-лог файла для АТС LG LDK-100, LDK-300
@@ -53,7 +54,14 @@ sub unitecurcalls() {
 	
 	if($dialed_number =~ /I/){
 		$way='1';
-		$number=0;
+		# detection of the CID line
+		if($dialed_number =~ /^I(\d+)/)
+		{
+			$nubmer=$1;
+		}
+		else {
+			$number=0;
+		}
 	}else{
 		$way='2';
 	};
