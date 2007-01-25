@@ -1,8 +1,11 @@
 2.1.x plans
+* Proofread translation of the english web interface
+
+2.2.x plans
 * add accounting code (AKA business code) support
 * Replace http-header based auth with form-based one. This will allow to 
   run atslog-www with php-cgi and to implement "logout" function.
-* Proofread translation of the english web interface
+* Add support for the >1 PBX to the atslog.
 
 May be, someday
 * accounting (billing)
