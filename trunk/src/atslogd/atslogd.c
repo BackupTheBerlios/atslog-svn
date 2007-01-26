@@ -47,7 +47,9 @@ typedef long	DWORD;
 #define INVALID_HANDLE_VALUE (HANDLE)(-1)
 
 #define	MAXSTRINGLEN	1028
+#ifndef MAXPATHLEN
 #define MAXPATHLEN	256
+#endif
 #define MAXFILENAMELEN	256
 #define MAXERRORLEN	256
 
