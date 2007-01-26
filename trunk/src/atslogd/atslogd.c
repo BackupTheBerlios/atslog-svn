@@ -340,7 +340,7 @@ my_strerror(void)
 	static char	ret_err[MAXERRORLEN + 1];
 	int		rc;
 	int		l;
-	snprintf(ret_err, sizeof(ret_err)-1, "(%d) ", errno);
+	snprintf(ret_err, sizeof(ret_err), "(%d) ", errno);
 	l = strlen(ret_err);
 	strncpy(ret_err + l, strerror(errno), MAXERRORLEN - l);
 	ret_err[MAXERRORLEN] = 0;
