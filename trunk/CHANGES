@@ -21,6 +21,7 @@
 + (samm) Changed atslogd i/o functions. Now atslogd use block reading
          instead of character reading. This will allow to add binary formats
          support.
+# (samm) Fixed compilation problems on OpenBSD
 # (samm) fixed "debug" mode.
 # (samm) Fixed "rotate" command. atslogd log file was lost after 
          "atslogmaster rotate".
