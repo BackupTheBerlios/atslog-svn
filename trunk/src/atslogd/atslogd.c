@@ -23,6 +23,8 @@
 #include "atslogd.h"
 #ifdef USE_LIBWRAP
 #include <tcpd.h>
+int allow_severity = 0;  /* OpenBSD require this symbols */
+int deny_severity  = 0;
 #endif				/* USE_LIBWRAP */
 #include <netdb.h>
 
