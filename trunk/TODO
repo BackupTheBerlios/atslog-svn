@@ -1,6 +1,3 @@
-2.1.x plans
-* Proofread translation of the english web interface
-
 2.2.x plans
 * add accounting code (AKA business code) support
 * Replace http-header based auth with form-based one. This will allow to 
