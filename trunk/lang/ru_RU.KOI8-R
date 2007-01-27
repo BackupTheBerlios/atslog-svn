@@ -1,7 +1,7 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.com  
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #
-# Файл с сообщениями сервеной части ATSlog.
+# Файл с сообщениями серверной части ATSlog.
 # Русский язык, кодировка KOI8-R
 #
 msg1="не может стартовать, т.к. уже существует PID файл. Скорее всего, ATSlog уже запущен; в противном случае удалите файл ${pidfile}"
