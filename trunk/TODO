@@ -7,3 +7,5 @@
 May be, someday
 * accounting (billing)
 * smarty-based templates
+* Add asterisk support - see 
+  http://www.voip-info.org/wiki/view/Asterisk+cdr+mysql
