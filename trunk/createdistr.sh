@@ -37,7 +37,7 @@ perl scripts/subdir_subst.pl -x -d tmp/ '\@buildnumber\@' ${build} >/dev/null
 find ./tmp -name \*sds_sav -type f |xargs rm
 
 echo "Creating ChangeLog"
-svn2cl ../ -o tmp/atslog-${ver}/ChangeLog
+svn2cl ./ -o tmp/atslog-${ver}/ChangeLog
 echo "Creating atslog-${ver}.tar.gz"
 
 cd tmp
