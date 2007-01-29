@@ -243,6 +243,7 @@ if ($res && $res->RecordCount() > 0) {
 
 		$anyDigit=1;
 		$linha=0;
+		if(!isset($noAbonents)) $noAbonents=0;
 		while ($row = $res->FetchRow()) {
 			if(!empty($row[1]) && !$noAbonents) {
 			    $intPhoneDescription="($row[1])";
