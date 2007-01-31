@@ -36,7 +36,7 @@ open(IN,$config) || die print("Can't open config $config\n");
 open(OUT,">/tmp/conftmp");
 $print_out=1;
 while($line=<IN>) {
-    if($line=~/^model=/){
+    if($line=~/^#$/){
 	$print_out=1;
     }
 
