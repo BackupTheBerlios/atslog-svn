@@ -208,38 +208,46 @@ pidfile=@localstatedir@/run/atslogd.pid
 #
 howmonth=12
 
-# Модель АТС.
-# На данный момент поддерживаются следующие:
-# Panasonic KX-TA308RU
-#           KX-TA308
-#           KX-TA616RU
-#           KX-TD1232
-#           KX-TD1232-RU (русская прошивка)
-#	    KX-TD816RU
-#	    KX-TD500
-#           KX-TEM824
-#           KX-TES824
-#           KX-TDA100
-#           KX-TDA200
-# Samsung   SKP-816
-#           NX-820
-#           OFFICESERV-7200
-#           OFFICESERV-500
-#           OFFICESERV-100
-#           IDCS-500
-# Hybrex    GD-320
-# Siemens   HICOM-150
-#           HICOM-350H
-#           HICOM-250
-#           HIPATH-3750 (3000/3750, сжатый формат лога)
-# LG        GDK-100
-#           GDK-162
-#           GHX-46
-#           LDK-300
-#           LDK-100
-# GoldStar  GPS-6A
-# Alcatel   4200E
-# NEC       NEAX2000 (формат - внутренний SMDR NEAX 2400 IMS)
+# Список поддерживаемых моделей АТС:
+# Alcatel:
+# 		4200E
+# Goldstar:
+# 		GPS-6A
+# Hybrex:
+# 		GD-320
+# LG:
+# 		GDK-100
+# 		GDK-162
+# 		GHX-46
+# 		LDK-100
+# 		LDK-300
+# NEC:
+# 		NEAX2000
+# Panasonic:
+# 		KX-TA308
+# 		KX-TA308RU
+# 		KX-TA616
+# 		KX-TA616RU
+# 		KX-TD1232
+# 		KX-TD1232-RU
+# 		KX-TD500
+# 		KX-TD816RU
+# 		KX-TDA100
+# 		KX-TDA200
+# 		KX-TEM824
+# 		KX-TES824
+# Samsung:
+# 		IDCS-500
+# 		NX-820
+# 		OFFICESERV-100
+# 		OFFICESERV-500
+# 		OFFICESERV-7200
+# 		SKP-816
+# Siemens:
+# 		HICOM-150
+# 		HIPATH-3750
+# 		Hicom 250
+# 		Hicom 350H
 #
 # При указании параметра $model нужно задать только
 # обозначение модели без названия производителя.

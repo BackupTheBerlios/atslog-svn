@@ -203,38 +203,46 @@ pidfile=@localstatedir@/run/atslogd.pid
 #
 howmonth=12
 
-# PBX model.
-# PBX`s supported by current version of the ATSLog:
-# Panasonic KX-TA308RU
-#           KX-TA308
-#           KX-TA616RU
-#           KX-TD1232
-#           KX-TD1232-RU (russian firmware)
-#	    KX-TD816RU
-#	    KX-TD500
-#           KX-TEM824
-#           KX-TES824
-#           KX-TDA100
-#           KX-TDA200
-# Samsung   SKP-816
-#           NX-820
-#           OFFICESERV-7200
-#           OFFICESERV-500
-#           OFFICESERV-100
-#           IDCS-500
-# Hybrex    GD-320
-# Siemens   HICOM-150
-#           HICOM-350H
-#           HICOM-250
-#           HIPATH-3750 (3000/3750 with compressed log format)
-# LG        GDK-100
-#           GDK-162
-#           GHX-46
-#           LDK-300
-#           LDK-100
-# GoldStar  GPS-6A
-# Alcatel   4200E
-# NEC       NEAX2000 (built-in SMDR NEAX 2400 IMS Format)
+# List of the supported PBX models:
+# Alcatel:
+# 		4200E
+# Goldstar:
+# 		GPS-6A
+# Hybrex:
+# 		GD-320
+# LG:
+# 		GDK-100
+# 		GDK-162
+# 		GHX-46
+# 		LDK-100
+# 		LDK-300
+# NEC:
+# 		NEAX2000
+# Panasonic:
+# 		KX-TA308
+# 		KX-TA308RU
+# 		KX-TA616
+# 		KX-TA616RU
+# 		KX-TD1232
+# 		KX-TD1232-RU
+# 		KX-TD500
+# 		KX-TD816RU
+# 		KX-TDA100
+# 		KX-TDA200
+# 		KX-TEM824
+# 		KX-TES824
+# Samsung:
+# 		IDCS-500
+# 		NX-820
+# 		OFFICESERV-100
+# 		OFFICESERV-500
+# 		OFFICESERV-7200
+# 		SKP-816
+# Siemens:
+# 		HICOM-150
+# 		HIPATH-3750
+# 		Hicom 250
+# 		Hicom 350H
 #
 # At the $model parameter it is necessary to set only a designation of PBX model
 # without the name of the manufacturer. 
