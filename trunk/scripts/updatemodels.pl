@@ -14,7 +14,7 @@ while ($name = readdir(DIRHANDLE)) {
 }
 closedir(DIRHANDLE);
 
-$output="\n";
+$output="";
 # creating output
 foreach $model (sort keys %models) {
      $output.="# $model:\n";
@@ -27,8 +27,8 @@ foreach $model (sort keys %models) {
 
 chdir("../include");
 
-modconf("atslog.conf.default.in");
-modconf("atslog.conf.default.rus.in");
+modconf("atslog.conf.default.in", "# List of the supported PBX models:");
+modconf("atslog.conf.default.rus.in","# Список поддерживаемых моделей АТС:");
 
 sub modconf(){
     my $config=$_[0];
@@ -43,7 +43,7 @@ while($line=<IN>) {
     if($print_out) {print OUT $line;}
     if($line=~/^howmonth=/){
 	$print_out=0;
-	print OUT $output;
+	print OUT "\n".$_[1]."\n".$output;
     }
 
 }
