@@ -6,6 +6,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
 NOWDATE=`LANG=en_US;date`
 BASENAME=`basename $0`
 prefix=@prefix@
+ATSLOGDpid=""
 
 # Readin config file                              
 if [ -r @sysconfdir@/atslog.conf ]; then
@@ -26,10 +27,11 @@ else
 fi                                                
 
 checkstatus(){
+    ATSLOGDpid=""
     if [ -f $pidfile ] ; then
         PID=`cat $pidfile`
         if [ "x$PID" != "x" ] && kill -0 $PID 2>/dev/null ; then
-            return $PID
+	    ATSLOGDpid=$PID
         fi
     fi
     return 0
@@ -39,10 +41,6 @@ checkstatus(){
 PATH=$PATH:$bindir:$sharedir
 
 checkstatus
-ATSLOGDpid=$?
-if [ $ATSLOGDpid -eq 0 ]; then
-    ATSLOGDpid=""
-fi
 
 case "$debug" in
     [Yy][Ee][Ss])
@@ -53,11 +51,6 @@ case "$debug" in
     ;;
 esac
 
-# creating log directory
-if [ ! -d $logdir ]; then
-    mkdir -p $logdir
-    chmod 700 $logdir
-fi
 
 # Проверим, используется tcp порт, или порт в /dev/
 TCPPORT=$(expr $port : ".*tcp:.*\$")
@@ -98,10 +91,6 @@ func_restart(){
 	echo "$msg8"
     fi
     checkstatus
-    ATSLOGDpid=$?
-    if [ $ATSLOGDpid -eq 0 ]; then
-	ATSLOGDpid=""
-    fi
     startloging
     if [ $? -eq 0 ]
     then
@@ -159,7 +148,7 @@ startloging(){
     fi
     sleep 1;
     checkstatus
-    if [ $? -eq 0 ];then
+    if [ -z ATSLOGDpid ];then
 	TORETURN=1; # atslogd not started
 	ERRORMESSAGE=$msg4
 	echomess
