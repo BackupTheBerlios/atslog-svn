@@ -51,6 +51,11 @@ case "$debug" in
     ;;
 esac
 
+# creating log directory
+if [ ! -d $logdir ]; then
+    mkdir -p $logdir
+    chmod 700 $logdir
+fi
 
 # Проверим, используется tcp порт, или порт в /dev/
 TCPPORT=$(expr $port : ".*tcp:.*\$")
