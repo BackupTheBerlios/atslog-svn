@@ -1098,7 +1098,7 @@ rtcp:
 			    {
 				/* because we read() in blocking mode so if   */
 				/* we've got 0 -> remote peer hangs           */
-				if ((errno != EINTR) || (errno != EAGAIN))
+				if (errno != EINTR)
 				    {
 					my_syslog("Connection with remote peer %s:%d has been closed", inet_ntoa(sa_rclient.sin_addr), ntohs(sa_rclient.sin_port));
 					h2close = INVALID_HANDLE_VALUE;
