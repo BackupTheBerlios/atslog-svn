@@ -1089,37 +1089,48 @@ rtcp:
 		my_syslog("Can't open CDR file '%s': %s", dirname, strerror(errno));
 		my_exit(1);
 	}
-	while ((rc = read_block(hCom, buf)) >= 0) {
-		if (rc == 0) {
-			if ((is_tcp) || (is_rtcp)) {
+	while (1)
+	    {
+		rc = read_block(hCom, buf);
+		if (rc <= 0) 
+		    {
+			if ((is_tcp) || (is_rtcp)) 
+			    {
 				/* because we read() in blocking mode so if   */
 				/* we've got 0 -> remote peer hangs           */
-				if (errno != EINTR) {
-					my_syslog("Connection with remote peer %s:%d has been closed, exiting", inet_ntoa(sa_rclient.sin_addr), ntohs(sa_rclient.sin_port));
+				if ((errno != EINTR) || (errno != EAGAIN))
+				    {
+					my_syslog("Connection with remote peer %s:%d has been closed", inet_ntoa(sa_rclient.sin_addr), ntohs(sa_rclient.sin_port));
 					h2close = INVALID_HANDLE_VALUE;
 					close(hCom);
-					if (is_rtcp) {
+					if (is_rtcp)
+					    {
 						my_syslog("Reconnect");
 						goto rtcp;
-					} else
+					    }
+					else
+						my_syslog("Exiting");
 						my_exit(0);
 
-				}
-			} else {
+				    }
+			    }
+			else 
+			    {
 				h2close = INVALID_HANDLE_VALUE;
 				close_tty(hCom);
 				sleep(next_open_timeout);
 				hCom = open_io(argv[0], speed, data_bits, parity, stop_bits);
-				if (hCom == INVALID_HANDLE_VALUE) {
+				if (hCom == INVALID_HANDLE_VALUE)
+				    {
 					my_syslog("Can't open '%s', exiting", argv[0]);
 					my_exit(1);
-				}
-			}
+				    }
+			    }
 			continue;
-		}
+		    }
 		my_write(buf, cur_logfile, rc);
 		my_fflush(cur_logfile);
-	}
+	    }
 	my_exit(0);
 	return 0;
 }
