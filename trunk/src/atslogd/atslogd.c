@@ -570,7 +570,7 @@ read_block(HANDLE hCom, unsigned char *buf)
 	int		count     , stop;
 	do {
 		stop = 1;
-		count = read(hCom, buf, sizeof(count));
+		count = read(hCom, buf, MAXSTRINGLEN+1);
 		if(dbg)
 			my_syslog("read(): %d bytes", count);
 		if (tflag) {
