@@ -1,6 +1,6 @@
 NAME
 
-    ATSlog gives the convenient interface for viewing and analysing bells of various models PBX.
+    ATSlog gives the convenient interface for viewing and analysing calls of various models PBX.
 
 SYNOPSIS
 
