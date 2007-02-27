@@ -126,24 +126,9 @@ atslogd=atslogd
 # Используйте -t при возникновении проблем с tcp режимом
 atslogd_flags=
 
-
 # Основной управляющий скрипт
 #
 masterscript=atslogmaster
-
-# Скрипт запуска программы при старте системы
-#
-initscript=@sysconfdir@/rc.d/atslogdinit.sh
-
-# Скрипт ежемесячного вызова ротации логов
-#
-monthlyscript=@bindir@/atslogrotate
-
-# Скрипт ежедневного вызова сбора информации из
-# текстового лог-файла и записи её в базу SQL сервера.
-# Скрипт активируется только если параметр $fastwrite=no
-
-dailyscript=@bindir@/atslogdaily
 
 # Скрипт, передающий информацию о звонках SQL серверу
 #

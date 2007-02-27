@@ -126,20 +126,6 @@ atslogd_flags=
 #
 masterscript=atslogmaster
 
-# Init script of the program (system start & stop)
-#
-initscript=@sysconfdir@/rc.d/atslogdinit.sh
-
-# Monthly log rotate script
-#
-monthlyscript=@bindir@/atslogrotate
-
-# daily script called for gathering the information from text file and
-# making records in the SQL server table. 
-# This script is activated only if parameter $fastwrite=no
-
-dailyscript=@bindir@/atslogdaily
-
 # The script transferring the information on calls to the SQL server
 #
 atslogdb=atslogdb.pl
