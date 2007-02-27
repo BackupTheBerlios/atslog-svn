@@ -129,7 +129,9 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
 	if(!$fastwrite){
 		# pass stdin to the library
 		open(PBX_DATA,"-");
-		parsecurcalls();
+		if( connecttodb() ){
+			parsecurcalls();
+		}
 	}
 	else {
 		&daemonize;
@@ -139,13 +141,14 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
 				open(STDOUT, ">>$vars{logdir}/$vars{notwritelog}") || die "Can't redirect stdout";
 				select(STDOUT); $| = 1;     # make unbuffered
 			}
-			parsecurcalls();
-			if(!close(PBX_DATA))  {
-				# warn "atslogd exited $?"
-				$ERRORMESSAGE="\n$vars{atslogd} error code: $?";
-				echoerrors();
-			};
-			
+			if( connecttodb() ){
+				parsecurcalls();
+				if(!close(PBX_DATA))  {
+					# warn "atslogd exited $?"
+					$ERRORMESSAGE="\n$vars{atslogd} error code: $?";
+					echoerrors();
+				};
+			}
 		} else {      # child
 			if($vars{port} !~ /r?tcp\:/i){
 				$vars{port}='/dev/'.$vars{port};
@@ -162,26 +165,17 @@ if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlm
 		echoerrors();
 	}
 	$dbh->disconnect;
-}else{
-	$ERRORMESSAGE="$vars{msg33}:".$DBI::errstr; 
-	echoerrors();
-}
 if($vars{syslogfacility}){
 	closelog();
 }    
 exit $toexit;
 
 sub WriteRecord{
-	my $time_of_call = $_[0];
-	my $fwd = $_[1];
-	my $int = $_[2];
-	my $co = $_[3];
-	my $way = $_[4];
-	my $number = $_[5];
-	my $duration = $_[6];
-	my $query = "INSERT INTO calls (timeofcall, forwarded,internally,co, way,number, duration) VALUES  ('$time_of_call', '$fwd', '$int', '$co', '$way', '$number', '$duration');";                
-        my $sth = $dbh->prepare($query);                                                                    
-        $sth->execute;
+	my ($time_of_call, $fwd, $int, $co, $way, $number, $duration) = @_ ;
+	my $query = "INSERT INTO calls ( timeofcall, forwarded, internally, co, way, number, duration ) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
+	my $sth = $dbh->prepare($query); 	
+        my $sth = $dbh->prepare($query);
+	$sth->execute($time_of_call, $fwd, $int, $co, $way, $number, $duration);
 	if($sth->err){
 		# error on SQL query. We need to record sql server message to 
 		# the syslog and failed record to the special file
@@ -193,6 +187,19 @@ sub WriteRecord{
 		return -1;
 	}
 	return 0;
+}
+
+sub connecttodb {
+	if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0})){
+		if($vars{sqltype} =~ /MySQL/i){
+			$dbh->{mysql_auto_reconnect} = 1;
+		}
+		return 1;
+	}else{
+		$ERRORMESSAGE="$vars{msg33}:".$DBI::errstr;
+		echoerrors();
+		return 0;
+	}
 }
 
 sub getLibName{
