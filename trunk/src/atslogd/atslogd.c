@@ -564,14 +564,19 @@ atomicio(ssize_t(*f) (int, void *, size_t), int fd, void *_s, size_t n){
 
 
 int 
-read_block(HANDLE hCom, unsigned char *buf)
+read_block(HANDLE hCom, unsigned char *buf, int bufsize)
 {
 	unsigned char	obuf[4];
 	unsigned char  *p, *end;
 	int		count     , stop;
+
+	if(dbg)
+		my_syslog("read_block: %d bufsize", bufsize);
+
+
 	do {
 		stop = 1;
-		count = read(hCom, buf, sizeof(buf));
+		count = read(hCom, buf, bufsize);
 		if(dbg)
 			my_syslog("read(): %d bytes", count);
 		if (tflag) {
@@ -694,7 +699,7 @@ main(int argc, char *argv[])
 	int		data_bits = 8, stop_bits = 1;
 	char		parity = 0;
 	int		next_open_timeout = 5;
-	unsigned char		buf       [MAXSTRINGLEN + 1];
+	unsigned char	buf[1024];
 	unsigned short	tcpPort = 0, rtcpPort = 0;
 	char           *hostname = NULL, *rhostname = NULL;
 	char           *token = NULL, *saveptr = NULL, *port = NULL;
@@ -1116,7 +1121,7 @@ rtcp:
 	}
 	while (1)
 	    {
-		rc = read_block(hCom, buf);
+		rc = read_block(hCom, buf, sizeof(buf));
 		if (rc <= 0) 
 		    {
 			if ((is_tcp) || (is_rtcp)) 
