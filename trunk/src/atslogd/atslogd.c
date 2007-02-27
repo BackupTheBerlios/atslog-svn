@@ -30,6 +30,7 @@ int deny_severity  = 0;
 
 #include <signal.h>
 #include <sys/socket.h>
+#include <netinet/tcp.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <arpa/telnet.h>
@@ -1059,6 +1060,30 @@ rtcp:
 			my_syslog("setsockopt() failed: %s", my_strerror());
 			my_exit(1);
 		}
+                /* fine tuning of the keepalive options. 
+		Because there are no such options in BSD stack this will 
+		work for the Linux only*/
+#ifdef TCP_KEEPCNT
+		opt=5; /* maximum number of keepalive probes to be sent. */
+		if (setsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, (char *)&opt, sizeof(opt)) < 0) {
+			my_syslog("setsockopt() failed: %s", my_strerror());
+			my_exit(1);
+		}
+#endif
+#ifdef TCP_KEEPINTVL
+		opt=2; /* number of seconds to wait before retransmitting a keepalive probe. */ 
+		if (setsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, (char *)&opt, sizeof(opt)) < 0) {
+			my_syslog("setsockopt() failed: %s", my_strerror());
+			my_exit(1);
+		}
+#endif
+#ifdef TCP_KEEPIDLE
+		opt=60; /* number of seconds to wait before retransmitting a keepalive probe. */ 
+		if (setsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, (char *)&opt, sizeof(opt)) < 0) {
+			my_syslog("setsockopt() failed: %s", my_strerror());
+			my_exit(1);
+		}
+#endif		
 		memset(&sa_rclient, 0, sizeof(sa_rclient));
 		memcpy(&sa_rclient.sin_addr.s_addr, he_rserver->h_addr_list[0], he_rserver->h_length);
 		sa_rclient.sin_family = AF_INET;
