@@ -1,7 +1,10 @@
 #!/bin/sh
 # ATSlog version @version@ build @buildnumber@ www.atslog.com
-# Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
-#                                                       
+# Copyright (C) 2003-2007 Denis CyxoB www.yamiyam.dp.ua
+#
+# chkconfig: 345 96 04
+# description:  This is a daemon for reading PBX logs
+#
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:.
 NOWDATE=`LANG=en_US;date`
 BASENAME=`basename $0`
