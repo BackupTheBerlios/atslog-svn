@@ -174,9 +174,17 @@ sub WriteRecord{
 	my ($time_of_call, $fwd, $int, $co, $way, $number, $duration) = @_ ;
 	my $query = "INSERT INTO calls ( timeofcall, forwarded, internally, co, way, number, duration ) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
 	my $sth = $dbh->prepare($query); 	
-        my $sth = $dbh->prepare($query);
 	$sth->execute($time_of_call, $fwd, $int, $co, $way, $number, $duration);
-	if($sth->err){
+	if($sth->err){ # try to reconnect and send the query again
+		$ERRORMESSAGE="\nError on sth->execute: ".$sth->errstr()."\n";
+		echoerrors();
+		if(connecttodb()){
+			my $sth = $dbh->prepare($query);
+			$sth->execute($time_of_call, $fwd, $int, $co, $way, $number, $duration);
+			if(!$sth->err) { # success
+				return 0;
+			}
+		}
 		# error on SQL query. We need to record sql server message to 
 		# the syslog and failed record to the special file
 		open(SQLFAIL,">>$vars{logdir}/sqlfail.log");
