@@ -176,7 +176,7 @@ sub WriteRecord{
 	my $sth = $dbh->prepare($query); 	
 	$sth->execute($time_of_call, $fwd, $int, $co, $way, $number, $duration);
 	if($sth->err){ # try to reconnect and send the query again
-		$ERRORMESSAGE="\nError on sth->execute: ".$sth->errstr()."\n";
+		$ERRORMESSAGE="\nError on sth->execute: ".$sth->errstr().", reconnecting\n";
 		echoerrors();
 		if(connecttodb()){
 			my $sth = $dbh->prepare($query);
