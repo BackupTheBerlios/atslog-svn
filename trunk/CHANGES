@@ -7,6 +7,15 @@
 
 === ATSLOG 2.2-DEV ===
 
+# (samm) Added 12h time format processing to the tda100.lib library
+# (samm) PostgeSQL fixes and autoreconnecting to SQL in case of problems
+# (samm) some unused scripts and variables were removed
++ (samm) added keep-alive tuning for the Linux TCP/IP stack
+# (hiddenman) atslogd EAGAIN shouldn't be used in blocking mode
+# (samm,hiddenman) fixed size of the tcp/ip read buffer
+# (hiddenman) fixed incorrect PID in the atslogmaster script
+# (samm) fixed incorrect PID in the atslogd in non daemon mode
+
 2007-JAN-28: ATSlog 2.1.0 Release
 ! (samm) Added Samsung OfficeServ 100, Samsung iDSC 500 to the list of
           supported models
