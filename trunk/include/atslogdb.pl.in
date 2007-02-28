@@ -112,59 +112,58 @@ if ( (-e $libname) && (-r $libname) )
 {
 	require $libname;
 }else{
-        $ERRORMESSAGE="$vars{msg31}";
-        echoerrors();
+	$ERRORMESSAGE="$vars{msg31}";
+	echoerrors();
 	if($vars{syslogfacility}){	
 		closelog();
 	}	
 	exit $toexit;
 }
 
-if ($dbh = DBI->connect("dbi:$sqltype:dbname=$vars{sqldatabase}$host",$vars{sqlmasteruser},$vars{sqlmaspasswd},{PrintError=>0})){
-	if($vars{sqltype}  =~ /MySQL/i){
-		$dbh->{mysql_auto_reconnect} = 1;
+if(!connecttodb()){
+	$toexit=1;
+	exit $toexit;
+}
+# parsing calls
+if(!$fastwrite){
+	# pass stdin to the library
+	open(PBX_DATA,"-");
+	if( connecttodb() ){
+		parsecurcalls();
 	}
-	
-	# parsing calls
-	if(!$fastwrite){
-		# pass stdin to the library
-		open(PBX_DATA,"-");
+}
+else {
+	&daemonize;
+	$pid = open(PBX_DATA, "-|");
+	if ($pid) {   # parent
+		if($vars{debug} =~ /yes/i){
+			open(STDOUT, ">>$vars{logdir}/$vars{notwritelog}") || die "Can't redirect stdout";
+			select(STDOUT); $| = 1;     # make unbuffered
+		}
 		if( connecttodb() ){
 			parsecurcalls();
+			if(!close(PBX_DATA))  {
+				# warn "atslogd exited $?"
+				$ERRORMESSAGE="\n$vars{atslogd} error code: $?";
+				echoerrors();
+			};
 		}
-	}
-	else {
-		&daemonize;
-		$pid = open(PBX_DATA, "-|");
-		if ($pid) {   # parent
-			if($vars{debug} =~ /yes/i){
-				open(STDOUT, ">>$vars{logdir}/$vars{notwritelog}") || die "Can't redirect stdout";
-				select(STDOUT); $| = 1;     # make unbuffered
-			}
-			if( connecttodb() ){
-				parsecurcalls();
-				if(!close(PBX_DATA))  {
-					# warn "atslogd exited $?"
-					$ERRORMESSAGE="\n$vars{atslogd} error code: $?";
-					echoerrors();
-				};
-			}
-		} else {      # child
-			if($vars{port} !~ /r?tcp\:/i){
-				$vars{port}='/dev/'.$vars{port};
-			}
-			# correcting port variable
-			exec("$vars{bindir}/$vars{atslogd} $vars{atslogd_flags} -P $vars{pidfile} -o -f $vars{stopbits} -p $vars{parity} -c $vars{charsize} -s $vars{speed} -D $vars{logdir} -F $vars{callslogfile} -L $vars{logdir}/$vars{startlogfile} $vars{port}")
-			|| die "can't exec program: $!";
-			# NOTREACHED
+	} else {      # child
+		if($vars{port} !~ /r?tcp\:/i){
+			$vars{port}='/dev/'.$vars{port};
 		}
+		# correcting port variable
+		exec("$vars{bindir}/$vars{atslogd} $vars{atslogd_flags} -P $vars{pidfile} -o -f $vars{stopbits} -p $vars{parity} -c $vars{charsize} -s $vars{speed} -D $vars{logdir} -F $vars{callslogfile} -L $vars{logdir}/$vars{startlogfile} $vars{port}")
+		|| die "can't exec program: $!";
+		# NOTREACHED
 	}
-	
-	if($callsCount == 0){                                                          
-		$ERRORMESSAGE="\n$vars{msg32}";
-		echoerrors();
-	}
-	$dbh->disconnect;
+}
+
+if($callsCount == 0){                                                          
+	$ERRORMESSAGE="\n$vars{msg32}";
+	echoerrors();
+}
+$dbh->disconnect;
 if($vars{syslogfacility}){
 	closelog();
 }    
@@ -211,23 +210,23 @@ sub connecttodb {
 }
 
 sub getLibName{
-        my $model_name = $_[0];
-        while ($string =<DATA>) {
+	my $model_name = $_[0];
+	while ($string =<DATA>) {
 		my @libarray=split(/:/,$string);
 		my $libname=@libarray[0];
 		my @models=split(/,/,@libarray[1]);
 		if (grep (/^${model_name}$/i, @models)) {return $libname;}
-        }
+	}
 	return 0;
 }
 
 sub daemonize {
-    chdir '/'		or die "Can't chdir to /: $!";
-    open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
-    open STDOUT, '>/dev/null'
-		or die "Can't write to /dev/null: $!";
-    defined(my $pid = fork)	or die "Can't fork: $!";
-    exit if $pid;
-    setsid			or die "Can't start a new session: $!";
-    open STDERR, '>&STDOUT'	or die "Can't dup stdout: $!";
+	chdir '/'		or die "Can't chdir to /: $!";
+	open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
+	open STDOUT, '>/dev/null'
+	or die "Can't write to /dev/null: $!";
+	defined(my $pid = fork)	or die "Can't fork: $!";
+	exit if $pid;
+	setsid			or die "Can't start a new session: $!";
+	open STDERR, '>&STDOUT'	or die "Can't dup stdout: $!";
 }
