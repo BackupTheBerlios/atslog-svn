@@ -39,6 +39,8 @@ sub WriteRecord{
     print(DUMP "LOG: ".$str."OUT: `$time_of_call`,`$fwd`,`$int`,`$co`,`$way`,`$number`,`$duration`\n\n");
 
     if($duration !~ /^\d+$/|| $co !~ /^\d+$/ || $way !~ /^[12]$/ || $time_of_call !~ /^[12]\d\d\d-[01]\d-[0123]\d [012]\d:\d\d:\d\d$/){
+        print(DUMP "LOG: ERROR detected\n\n");
+
 	$total_errors++;
     }
 
@@ -48,7 +50,7 @@ sub WriteRecord{
 
 # ampto24 with russian and english language support
 sub AmPmTo24(){
-	my $return24='';
+	my $return24=$_[0]; # last choice, if no symbols found
 	my $hour=$_[0];
 	my $AmPm=$_[1];
 	if ($AmPm eq 'PM' || $AmPm eq 'èè'){

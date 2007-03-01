@@ -8,7 +8,7 @@ hicom-350h.lib:Hicom 350H:Siemens
 hipath-3750.lib:HIPATH-3750,HICOM-150:Siemens
 kx-ta616-308-ru.lib:KX-TA616RU,KX-TA308RU,KX-TA308,KX-TA616,KX-TEM824,KX-TES824:Panasonic
 kx-td1232-ru.lib:KX-TD1232-RU:Panasonic
-kx-td1232.lib:KX-TD1232:Panasonic
+kx-td1232.lib:KX-TD1232,KX-TDA600:Panasonic
 kx-td500.lib:KX-TD500:Panasonic
 kx-td816ru.lib:KX-TD816RU:Panasonic
 kx-tda100.lib:KX-TDA100,KX-TDA200:Panasonic

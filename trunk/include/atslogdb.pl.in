@@ -68,7 +68,7 @@ sub echoerrors(){
 
 # ampto24 with russian and english language support
 sub AmPmTo24(){
-	my $return24='';
+	my $return24=$_[0]; # last choice, if no symbols found
 	my $hour=$_[0];
 	my $AmPm=$_[1];
 	if ($AmPm eq 'PM' || $AmPm eq 'èè'){
