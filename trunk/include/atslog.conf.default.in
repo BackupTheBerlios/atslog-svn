@@ -192,6 +192,8 @@ howmonth=12
 # List of the supported PBX models:
 # Alcatel:
 # 		4200E
+# Ericsson:
+# 		BP-250
 # Goldstar:
 # 		GPS-6A
 # Hybrex:

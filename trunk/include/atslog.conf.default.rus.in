@@ -196,6 +196,8 @@ howmonth=12
 # Список поддерживаемых моделей АТС:
 # Alcatel:
 # 		4200E
+# Ericsson:
+# 		BP-250
 # Goldstar:
 # 		GPS-6A
 # Hybrex:

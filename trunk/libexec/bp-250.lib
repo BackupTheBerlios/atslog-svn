@@ -7,7 +7,7 @@
 # TESTLOG: Ericsson BP 250.txt
 #
 use Time::Local;
-use POSIX qw(strftime)
+use POSIX;
 
 sub parsecurcalls() {
 	while ($str=<PBX_DATA>)
@@ -46,7 +46,8 @@ sub unitecurcalls() {
 	my $statusI=$9;
 	my $trunk=$10;
 	my $sent_number=$11;
-	my $transfer_condition=$12;
+	my $a_number=$12;
+	my $transfer_condition=$13;
 	
 	# calculating duration
 	if ($duration=~(/(\d)(\d{2})(\d{2})/)) {
@@ -64,14 +65,40 @@ sub unitecurcalls() {
 		$end_minute=$2;
 	}
 	
-	if ($trunk=~(/(\d+)/) {
+	if ($statusII=~(/[abcdefghijklm1346]/)) {
+		$way=2; # outgoing
+		$internally=$callers_number;
 		$co=$trunk;
+		$number=$dialed_call;
 	}
-	else $co=0;
+	elsif($statusII=~(/[ABCDEFGHIM]/)) {
+		$co=$callers_number;
+		$way=1; # incoming
+		$internally=$dialed_call;
+		$number=$a_number;
+	}
+	else{
+		return; #internal call;
+	}
+	$timeofcall=strftime("%Y-%m-%d %H:%M:%S",localtime(timelocal(0,$end_minute,$end_hour,$end_day,$end_month-1,$end_year)-$duration));
+
 	
-	$timeofcall=strftime("%Y-%m-%d %H:%M:%S",localtime(timelocal(0,$end_minute,$end_hour,$end_day,$end_month,$end_year)-$duration));
+	if ($co=~(/(\d+)/)) {
+		$co=$1;
+	}
 	
-	#print("$stringnumber $timeofcall $forwarded $internally $co $way $number $duration\n");
+	if ($internally=~(/(\d+)/)) {
+		$internally=$1;
+	}
+	if ($number=~(/(\d+)/)) {
+		$number=$1;
+	}
+	else {
+		$number=0;
+	}
+
+	$forwarded=0;
+	# print("$timeofcall,$forwarded,$internally,$co,$way,$number,$duration\n");
 	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 }
 
