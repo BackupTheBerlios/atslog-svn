@@ -1,0 +1,79 @@
+# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# 
+# VENDOR: Ericsson
+# MODELS: BP-250
+# AUTHOR: Alex Samorukov
+#
+# TESTLOG: Ericsson BP 250.txt
+#
+use Time::Local;
+use POSIX qw(strftime)
+
+sub parsecurcalls() {
+	while ($str=<PBX_DATA>)
+	{
+		$stringnumber++;
+		# 1 - end_date (yymmdd), 2 - end_time (hhmm), 3 - callers_number
+		# 4 - duration (hmmss), 5 - dialed_call, 6 - INFORMATION STATUS II
+		# 7 - account code, 8 - AUTHORISATION CODE,  9 - INFORMATION STATE I
+		# 10 - trunk number, 11 - sent number,12 - TRANSFER CONDITION:  
+		if ($str =~ /00 \d{3} (\d{6}) (\d{4}) ([\d ]{4}) (\d{5}) \d{4} [\d ]{4} ([\d ]{24}) (.) ([\d ]{15}) ([\d ]{4}) \d{4} (.) [ \d\.]{11} . ([\d ]{4}) .{4} ([\d ]{24}) ([\d ]{20}) . (.{2})/){
+			unitecurcalls();
+		}else{
+			if ($vars{debug} =~ /yes/i){
+				if ($str !~ /^\s*$/){
+					print $str;
+				};
+			};
+		};
+	};
+};
+
+sub unitecurcalls() {
+	
+	# 1 - end_date (yymmdd), 2 - end_time (hhmm), 3 - callers_number
+	# 4 - duration (hmmss), 5 - dialed_call, 7 - INFORMATION STATUS II
+	# 8 - account code, 9 - AUTHORISATION CODE, 10 - INFORMATION STATE I
+	# 11 - trunk number, 12 - sent number,13 - TRANSFER CONDITION:
+	
+	my $end_date=$1;
+	my $end_time=$2;
+	my $callers_number=$3;
+	my $duration=$4;
+	my $dialed_call=$5;
+	my $statusII=$6;
+	my $code=$8;
+	my $statusI=$9;
+	my $trunk=$10;
+	my $sent_number=$11;
+	my $transfer_condition=$12;
+	
+	# calculating duration
+	if ($duration=~(/(\d)(\d{2})(\d{2})/)) {
+		$duration=$1*60*60+$2*60+$3;
+	}
+	
+	# calculating unix end time
+	if ($end_date=~(/(\d{2})(\d{2})(\d{2})/)) {
+		$end_year=2000+$1;
+		$end_month=$2;
+		$end_day=$3;
+	}
+	if ($end_time=~(/(\d{2})(\d{2})/)) {
+		$end_hour=$1;
+		$end_minute=$2;
+	}
+	
+	if ($trunk=~(/(\d+)/) {
+		$co=$trunk;
+	}
+	else $co=0;
+	
+	$timeofcall=strftime("%Y-%m-%d %H:%M:%S",localtime(timelocal(0,$end_minute,$end_hour,$end_day,$end_month,$end_year)-$duration));
+	
+	#print("$stringnumber $timeofcall $forwarded $internally $co $way $number $duration\n");
+	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
+}
+
+1;
+
