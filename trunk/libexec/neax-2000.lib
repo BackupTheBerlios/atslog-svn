@@ -1,25 +1,26 @@
 # ATSlog version @version@ build @buildnumber@ www.atslog.com  
 # 
 # VENDOR: NEC
-# MODELS: NEAX2000
+# MODELS: NEAX2000,NEAX7400
 # AUTHOR: Alex Samorukov
 # COMMENTS: Built-in SMDR NEAX 2400 IMS Format
 #
 # TESTLOG: NEC NEAX2000 IPS.txt
-#
+# TESTLOG: NEC NEAX7400 ICS m100.txt
 # (c) Alex Samorukov, samm@os2.kiev.ua, 2007
 #
 # sample:
 # 0!KE000038001206   01121205130112121023             100000000                                000080442309997       07070          
 
 use Time::Local;
+use POSIX;
 
 sub parsecurcalls() {
 	while ($str=<PBX_DATA>)
 	{
 		$stringNumber++;
 		# regexp
-		if ($str =~ /K([EA])(\d{3})(\d{3})(\d)(\d{2})([\d ]{6})(\d{10})(\d{10})([\d ]{10}) {3}(\d{3})(\d{3})(\d{3})([\d ]{32})(\d{4})([\d ]{18})(\d{2})(\d{2})([\d ])([\d ]{4})/){
+		if ($str =~ /K([EA])(\d{3})(\d{3})(\d)(\d{2})([\d ]{6})(\d{10})(\d{10})([\d ]{10}) {3}(\d{3})(\d{3})([\d ]{3})([\d ]{32})(\d{4})([\d ]{18})([\d ]{2})([\d ]{2})([\d ])([\d ]{4})/){
 			unitecurcalls();
 		}else{
 			if ($vars{debug} =~ /yes/i){ 
@@ -77,6 +78,15 @@ sub unitecurcalls() {
 	# bonus
 	# $Code
 	$co=int($line);
+
+	# fix year
+	if ($Year1!~/(\d{2})/){
+		$Year1=strftime("%y",gmtime);
+	}
+	
+	if ($Year2!~/(\d{2})/){
+		$Year2=strftime("%y",gmtime);
+	}
 	
 	# print "\n$date,$time,$ext_number,$cid_number\n";
 	if($mode eq "E"){

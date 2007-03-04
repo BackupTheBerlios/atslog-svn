@@ -7,6 +7,7 @@
 
 === ATSLOG 2.2-DEV ===
 
++ (samm) Added support for the Ericsson BP-250
 + (samm) Added support for the Panasonic KX-TDA600
 + (samm) added keep-alive tuning for the Linux TCP/IP stack
 # (samm) Fixed CID detection in the kx1232.lib
