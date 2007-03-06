@@ -1,25 +1,199 @@
 <?php
-    //phpinfo();
-    include ("index.html");
-/*
-<HTML>
-<body bgcolor="#FFFFFF" text="#000000" link="#E73030" vlink="#893700" alink="#CC3333" leftmargin=20 bottommargin=20 marginheight=20 marginwidth=20 rightmargin=20 topmargin=20>
-<H1>Ошибка!</H1>
-<H2>Неверно настроен анализ PHP кода в HTML тексте.</h2>
-<p>Это может произойти по двум причинам:<br>
-1. PHP не подключен или не активирован.<br>
-2. Разрешение файлов .php не интерпертируется как PHP код.
-</p>
-<p>Не забудьте вставить строку
-<table width=80% cellspacing=0 cellpadding=0 border=0 bgcolor="#F0F0F0">
-<tr>
-<td><pre>
-AddHandler application/x-httpd-php php
-</pre></td></tr></table>
-в  настройках Вашего Apache http сервера. 
-</BODY>
-</HTML>
-<!--
-*/
+
+// Начало замера потраченного на обработку времени
+// ----------------------------------------------------------------------------
+$start_time = microtime();
+
+//  Параметры из внешнего файла
+// ----------------------------------------------------------------------------
+include("../include/config.inc.php");
+
+// Функции, описанные во внешнем файле
+// ----------------------------------------------------------------------------
+include('../include/set/functions.php');
+
+// Общие данные и переменные
+// ----------------------------------------------------------------------------
+include('../include/set/commonData.php');
+
+// Начнем вывод HTML
+// ----------------------------------------------------------------------------
+
+$title=strtr($GUI_LANG['TheAccountOfPhoneCalls'],$GUI_LANG['UpperCase'],$GUI_LANG['LowerCase']);;
+if(empty($export)) include("../include/set/header.html");
+
+// ---------------------------------------------------------------------------
+
+switch($type){
+	case "IntAll":
+	case "IntCoDetail":
+	case "IntDetail":
+	case "IntNum":
+	case "IntNumDetail":
+		$int_echo = $GUI_LANG['ByInternalPhones'];
+		$anothType = 1;
+		break;
+	case "diagram";
+		$int_echo = $GUI_LANG['ReportInTheSchedules'];
+		$anothType = 3;
+		break;
+	case "CoIntDetail":
+	case "CoDetail":
+	case "CoAll":
+	case "CoNum":
+	case "CoNumDetail":
+		$int_echo = $GUI_LANG['ByExternalLines'];
+		$anothType = 2;
+		break;
+	case "NumAll":
+	case "NumDetail":
+		$int_echo = $GUI_LANG['ByCallingNumber'];
+		$anothType = 4;
+		break;
+	case "AllCalls":
+		$int_echo = $GUI_LANG['ByAll'];
+		$anothType = 5;
+		break;
+	default:
+		$int_echo = $int;
+}
+
+$CurrentIP[$anothType]=" SELECTED";
+$incomingCheck[$incoming] = " SELECTED";
+$CityLineCheck[1] = " checked";
+$TrunkLineCheck[2] = " checked";
+$MobLineCheck[4] = " checked";
+$NationalLineCheck[8] = " checked";
+$CurrentDebug[$debug] = " SELECTED";
+
+if (!isset($toprint) || $toprint!="yes"){
+    $thisMenu="calls";
+    if(empty($export)) include("../include/set/menuTable.html");
+}
+
+switch ($type){
+
+	case "IntAll":
+	/* 
+	   Список внутренних телефонов с общей длительностью переговоров.
+	*/
+		include("query/IntAll.php");
+		break;	
+
+	case "IntDetail":
+	/*
+		Детальный список звонков с определённого внутреннего телефона.
+	*/
+		include("query/IntDetail.php");
+		break;
+
+	case "IntCoDetail":
+	/*
+	   Детализированный список звонков с определённого внутреннего телефона
+	   по конкретной внешней линии.
+	*/
+		include("query/IntCoDetail.php");
+		break;
+	
+	case "diagram";
+	/*
+	  Диаграмы для визуального представления статистики.
+
+	*/
+		include("query/diagram.php");
+		break;
+
+	case "CoDetail":
+	/*
+	   Детализированный список звонков по определённой внешней линии.
+	*/
+		include("query/CoDetail.php");
+		break;
+
+	case "NumDetail":
+	/*
+	   Детализированный список всех звонков на определённый номер.
+	*/
+		include("query/NumDetail.php");
+		break;
+
+	case "CoNum":
+	/*
+	   Группированный список набранных номеров на определённой линии.
+	*/
+		include("query/CoNum.php");
+		break;
+	
+	case "CoNumDetail":
+	/*
+	   Детализированный список звонков по конкретному номеру на определённой линии.
+	*/
+		include("query/CoNumDetail.php");
+		break;
+	
+	case "IntNumDetail":
+	/*
+	   Детализированный список звонков по конкретному номеру на определённом телефоне.
+	*/
+		include("query/IntNumDetail.php");
+		break;
+	
+	case "IntNum":
+	/*
+	   Группированный список набранных номеров на определённом внутреннем телефоне.
+	*/
+		include("query/IntNum.php");
+		break;
+	
+	case "NumAll":
+	/*
+	   Группированный список всех набранных номеров.
+	*/
+		include("query/NumAll.php");
+		break;
+
+	case "CoIntDetail":
+	/*
+	   Детализированный список звонков с определённого внутреннего телефона
+	   по конкретной внешней линии.
+	*/
+		include("query/CoIntDetail.php");
+		break;
+
+	case "CoDetail":
+	/*
+	   Детализированный список звонков по определённой внешней линии.
+	*/
+		include("query/CoDetail.php");
+		break;
+
+	case "AllCalls":
+	/*
+	   Детализированный список всех звонков, а также результат поиска.
+	*/
+		include("query/AllCalls.php");
+		break;
+
+   default:
+	/* 
+	   Список внешних линий с общей длительностью переговоров.
+	*/
+		include("query/CoAll.php");
+		break;
+}
+$duration = microtime_diff($start_time, microtime());
+$duration = sprintf("%0.3f", $duration);
+
+if(empty($export)) {
+
+    // Печатаем список страниц
+	if(!isset($pages)) $pages=0;
+    if(empty($export)) pagesNavigator($pages,$page);
+
+    include("../include/set/printfooter.html");
+
+    include("../include/set/footer.html");
+
+}
 
 ?>
