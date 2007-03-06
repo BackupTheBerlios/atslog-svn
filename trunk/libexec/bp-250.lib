@@ -97,7 +97,12 @@ sub unitecurcalls() {
 		$number=0;
 	}
 
-	$forwarded=0;
+	if ($transfer_conditio=~(/1[1234]/)) {
+		$forwarded=1;
+	}
+	else {
+		$forwarded=0;
+	}
 	# print("$timeofcall,$forwarded,$internally,$co,$way,$number,$duration\n");
 	WriteRecord($timeofcall, $forwarded, $internally, $co, $way, $number, $duration);
 }
