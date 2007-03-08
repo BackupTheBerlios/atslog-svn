@@ -4,7 +4,7 @@ CREATE TABLE calls (
     internally smallint,
     co smallint,
     way character(3),
-    number numeric(100,0) DEFAULT 0 NOT NULL,
+    number varchar(65,0),
     duration integer DEFAULT 0 NOT NULL,
     cost numeric(100,3) DEFAULT 0
 );

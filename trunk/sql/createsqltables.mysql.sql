@@ -5,7 +5,7 @@ CREATE TABLE `calls` (
   `internally` smallint(6) unsigned default NULL,
   `co` smallint(6) unsigned default NULL,
   `way` char(3) default NULL,
-  `number` decimal(65,0) unsigned NOT NULL default '0',
+  `number` varchar(65),
   `duration` int(10) unsigned NOT NULL default '0',
   `cost` decimal(65,3) unsigned default '0.000',
   KEY `co` (`co`),
