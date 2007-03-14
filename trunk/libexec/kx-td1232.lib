@@ -65,8 +65,11 @@ sub unitecurcalls() {
     }else{
 	$way='2';
 	$number=$forIncoming;
-	$forIncoming =~ s/\D+//;
-	$number = substr($forIncoming,0,100);
+	if ($forIncoming=~/([\d*#P]+)/) 
+	{
+		$number=$1;
+	}
+
     };
 
     if ($timeofcall ne ""){
