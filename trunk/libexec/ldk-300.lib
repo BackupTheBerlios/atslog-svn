@@ -42,7 +42,7 @@ sub unitecurcalls() {
 	
 	
 	$co=int($co);
-	$forwarded=0; # please, FIXME
+	$forwarded=0;
 	
 	if ($dialed_number=~/(\d+)/)
 	{
@@ -52,19 +52,22 @@ sub unitecurcalls() {
 		$number=0;
 	}
 	
-	if($dialed_number =~ /I/){
+	if($dialed_number =~ /^[IG]/){
 		$way='1';
-		# detection of the CID line
-		if($dialed_number =~ /^I(\d+)/)
-		{
-			$nubmer=$1;
-		}
-		else {
-			$number=0;
-		}
-	}else{
+		$forwarded=0;
+	}
+	elsif($dialed_number =~ /^O/){
 		$way='2';
-	};
+		$forwarded=0;
+	}
+	elsif($dialed_number =~ /^T/){
+		$way='2';
+		$forwarded=1;
+	}
+	elsif($dialed_number =~ /^t/){
+		$way='1';
+		$forwarded=1;
+	}
 	
 	if ($date=~(/(\d{2})\/(\d{2})\/(\d{2})/)) {
 		$Month=$2;
