@@ -7,6 +7,9 @@
 
 === ATSLOG 2.2-DEV ===
 
+# (samm) Fixed KX-TDA600 support (date format corrected)
+# (samm) calls.number is VARCHAR field, not decimal
+
 2007-MAR-04: ATSlog 2.1.1 Release
 + (samm) Added support for the NEC NEAX7400
 + (samm) Added support for the Ericsson BP-250
