@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
 # Copyright (C) 2003 Denis CyxoB www.yamiyam.dp.ua
 #                                                       
 # Скрипт очищает содержимое базы одним махом
