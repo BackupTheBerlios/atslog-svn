@@ -1,4 +1,4 @@
-# ATSlog version @version@ build @buildnumber@ www.atslog.com  
+# ATSlog version @version@ build @buildnumber@ www.atslog.com
 # 
 # VENDOR: Panasonic
 # MODELS: KX-TD1232,KX-TDA600
@@ -7,6 +7,7 @@
 # TESTLOG: Panasonic KX-TD1232.txt
 # TESTLOG: Panasonic KX-TD1232 (P271F).txt
 # TESTLOG: Panasonic KX-TD1232 (P271F)_2.txt
+# TESTLOG: Panasonic KX-TDA600.txt
 #
 sub parsecurcalls() {
 	while ($str=<PBX_DATA>)
