@@ -10,7 +10,7 @@ use POSIX 'setsid'; # used in daemonize
 
 $prefix="@prefix@";
 $config_file="@sysconfdir@/atslog.conf";
-if(@ARGV[0] eq "--fastwrite"){
+if($ARGV[0] eq "--fastwrite"){
 	$fastwrite=1;
 } else{
 	$fastwrite=0;
@@ -93,9 +93,9 @@ if($vars{syslogfacility}){
 	openlog("atslogdb", 'pid, ndelay, cons', "$sFas1");#Откроем сокет на syslogd
 }
 if($vars{sqltype}  =~ /PostgreSQL/i){
-	$sqltype=Pg;
+	$sqltype="Pg";
 }else{
-	$sqltype=mysql;
+	$sqltype="mysql";
 }
 $host="";                           
 if($vars{sqlhost} ne "localhost"){
@@ -125,6 +125,8 @@ if(!connecttodb()){
 	exit $toexit;
 }
 # parsing calls
+$str='';
+
 if(!$fastwrite){
 	# pass stdin to the library
 	open(PBX_DATA,"-");
@@ -213,8 +215,8 @@ sub getLibName{
 	my $model_name = $_[0];
 	while ($string =<DATA>) {
 		my @libarray=split(/:/,$string);
-		my $libname=@libarray[0];
-		my @models=split(/,/,@libarray[1]);
+		my $libname=$libarray[0];
+		my @models=split(/,/,$libarray[1]);
 		if (grep (/^${model_name}$/i, @models)) {return $libname;}
 	}
 	return 0;
