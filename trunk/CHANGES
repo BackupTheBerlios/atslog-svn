@@ -7,6 +7,7 @@
 
 === ATSLOG 2.2-DEV ===
 
+# (samm) Fixed support for some NEAX2000 with non-trivial format
 # (samm) Fixed KX-TDA600 support (date format corrected)
 # (samm) calls.number is VARCHAR field, not decimal
 
